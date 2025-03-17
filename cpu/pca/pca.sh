@@ -1,2 +1,2 @@
-g++ -O3 pca.cpp -o pca -lopenblas -llapacke -I./usr/include/x86_64-linux-gnu/
+g++ -O3 pca.cpp -o pca -lblas -llapacke
 ./pca
