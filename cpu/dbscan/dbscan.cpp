@@ -255,7 +255,7 @@ int main() {
     std::vector<DataPoint> raw_data = read_csv("../../data/blobs/X_20d_10.csv");
     std::vector<DataPoint> data = scale_features(raw_data);
     
-    DBSCAN dbscan(0.6, 8);
+    DBSCAN dbscan(0.6, 12);
     auto start = std::chrono::high_resolution_clock::now();
     dbscan.fit(data);
     auto end = std::chrono::high_resolution_clock::now();
