@@ -19,6 +19,7 @@ private:
     int hidden_size;
     int output_size;
     double learning_rate;
+    unsigned int seed;  
     std::vector<std::vector<double>> w1;
     std::vector<double> b1;
     std::vector<std::vector<double>> w2;
@@ -33,8 +34,7 @@ private:
         return s * (1 - s);
     }
     
-    std::vector<double> forward(const std::vector<double>& x, 
-                              std::vector<double>& h) {  // Modified to return hidden layer
+    std::vector<double> forward(const std::vector<double>& x, std::vector<double>& h) {
         std::vector<double> h_input(hidden_size, 0.0);
         for (int i = 0; i < hidden_size; ++i) {
             for (int j = 0; j < input_size; ++j) {
@@ -54,9 +54,7 @@ private:
     }
     
     void initialize_weights() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        // Xavier/Glorot initialization
+        std::mt19937 gen(seed);  // Use provided seed
         double limit1 = sqrt(6.0 / (input_size + hidden_size));
         double limit2 = sqrt(6.0 / (hidden_size + output_size));
         std::uniform_real_distribution<> dis1(-limit1, limit1);
@@ -76,9 +74,9 @@ private:
     }
 
 public:
-    MLPClassifier(int in_size, int hid_size, int out_size, double lr = 0.1)
+    MLPClassifier(int in_size, int hid_size, int out_size, double lr = 0.1, unsigned int s = 42)
         : input_size(in_size), hidden_size(hid_size), output_size(out_size), 
-          learning_rate(lr) {
+          learning_rate(lr), seed(s) {  // Added seed parameter with default value
         initialize_weights();
     }
     
@@ -109,12 +107,10 @@ public:
                 std::vector<double> target(output_size, 0.0);
                 target[point.label] = 1.0;
                 
-                // Calculate loss (MSE)
                 for (int i = 0; i < output_size; ++i) {
                     total_loss += (o[i] - target[i]) * (o[i] - target[i]);
                 }
                 
-                // Backward pass
                 std::vector<double> o_delta(output_size);
                 for (int i = 0; i < output_size; ++i) {
                     o_delta[i] = (o[i] - target[i]) * sigmoid_derivative(o_input[i]);
@@ -129,7 +125,6 @@ public:
                     h_delta[i] = error * sigmoid_derivative(h_input[i]);
                 }
                 
-                // Update weights and biases
                 for (int i = 0; i < output_size; ++i) {
                     for (int j = 0; j < hidden_size; ++j) {
                         w2[i][j] -= learning_rate * o_delta[i] * h[j];
@@ -158,14 +153,12 @@ public:
     }
 };
 
-// Feature scaling function
 std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     std::vector<DataPoint> scaled_data = data;
     int n_features = data[0].features.size();
     std::vector<double> means(n_features, 0.0);
     std::vector<double> stds(n_features, 0.0);
     
-    // Calculate means
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
             means[i] += point.features[i];
@@ -175,7 +168,6 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
         means[i] /= data.size();
     }
     
-    // Calculate standard deviations
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
             double diff = point.features[i] - means[i];
@@ -184,10 +176,9 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     }
     for (int i = 0; i < n_features; ++i) {
         stds[i] = sqrt(stds[i] / data.size());
-        if (stds[i] < 1e-9) stds[i] = 1e-9;  // Prevent division by zero
+        if (stds[i] < 1e-9) stds[i] = 1e-9;
     }
     
-    // Scale features
     for (auto& point : scaled_data) {
         for (int i = 0; i < n_features; ++i) {
             point.features[i] = (point.features[i] - means[i]) / stds[i];
@@ -249,12 +240,13 @@ int main() {
     for (const auto& point : data) {
         output_size = std::max(output_size, point.label + 1);
     }
-    int hidden_size = (input_size + output_size);  // Adjusted
+    int hidden_size = (input_size + output_size);
     
-    // Train
-    MLPClassifier classifier(input_size, hidden_size, output_size, 0.01);  // Reduced learning rate
+    // Train with specific seed
+    unsigned int random_seed = 12345;  // You can change this value
+    MLPClassifier classifier(input_size, hidden_size, output_size, 0.01, random_seed);
     auto start = std::chrono::high_resolution_clock::now();
-    classifier.fit(train_data, 200);  // Increased epochs
+    classifier.fit(train_data, 200);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     
@@ -273,7 +265,7 @@ int main() {
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
     // Write predictions
-    write_predictions(test_data, predictions, "../../gassnb/predictions.csv");
+    write_predictions(test_data, predictions, "../../mlp/predictions.csv");
     
     return 0;
 }
