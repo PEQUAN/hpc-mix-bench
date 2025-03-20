@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
     }
 
     cout << "Reading data..." << endl;
-    vector<double> data = readCSV("../data/blobs/X_20d_10.csv", rows, cols);
+    vector<double> data = readCSV("../data/clustering/X_20d_10.csv", rows, cols);
     
     if (rows <= 0 || cols <= 0) {
         cerr << "Error: Invalid data dimensions (rows = " << rows << ", cols = " << cols << ")" << endl;

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/xinye/hpc-mix-mlbench/cpu/pca/pca.cpp" "CMakeFiles/pca.dir/pca.cpp.o" "gcc" "CMakeFiles/pca.dir/pca.cpp.o.d"
+  "/home/xinye/hpc-mix-mlbench/pca/pca.cpp" "CMakeFiles/pca.dir/pca.cpp.o" "gcc" "CMakeFiles/pca.dir/pca.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

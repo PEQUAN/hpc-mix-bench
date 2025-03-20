@@ -1,4 +1,4 @@
-# Install script for directory: /home/xinye/hpc-mix-mlbench/cpu/pca
+# Install script for directory: /home/xinye/hpc-mix-mlbench/pca
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/xinye/hpc-mix-mlbench/cpu/pca/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/xinye/hpc-mix-mlbench/pca/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
