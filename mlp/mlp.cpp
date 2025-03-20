@@ -226,7 +226,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 
 int main() {
     // Read and scale data
-    std::vector<DataPoint> raw_data = read_csv("../data/iris/iris.csv");
+    std::vector<DataPoint> raw_data = read_csv("../data/classification/iris.csv");
     std::vector<DataPoint> data = scale_features(raw_data);
     
     // Train-test split (80-20)
@@ -265,7 +265,7 @@ int main() {
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
     // Write predictions
-    write_predictions(test_data, predictions, "../mlp/predictions.csv");
+    write_predictions(test_data, predictions, "../mlp/pred.csv");
     
     return 0;
 }

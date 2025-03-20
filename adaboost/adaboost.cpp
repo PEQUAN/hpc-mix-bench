@@ -175,7 +175,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/iris/iris.csv");
+    std::vector<DataPoint> raw_data = read_csv("../data/classification/iris.csv");
     std::vector<DataPoint> data = scale_features(raw_data);
     
     size_t train_size = static_cast<size_t>(0.8 * data.size());
@@ -202,7 +202,7 @@ int main() {
     double accuracy = static_cast<double>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
-    write_predictions(test_data, predictions, "../results/adaboost/predictions.csv");
+    write_predictions(test_data, predictions, "../results/adaboost/pred.csv");
     
     return 0;
 }
