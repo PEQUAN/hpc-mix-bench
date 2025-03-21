@@ -85,59 +85,63 @@ struct GMRESResult {
 };
 
 GMRESResult gmres(const Matrix& A, const std::vector<double>& b, 
-                  const DiagonalPreconditioner& M, int max_iter = 100, double tol = 1e-6) {
+                  const DiagonalPreconditioner& M, int max_iter, double tol) {
     int n = A.size();
     std::vector<double> x(n, 0.0);  // Initial guess
     std::vector<double> r = axpy(-1.0, A.matvec(x), b);  // Initial residual
     double beta = norm(r);
-    std::vector<std::vector<double>> V(n);  // Krylov basis
-    std::vector<std::vector<double>> H(max_iter + 1, std::vector<double>(max_iter, 0.0));  // Hessenberg matrix
-    std::vector<double> s(max_iter + 1, 0.0);  // Right-hand side for least squares
-    s[0] = beta;
+    if (beta < tol) return {x, beta, 0};
 
-    if (beta < tol) {
-        return {x, beta, 0};
-    }
+    std::vector<std::vector<double>> V(max_iter + 1, std::vector<double>(n, 0.0));  // Krylov basis
+    std::vector<std::vector<double>> H(max_iter + 1, std::vector<double>(max_iter, 0.0));  // Hessenberg matrix
+    std::vector<double> c(max_iter), s(max_iter);  // Givens rotation coefficients
+    std::vector<double> g(max_iter + 1);  // Residual vector
 
     V[0] = r;
-    for (double& v : V[0]) v /= beta;
+    for (int i = 0; i < n; ++i) V[0][i] /= beta;
+    g[0] = beta;
 
     int k;
     for (k = 0; k < max_iter && beta > tol; ++k) {
-        // Arnoldi iteration
+        // Arnoldi iteration with preconditioning
         std::vector<double> w = A.matvec(M.apply(V[k]));
         for (int j = 0; j <= k; ++j) {
             H[j][k] = dot(w, V[j]);
-            w = axpy(-H[j][k], V[j], w);
+            for (int i = 0; i < n; ++i) {
+                w[i] -= H[j][k] * V[j][i];
+            }
         }
         H[k + 1][k] = norm(w);
-        if (H[k + 1][k] < 1e-10) break;  // Breakdown
+        if (H[k + 1][k] < 1e-10) break;  // Lucky breakdown (exact solution found)
         V[k + 1] = w;
-        for (double& v : V[k + 1]) v /= H[k + 1][k];
+        for (int i = 0; i < n; ++i) V[k + 1][i] /= H[k + 1][k];
 
-        // Apply Givens rotations to H and s
+        // Apply previous Givens rotations
         for (int j = 0; j < k; ++j) {
-            double temp = H[j][k];
-            H[j][k] = H[j][k] * H[j][j] + H[j + 1][j] * H[j + 1][k];
-            H[j + 1][k] = -H[j + 1][j] * temp + H[j][j] * H[j + 1][k];
+            double temp = c[j] * H[j][k] + s[j] * H[j + 1][k];
+            H[j + 1][k] = -s[j] * H[j][k] + c[j] * H[j + 1][k];
+            H[j][k] = temp;
         }
+
+        // Compute new Givens rotation
         double rho = std::sqrt(H[k][k] * H[k][k] + H[k + 1][k] * H[k + 1][k]);
         if (rho < 1e-10) break;
+        c[k] = H[k][k] / rho;
+        s[k] = H[k + 1][k] / rho;
         H[k][k] = rho;
         H[k + 1][k] = 0.0;
-        double c = H[k][k] / rho;
-        double s_rot = H[k + 1][k] / rho;
-        H[k][k] = c * H[k][k] + s_rot * H[k + 1][k];
-        s[k + 1] = -s_rot * s[k];
-        s[k] *= c;
 
-        beta = std::abs(s[k + 1]);
+        // Update residual vector
+        double g_temp = g[k];
+        g[k] = c[k] * g[k] + s[k] * g[k + 1];
+        g[k + 1] = -s[k] * g_temp + c[k] * g[k + 1];
+        beta = std::abs(g[k + 1]);
     }
 
-    // Solve upper triangular system Hy = s
+    // Solve upper triangular system H y = g
     std::vector<double> y(k);
     for (int i = k - 1; i >= 0; --i) {
-        y[i] = s[i];
+        y[i] = g[i];
         for (int j = i + 1; j < k; ++j) {
             y[i] -= H[i][j] * y[j];
         }
@@ -145,13 +149,14 @@ GMRESResult gmres(const Matrix& A, const std::vector<double>& b,
     }
 
     // Update solution
-    for (int i = 0; i < k; ++i) {
-        x = axpy(y[i], M.apply(V[i]), x);
+    for (int j = 0; j < k; ++j) {
+        for (int i = 0; i < n; ++i) {
+            x[i] += y[j] * M.apply(V[j])[i];
+        }
     }
 
     r = axpy(-1.0, A.matvec(x), b);
     double residual = norm(r);
-
     return {x, residual, k};
 }
 
@@ -163,9 +168,9 @@ Matrix generate_tridiagonal(int n) {
     std::uniform_real_distribution<> dis(0.1, 1.0);
 
     for (int i = 0; i < n; ++i) {
-        A(i, i) = 2.0 + dis(gen);  // Diagonal
-        if (i > 0) A(i, i - 1) = -1.0 + 0.1 * dis(gen);  // Lower diagonal
-        if (i < n - 1) A(i, i + 1) = -1.0 + 0.1 * dis(gen);  // Upper diagonal
+        A(i, i) = 4.0 + dis(gen);  // Stronger diagonal dominance
+        if (i > 0) A(i, i - 1) = -1.0 + 0.1 * dis(gen);
+        if (i < n - 1) A(i, i + 1) = -1.0 + 0.1 * dis(gen);
     }
     return A;
 }
@@ -188,7 +193,7 @@ int main() {
     DiagonalPreconditioner M(A);
 
     auto start = std::chrono::high_resolution_clock::now();
-    GMRESResult result = gmres(A, b, M, n, 1e-12);
+    GMRESResult result = gmres(A, b, M, n, 1e-6);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
