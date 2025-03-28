@@ -16,14 +16,14 @@ struct DataPoint {
 
 class DBSCAN {
 private:
-    double eps;
+    half_float::half eps;
     int min_pts;
     std::vector<DataPoint> data;
 
-    double distance(const std::vector<double>& p1, const std::vector<double>& p2) {
-        double sum = 0.0;
+    float distance(const std::vector<double>& p1, const std::vector<double>& p2) {
+        float sum = 0.0;
         for (size_t i = 0; i < p1.size(); ++i) {
-            double diff = p1[i] - p2[i];
+            float diff = p1[i] - p2[i];
             sum += diff * diff;
         }
         return sqrt(sum);
@@ -56,7 +56,7 @@ private:
     }
 
 public:
-    DBSCAN(double epsilon = 0.01, int min_points = 5) : eps(epsilon), min_pts(min_points) {}
+    DBSCAN(float epsilon = 0.01, int min_points = 5) : eps(epsilon), min_pts(min_points) {}
     
     void fit(const std::vector<DataPoint>& input_data) {
         data = input_data;
@@ -125,7 +125,12 @@ double adjusted_mutual_information(const std::vector<int>& true_labels,
             }
         }
     }
-    mi = (mi > 0 ? mi / (n * log(2.0)) : 0);  // Convert to base 2
+    
+    if (mi > 0) {
+        mi = mi / (n * log(2.0));
+    } else {
+        mi = 0;
+    } // Convert to base 2
 
     // Entropy of true labels (H(A))
     double h_true = 0.0;
@@ -185,13 +190,14 @@ double adjusted_rand_index(const std::vector<int>& true_labels,
     return (index - expected) / (max_index - expected + 1e-10);
 }
 
+
 std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     std::vector<DataPoint> scaled_data = data;
     if (data.empty()) return scaled_data;
     
     int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
+    std::vector<float> means(n_features, 0.0);
+    std::vector<float> stds(n_features, 0.0);
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
@@ -204,7 +210,7 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
+            float diff = point.features[i] - means[i];
             stds[i] += diff * diff;
         }
     }
@@ -271,7 +277,8 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/clustering/shape_clusters_include_y.csv");
+    std::vector<DataPoint> raw_data = read_csv("shape_clusters_include_y.csv");
+
     if (raw_data.empty()) {
         std::cerr << "No data loaded. Exiting." << std::endl;
         return 1;
@@ -306,7 +313,7 @@ int main() {
     std::cout << "Adjusted Mutual Information (AMI): " << ami << std::endl;
     std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
     
-    write_predictions(data, pred_labels, "../results/dbscan/clusters.csv");
+    write_predictions(data, pred_labels, "../../results/dbscan/clusters.csv");
     
     return 0;
 }

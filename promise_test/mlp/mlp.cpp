@@ -149,6 +149,7 @@ public:
         std::vector<__PROMISE__> h(hidden_size);
         std::vector<__PROMISE__> output = forward(features, h);
 
+        PROMISE_CHECK_ARRAY(output.data(), output_size);
         return std::distance(output.begin(), 
                            std::max_element(output.begin(), output.end()));
     }
@@ -227,7 +228,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 
 int main() {
     // Read and scale data
-    std::vector<DataPoint> raw_data = read_csv("../data/classification/iris.csv");
+    std::vector<DataPoint> raw_data = read_csv("iris.csv");
     std::vector<DataPoint> data = scale_features(raw_data);
     
     // Train-test split (80-20)
@@ -255,7 +256,7 @@ int main() {
     
     // Evaluate
     std::vector<int> predictions;
-    int correct = 0;
+    float correct = 0.f;
     for (const auto& point : test_data) {
         int pred = classifier.predict(point.features);
         predictions.push_back(pred);
@@ -265,9 +266,8 @@ int main() {
     __PROMISE__ accuracy = static_cast<__PROMISE__>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
-    PROMISE_CHECK_VAR(accuracy);
     // Write predictions
-    write_predictions(test_data, predictions, "../mlp/pred.csv");
+    // write_predictions(test_data, predictions, "../../results/mlp/pred.csv");
     
     return 0;
 }
