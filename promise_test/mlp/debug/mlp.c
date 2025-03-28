@@ -1,3 +1,6 @@
+#include <half_promise.hpp>
+#include <floatx.hpp>
+#include "./promise.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -5,7 +8,7 @@
 #include <string.h> 
 
 typedef struct {
-    __PROMISE__* features;
+    double* features;
     int label;
     int feature_size;
 } DataPoint;
@@ -14,11 +17,11 @@ typedef struct {
     int input_size;
     int hidden_size;
     int output_size;
-    __PROMISE__ learning_rate;
+    double learning_rate;
     unsigned int seed;
-    __PROMISE__** w1;
-    __PROMISE__* b1;
-    __PROMISE__** w2;
+    double** w1;
+    double* b1;
+    double** w2;
     double* b2;
 } MLPClassifier;
 
@@ -27,7 +30,7 @@ double sigmoid(double x) {
 }
 
 double sigmoid_derivative(double x) {
-    __PROMISE__ s = sigmoid(x);
+    double s = sigmoid(x);
     return s * (1 - s);
 }
 
@@ -39,8 +42,8 @@ double rand_double(unsigned int* seed, double min, double max) {
 
 void initialize_weights(MLPClassifier* clf) {
     int i, j;
-    __PROMISE__ limit1 = sqrt(6.0 / (clf->input_size + clf->hidden_size));
-    __PROMISE__ limit2 = sqrt(6.0 / (clf->hidden_size + clf->output_size));
+    double limit1; limit1= sqrt(6.0 / (clf->input_size + clf->hidden_size));
+    double limit2 = sqrt(6.0 / (clf->hidden_size + clf->output_size));
     
     clf->w1 = (double**)malloc(clf->hidden_size * sizeof(double*));
     clf->b1 = (double*)calloc(clf->hidden_size, sizeof(double));
@@ -100,9 +103,9 @@ void fit(MLPClassifier* clf, DataPoint* data, int data_size, int epochs) {
     for (epoch = 0; epoch < epochs; epoch++) {
         double total_loss = 0.0;
         for (i = 0; i < data_size; i++) {
-            __PR_4__* h = (__PR_4__*)calloc(clf->hidden_size, sizeof(__PR_4__));
-            __PR_5__* h_input = (__PR_5__*)calloc(clf->hidden_size, sizeof(__PR_5__));
-            __PR_7__* o = (__PR_7__*)calloc(clf->output_size, sizeof(__PR_7__));
+            double* h = (double*)calloc(clf->hidden_size, sizeof(double));
+            double* h_input = (double*)calloc(clf->hidden_size, sizeof(double));
+            double* o = (double*)calloc(clf->output_size, sizeof(double));
             double* o_input = (double*)calloc(clf->output_size, sizeof(double));
             double* target = (double*)calloc(clf->output_size, sizeof(double));
             double* o_delta = (double*)calloc(clf->output_size, sizeof(double));
@@ -168,24 +171,24 @@ void fit(MLPClassifier* clf, DataPoint* data, int data_size, int epochs) {
 }
 
 int predict(MLPClassifier* clf, double* features) {
-    __PR_1__* h = (__PR_1__*)calloc(clf->hidden_size, sizeof(__PR_1__));
+    double * h = (double*)calloc(clf->hidden_size, sizeof(double));
     double * o = (double *)calloc(clf->output_size, sizeof(double));
     forward(clf, features, h, o);
-    
+    // PROMISE_CHECK_ARRAY(o, clf->output_size);
+    // printf("output size: %d", clf->output_size);
     int max_idx = 0;
     for (int i = 1; i < clf->output_size; i++) {
         if (o[i] > o[max_idx]) max_idx = i;
     }
     
-    PROMISE_CHECK_VAR(o[max_idx]);
     free(h); free(o);
     return max_idx;
 }
 
 DataPoint* scale_features(DataPoint* data, int data_size, int n_features) {
     DataPoint* scaled = (DataPoint*)malloc(data_size * sizeof(DataPoint));
-    __PR_2__* means = (__PR_2__*)calloc(n_features, sizeof(__PR_2__));
-    __PR_3__* stds = (__PR_3__*)calloc(n_features, sizeof(__PR_3__));
+    double* means = (double*)calloc(n_features, sizeof(double));
+    double* stds = (double*)calloc(n_features, sizeof(double));
     int i, j;
     
     for (i = 0; i < data_size; i++) {
@@ -199,7 +202,7 @@ DataPoint* scale_features(DataPoint* data, int data_size, int n_features) {
     
     for (i = 0; i < data_size; i++) {
         for (j = 0; j < n_features; j++) {
-            __PROMISE__ diff = data[i].features[j] - means[j];
+            double diff = data[i].features[j] - means[j];
             stds[j] += diff * diff;
         }
     }
@@ -279,7 +282,7 @@ int main() {
     DataPoint* raw_data = read_csv("../../data/classification/iris.csv", &data_size, &n_features);
     DataPoint* data = scale_features(raw_data, data_size, n_features);
     
-    int train_size = (int)(0.8 * data_size);
+    int train_size = (int)(0.5 * data_size);
     DataPoint* train_data = data;
     DataPoint* test_data = data + train_size;
     int test_size = data_size - train_size;
@@ -299,15 +302,15 @@ int main() {
     printf("Training time: %ld ms\n", (end - start) * 1000 / CLOCKS_PER_SEC);
     
     int* predictions = (int*)malloc(test_size * sizeof(int));
-    int correct = 0;
+    float correct = 0.f;
     for (int i = 0; i < test_size; i++) {
         predictions[i] = predict(clf, test_data[i].features);
         if (predictions[i] == test_data[i].label) correct++;
     }
     
     double acc = (double)correct / test_size * 100;
-    printf("Accuracy: %f%%\n", acc);
-
+    printf("Accuracy:%f", acc);
+    PROMISE_CHECK_VAR(acc);
 
     free_classifier(clf);
     free_data(raw_data, data_size);

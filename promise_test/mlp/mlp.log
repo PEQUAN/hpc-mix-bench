@@ -1,9 +1,9 @@
-03/26 01:40:32: 🤘 cadnaPromise 🤘
-03/26 01:40:32: Using the compiler: g++
-03/26 01:40:32: We are working with 1 file and 15 different types
-03/26 01:40:32: The expectation is 3 digits.
-03/26 01:40:32: a) Get a reference result with cadna (double)
-03/26 01:40:34: b) Check with highest format (Double)
-03/26 01:40:35: Segmentation fault (core dumped)
+03/28 15:18:35: 🤘 cadnaPromise 🤘
+03/28 15:18:35: Using the compiler: g++
+03/28 15:18:35: We are working with 1 file and 1 different types
+03/28 15:18:35: The expectation is 12 digits.
+03/28 15:18:35: a) Get a reference result with cadna (double)
+03/28 15:18:37: b) Check with highest format (Double)
+03/28 15:18:38: Segmentation fault (core dumped)
 
-03/26 01:40:35: Execution failed (should return 0)
+03/28 15:18:38: Execution failed (should return 0)
