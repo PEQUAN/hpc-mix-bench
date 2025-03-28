@@ -1,2 +1,2 @@
 g++ kmeans.cpp -o kmeans
-./kmeans 10 2
+./kmeans 10 20

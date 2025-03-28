@@ -9,38 +9,38 @@
 
 struct DataPoint {
     std::vector<double> features;
-    double target;
+    float target;
 };
 
 // Forward declarations
 std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data);
 std::vector<DataPoint> read_csv(const std::string& filename);
 void write_predictions(const std::vector<DataPoint>& data, 
-                     const std::vector<double>& predictions, 
+                     const std::vector<half_float::half>& predictions, 
                      const std::string& filename);
 
 class MLPRegressor {
 private:
     std::vector<std::vector<double>> hidden_weights;
-    std::vector<double> output_weights;
-    std::vector<double> hidden_bias;
-    double output_bias;
+    std::vector<half_float::half> output_weights;
+    std::vector<half_float::half> hidden_bias;
+    half_float::half output_bias;
     int n_features;
     int n_hidden;
-    double learning_rate;
+    half_float::half learning_rate;
     unsigned int seed;
 
-    double sigmoid(double x) {
+    float sigmoid(float x) {
         return 1.0 / (1.0 + exp(-x));
     }
     
-    double sigmoid_derivative(double x) {
-        double s = sigmoid(x);
+    float sigmoid_deriv(float x) {
+        float s = sigmoid(x);
         return s * (1 - s);
     }
-    
+
 public:
-    MLPRegressor(int hidden = 10, double lr = 0.01, unsigned int seed_val = 42) 
+    MLPRegressor(int hidden = 10, float lr = 0.01, unsigned int seed_val = 42) 
         : n_hidden(hidden), learning_rate(lr), seed(seed_val) {}
     
     void fit(const std::vector<DataPoint>& data) {
@@ -64,27 +64,27 @@ public:
 
         int max_iter = 1000;
         for (int iter = 0; iter < max_iter; ++iter) {
-            std::vector<double> hidden_outputs(data.size() * n_hidden, 0.0);
-            std::vector<double> predictions(data.size(), 0.0);
+            std::vector<float> hidden_outputs(data.size() * n_hidden, 0.0);
+            std::vector<float> predictions(data.size(), 0.0);
             
             for (size_t i = 0; i < data.size(); ++i) {
                 for (int h = 0; h < n_hidden; ++h) {
-                    double sum = hidden_bias[h];
+                    half_float::half sum = hidden_bias[h];
                     for (int f = 0; f < n_features; ++f) {
                         sum += data[i].features[f] * hidden_weights[h][f];
                     }
                     hidden_outputs[i * n_hidden + h] = sigmoid(sum);
                 }
-                double sum = output_bias;
+                half_float::half sum = output_bias;
                 for (int h = 0; h < n_hidden; ++h) {
                     sum += hidden_outputs[i * n_hidden + h] * output_weights[h];
                 }
                 predictions[i] = sum;
             }
             
-            std::vector<double> output_deltas(data.size());
-            std::vector<double> hidden_deltas(data.size() * n_hidden);
-            double total_error = 0.0;
+            std::vector<half_float::half> output_deltas(data.size());
+            std::vector<half_float::half> hidden_deltas(data.size() * n_hidden);
+            float total_error = 0.0;
             
             for (size_t i = 0; i < data.size(); ++i) {
                 output_deltas[i] = predictions[i] - data[i].target;
@@ -92,32 +92,32 @@ public:
                 
                 for (int h = 0; h < n_hidden; ++h) {
                     hidden_deltas[i * n_hidden + h] = output_deltas[i] * output_weights[h] * 
-                        sigmoid_derivative(hidden_outputs[i * n_hidden + h]);
+                        sigmoid_deriv(hidden_outputs[i * n_hidden + h]);
                 }
             }
             total_error /= data.size();
             
             for (int h = 0; h < n_hidden; ++h) {
                 for (int f = 0; f < n_features; ++f) {
-                    double grad = 0.0;
+                    float grad = 0.0;
                     for (size_t i = 0; i < data.size(); ++i) {
                         grad += hidden_deltas[i * n_hidden + h] * data[i].features[f];
                     }
                     hidden_weights[h][f] -= learning_rate * grad / data.size();
                 }
-                double bias_grad = 0.0;
+                float bias_grad = 0.0;
                 for (size_t i = 0; i < data.size(); ++i) {
                     bias_grad += hidden_deltas[i * n_hidden + h];
                 }
                 hidden_bias[h] -= learning_rate * bias_grad / data.size();
                 
-                double weight_grad = 0.0;
+                float weight_grad = 0.0;
                 for (size_t i = 0; i < data.size(); ++i) {
                     weight_grad += output_deltas[i] * hidden_outputs[i * n_hidden + h];
                 }
                 output_weights[h] -= learning_rate * weight_grad / data.size();
             }
-            double output_bias_grad = 0.0;
+            float output_bias_grad = 0.0;
             for (size_t i = 0; i < data.size(); ++i) {
                 output_bias_grad += output_deltas[i];
             }
@@ -127,19 +127,20 @@ public:
         }
     }
     
-    double predict(const std::vector<double>& features) {
+    half_float::half predict(const std::vector<double>& features) {
         if (features.size() != static_cast<size_t>(n_features)) {
             throw std::runtime_error("Feature size mismatch in prediction");
         }
-        std::vector<double> hidden(n_hidden);
+        std::vector<half_float::half> hidden(n_hidden);
         for (int h = 0; h < n_hidden; ++h) {
-            double sum = hidden_bias[h];
+            half_float::half sum = hidden_bias[h];
             for (int f = 0; f < n_features; ++f) {
                 sum += features[f] * hidden_weights[h][f];
             }
             hidden[h] = sigmoid(sum);
         }
-        double sum = output_bias;
+
+        half_float::half sum = output_bias;
         for (int h = 0; h < n_hidden; ++h) {
             sum += hidden[h] * output_weights[h];
         }
@@ -151,8 +152,8 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     if (data.empty()) return {};
     std::vector<DataPoint> scaled_data = data;
     int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
+    std::vector<float> means(n_features, 0.0);
+    std::vector<float> stds(n_features, 0.0);
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
@@ -165,7 +166,7 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
+            float diff = point.features[i] - means[i];
             stds[i] += diff * diff;
         }
     }
@@ -249,7 +250,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/regression/diabetes.csv");
+    std::vector<DataPoint> raw_data = read_csv("diabetes.csv");
     if (raw_data.empty()) return 1;
     
     std::vector<DataPoint> data = scale_features(raw_data);
@@ -267,19 +268,20 @@ int main() {
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    std::vector<double> predictions;
-    double mse = 0.0;
+    std::vector<half_float::half> predictions;
+    float mse = 0.0;
     try {
         for (const auto& point : test_data) {
-            double pred = mlp.predict(point.features);
+            half_float::half pred = mlp.predict(point.features);
             predictions.push_back(pred);
-            double diff = pred - point.target;
+            float diff = pred - point.target;
             mse += diff * diff;
         }
         mse /= test_data.size();
         std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
         
-        write_predictions(test_data, predictions, "../results/pred_mlp.csv");
+        PROMISE_CHECK_ARRAY(predictions.data(), predictions.size());
+        // write_predictions(test_data, predictions, "../results/pred_mlp.csv");
     } catch (const std::exception& e) {
         std::cerr << "Prediction error: " << e.what() << std::endl;
         return 1;

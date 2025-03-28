@@ -1,7 +1,3 @@
-// ALl the metrics are calculated by the double
-// TDIST indicates the type for main computations - 
-// while TSTORAGE indicates the data storage type.
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -14,25 +10,63 @@
 #include <numeric>
 #include <unordered_map>
 
-// using namespace std::chrono
-const bool USE_FIXED_SEED = true; // Set to false to use std::random_device
+const bool USE_FIXED_SEED = true;
 
-// There are 25 TDIST variables, 6 TSTORAGE variables
+struct DataPoint {
+    std::vector<double> features;
+    int label;
+};
+
+std::vector<DataPoint> read_csv(const std::string& filename) {
+    std::vector<DataPoint> data;
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return data;
+    }
+
+    std::string line;
+    getline(file, line);  // Skip header: ,feature1,feature2,...,label
+    
+    while (getline(file, line)) {
+        std::stringstream ss(line);
+        std::string value;
+        std::vector<double> features;
+        
+        // Skip the index column
+        getline(ss, value, ',');  // Ignore the first value (index)
+        
+        // Read features
+        while (getline(ss, value, ',')) {
+            features.push_back(std::stod(value));
+        }
+
+        // Last value is the true label
+        int true_label = (int)features.back();
+        features.pop_back();
+        data.push_back({features, true_label});
+    }
+    std::cout << "Loaded " << data.size() << " data points with "  
+              << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
+    
+    file.close();
+    return data;
+}
+
 template<class TDIST, class TSTORAGE>
 class KMeans {
 private:
-    int numPoints;           // Number of data points
-    int numFeatures;         // Number of features (dimensions)
-    int k;                   // Number of clusters
-    std::vector<TSTORAGE> data; // 1D vector storing data in row-major order
-    std::vector<int> labels;  // Cluster assignment for each point
-    std::vector<int> groundTruth; // Ground truth labels
-    std::vector<TSTORAGE> centroids; // Centroids in 1D (k * numFeatures)
-    double runtime;          // Runtime in seconds
-    unsigned int seed;       // Random seed for reproducibility
-    bool useFixedSeed;       // Flag to determine if a fixed seed is used
+    int numPoints;
+    int numFeatures;
+    int k;
+    std::vector<TSTORAGE> data;
+    std::vector<int> labels;
+    std::vector<int> groundTruth;
+    std::vector<TSTORAGE> centroids;
+    double runtime;
+    unsigned int seed;
+    bool useFixedSeed;
 
-    // Helper function to get data point at index
     std::vector<TDIST> getPoint(int idx) const {
         if (idx < 0 || idx >= numPoints) {
             std::cerr << "Error: Invalid point index " << idx << std::endl;
@@ -45,7 +79,6 @@ private:
         return point;
     }
 
-    // Calculate Euclidean distance between two points
     TDIST euclideanDistance(const std::vector<TDIST>& p1, const std::vector<TDIST>& p2) const {
         if (p1.size() != p2.size()) {
             std::cerr << "Error: Mismatched dimensions in euclideanDistance" << std::endl;
@@ -58,9 +91,7 @@ private:
         return std::sqrt(sum);
     }
 
-    // Initialize centroids using k-means++ algorithm
     void initializeCentroids() {
-        // Initialize the random number generator with either a fixed seed or std::random_device
         std::mt19937 gen;
         if (useFixedSeed) {
             gen = std::mt19937(seed);
@@ -72,15 +103,12 @@ private:
         }
 
         std::uniform_int_distribution<> dis(0, numPoints - 1);
-
-        // Choose first centroid randomly
         int firstCentroid = dis(gen);
         std::vector<TDIST> centroid = getPoint(firstCentroid);
         for (int j = 0; j < numFeatures; ++j) {
             centroids[j] = static_cast<TDIST>(centroid[j]);
         }
 
-        // Choose remaining centroids using k-means++
         for (int c = 1; c < k; ++c) {
             std::vector<TDIST> distances(numPoints, std::numeric_limits<TDIST>::max());
             for (int i = 0; i < numPoints; ++i) {
@@ -107,87 +135,38 @@ private:
     }
 
 public:
-    // Constructor with optional seed parameter
     KMeans(int k_, int numFeatures_, unsigned int seed_ = 0, bool useFixedSeed_ = false)
         : k(k_), numFeatures(numFeatures_), numPoints(0), runtime(0.0),
           seed(seed_), useFixedSeed(useFixedSeed_) {}
 
-    // Read data from file (assuming CSV format: feature1,feature2,...,featureN)
-    bool readData(const std::string& filename) {
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error opening file: " << filename << std::endl;
+    bool loadFromDataPoints(const std::vector<DataPoint>& dataPoints) {
+        if (dataPoints.empty()) {
+            std::cerr << "No data points provided" << std::endl;
             return false;
         }
 
-        std::vector<std::vector<TSTORAGE>> tempData;
-        std::string line;
-        while (std::getline(file, line)) {
-            std::vector<TSTORAGE> point;
-            std::stringstream ss(line);
-            std::string value;
-
-            while (std::getline(ss, value, ',')) {
-                try {
-                    point.push_back(std::stod(value));
-                } catch (...) {
-                    std::cerr << "Error parsing value: " << value << std::endl;
-                    return false;
-                }
-            }
-
-            if (point.size() != static_cast<size_t>(numFeatures)) {
-                std::cerr << "Incorrect number of features in row: expected " << numFeatures << ", got " << point.size() << std::endl;
-                return false;
-            }
-            tempData.push_back(point);
+        numPoints = dataPoints.size();
+        if (dataPoints[0].features.size() != static_cast<size_t>(numFeatures)) {
+            std::cerr << "Feature count mismatch: expected " << numFeatures 
+                      << ", got " << dataPoints[0].features.size() << std::endl;
+            numPoints = 0;
+            return false;
         }
 
-        numPoints = tempData.size();
         data.resize(numPoints * numFeatures);
-        for (int i = 0; i < numPoints; ++i) {
-            for (int j = 0; j < numFeatures; ++j) {
-                data[i * numFeatures + j] = tempData[i][j];
-            }
-        }
-
+        groundTruth.resize(numPoints);
         labels.resize(numPoints, 0);
         centroids.resize(k * numFeatures, 0.0);
-        file.close();
-        return true;
-    }
 
-    // Read ground truth labels from file
-    bool readGroundTruth(const std::string& filename) {
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error opening ground truth file: " << filename << std::endl;
-            return false;
-        }
-
-        groundTruth.clear();
-        std::string line;
-        while (std::getline(file, line)) {
-            try {
-                int label = std::stoi(line);
-                groundTruth.push_back(label);
-            } catch (...) {
-                std::cerr << "Error parsing ground truth label: " << line << std::endl;
-                return false;
+        for (int i = 0; i < numPoints; ++i) {
+            for (int j = 0; j < numFeatures; ++j) {
+                data[i * numFeatures + j] = static_cast<TSTORAGE>(dataPoints[i].features[j]);
             }
+            groundTruth[i] = dataPoints[i].label;
         }
-
-        if (groundTruth.size() != static_cast<size_t>(numPoints)) {
-            std::cerr << "Number of ground truth labels (" << groundTruth.size() 
-                      << ") doesn't match number of points (" << numPoints << ")" << std::endl;
-            return false;
-        }
-
-        file.close();
         return true;
     }
 
-    // Perform k-means clustering with timing
     void fit(int maxIterations = 100) {
         if (numPoints < k) {
             std::cerr << "Number of points (" << numPoints << ") less than k (" << k << ")" << std::endl;
@@ -195,7 +174,6 @@ public:
         }
 
         auto start = std::chrono::high_resolution_clock::now();
-
         initializeCentroids();
         bool changed = true;
         int iterations = 0;
@@ -255,9 +233,7 @@ public:
         std::cout << "Runtime: " << runtime << " seconds" << std::endl;
     }
 
-    // Calculate SSE (Error Sum of Squares)
     double calculateSSE() const {
-        // std::cout << "Calculating SSE..." << std::endl;
         double sse = 0.0;
         for (int i = 0; i < numPoints; ++i) {
             auto point = getPoint(i);
@@ -272,26 +248,19 @@ public:
         return sse;
     }
 
-    // Calculate Adjusted Mutual Information (AMI)
     double calculateAMI() const {
         if (groundTruth.empty()) {
             std::cerr << "No ground truth labels available for AMI calculation" << std::endl;
             return 0.0;
         }
 
-        // std::cout << "Calculating AMI..." << std::endl;
-
-        // Determine the number of unique clusters and labels
         int maxLabel = *std::max_element(groundTruth.begin(), groundTruth.end()) + 1;
         int maxCluster = k;
-
-        // Calculate contingency table
         std::vector<std::vector<int>> contingency(maxCluster, std::vector<int>(maxLabel, 0));
         for (int i = 0; i < numPoints; ++i) {
             contingency[labels[i]][groundTruth[i]]++;
         }
 
-        // Calculate marginal sums
         std::vector<int> a(maxCluster, 0), b(maxLabel, 0);
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
@@ -300,7 +269,6 @@ public:
             }
         }
 
-        // Calculate Mutual Information (MI)
         double mi = 0.0;
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
@@ -312,9 +280,7 @@ public:
                 }
             }
         }
-        // std::cout << "Mutual Information (MI): " << mi << std::endl;
 
-        // Calculate entropies
         double ha = 0.0, hb = 0.0;
         for (int i = 0; i < maxCluster; ++i) {
             if (a[i] > 0) {
@@ -328,10 +294,7 @@ public:
                 hb -= p_j * std::log(p_j);
             }
         }
-        // std::cout << "Entropy of predicted labels (Ha): " << ha << std::endl;
-        // std::cout << "Entropy of true labels (Hb): " << hb << std::endl;
 
-        // Calculate expected MI (simplified approximation)
         double emi = 0.0;
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
@@ -343,36 +306,20 @@ public:
                 }
             }
         }
-        // std::cout << "Expected Mutual Information (EMI): " << emi << std::endl;
 
-        // Calculate AMI
-        if (ha + hb == 0) {
-            std::cout << "Both entropies are zero, returning AMI = 0.0" << std::endl;
-            return 0.0;
-        }
+        if (ha + hb == 0) return 0.0;
         double denominator = (ha + hb) / 2.0 - emi;
-        if (denominator == 0) {
-            std::cout << "Denominator is zero, returning AMI = 0.0" << std::endl;
-            return 0.0;
-        }
+        if (denominator == 0) return 0.0;
         double ami = (mi - emi) / denominator;
-        // std::cout << "AMI before bounds check: " << ami << std::endl;
-
-        // Ensure AMI is in the valid range [-1, 1]
-        ami = std::max(-1.0, std::min(1.0, ami));
-        return ami;
+        return std::max(-1.0, std::min(1.0, ami));
     }
 
-    // Calculate Adjusted Rand Index (ARI)
     double calculateARI() const {
         if (groundTruth.empty()) {
             std::cerr << "No ground truth labels available for ARI calculation" << std::endl;
             return 0.0;
         }
 
-        // std::cout << "Calculating ARI..." << std::endl;
-
-        // Calculate contingency table
         int maxLabel = *std::max_element(groundTruth.begin(), groundTruth.end()) + 1;
         int maxCluster = k;
         std::vector<std::vector<int>> contingency(maxCluster, std::vector<int>(maxLabel, 0));
@@ -380,7 +327,6 @@ public:
             contingency[labels[i]][groundTruth[i]]++;
         }
 
-        // Calculate sums
         std::vector<int> a(maxCluster, 0), b(maxLabel, 0);
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
@@ -389,7 +335,6 @@ public:
             }
         }
 
-        // Calculate indices
         double sum_nij = 0.0, sum_a = 0.0, sum_b = 0.0;
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
@@ -410,7 +355,6 @@ public:
         return (index - expected) / (max_index - expected);
     }
 
-    // Save labels to CSV file
     bool saveLabelsToCSV(const std::string& filename) const {
         std::ofstream file(filename);
         if (!file.is_open()) {
@@ -418,10 +362,7 @@ public:
             return false;
         }
 
-        // Write header
         file << "point_index,cluster_label\n";
-        
-        // Write labels
         for (int i = 0; i < numPoints; ++i) {
             file << i << "," << labels[i] << "\n";
         }
@@ -431,7 +372,6 @@ public:
         return true;
     }
 
-    // Save runtime to CSV file
     bool saveRuntimeToCSV(const std::string& filename) const {
         std::ofstream file(filename);
         if (!file.is_open()) {
@@ -439,16 +379,12 @@ public:
             return false;
         }
 
-        // Write header and runtime
-        file << "runtime_seconds\n";
-        file << runtime << "\n";
-
+        file << "runtime_seconds\n" << runtime << "\n";
         file.close();
         std::cout << "Runtime saved to: " << filename << std::endl;
         return true;
     }
 
-    // Save centroids to CSV file
     bool saveCentroidsToCSV(const std::string& filename) const {
         std::ofstream file(filename);
         if (!file.is_open()) {
@@ -456,14 +392,12 @@ public:
             return false;
         }
 
-        // Write header
         file << "centroid_index";
         for (int j = 0; j < numFeatures; ++j) {
             file << ",feature_" << j;
         }
         file << "\n";
 
-        // Write centroids
         for (int c = 0; c < k; ++c) {
             file << c;
             for (int j = 0; j < numFeatures; ++j) {
@@ -482,73 +416,54 @@ public:
     double getRuntime() const { return runtime; }
 };
 
-
 int main(int argc, char *argv[]) {
     size_t K(2), NUM_FEATURES(2);
     size_t SEED(42);
 
     if(argc == 2){
         K = atoi(argv[1]);
-    }else if(argc == 3){
+    } else if(argc == 3){
         K = atoi(argv[1]);
         NUM_FEATURES = atoi(argv[2]);
-    }else if(argc > 3){
+    } else if(argc > 3){
         K = atoi(argv[1]);
         NUM_FEATURES = atoi(argv[2]); 
         SEED = atoi(argv[3]); 
     }
     
-    // Initialize KMeans with a fixed seed
     KMeans<float, float> kmeans(K, NUM_FEATURES, SEED, USE_FIXED_SEED);
 
-    // Read data and ground truth
-    if (!kmeans.readData("../data/clustering/X_2d_10.csv")) {
-        return 1;
-    }
-    if (!kmeans.readGroundTruth("../data/clustering/y_2d_10.csv")) {
+    std::vector<DataPoint> dataPoints = read_csv("../data/clustering/blobs_20d_10_include_y.csv");
+    if (dataPoints.empty()) {
+        std::cerr << "Failed to read CSV data" << std::endl;
         return 1;
     }
 
-    // Perform clustering
+    if (!kmeans.loadFromDataPoints(dataPoints)) {
+        std::cerr << "Failed to load data points into KMeans" << std::endl;
+        return 1;
+    }
+
     kmeans.fit();
+    kmeans.saveLabelsToCSV("../results/kmeans/output_labels.csv");
+    kmeans.saveRuntimeToCSV("../results/kmeans/runtime.csv");
+    kmeans.saveCentroidsToCSV("../results/kmeans/centroids.csv");
 
-    // Save output labels, runtime, and centroids to CSV files
-    if (!kmeans.saveLabelsToCSV("../results/kmeans/output_labels.csv")) {
-        return 1;
-    }
-    if (!kmeans.saveRuntimeToCSV("../results/kmeans/runtime.csv")) {
-        return 1;
-    }
-    if (!kmeans.saveCentroidsToCSV("../results/kmeans/centroids.csv")) {
-        return 1;
-    }
-
-    // Calculate and print evaluation metrics
-    std::cout << "\nStarting evaluation metrics calculation..." << std::endl;
-    double sse = kmeans.calculateSSE();
-    double ami = kmeans.calculateAMI();
-    double ari = kmeans.calculateARI();
-
+    double SSE = kmeans.calculateSSE(); 
     std::cout << "\nEvaluation Metrics:" << std::endl;
-    std::cout << "SSE: " << sse << std::endl;
-    std::cout << "AMI: " << ami << std::endl;
-    std::cout << "ARI: " << ari << std::endl;
+    std::cout << "SSE: " << SSE << std::endl;
+    std::cout << "AMI: " << kmeans.calculateAMI() << std::endl;
+    std::cout << "ARI: " << kmeans.calculateARI() << std::endl;
 
-    // Print centroids
-    std::cout << "\nPrinting centroids..." << std::endl;
-    const auto& centroids = kmeans.getCentroids();
-    std::cout << "\nCentroids:\n";
-    for (int c = 0; c < K; ++c) {
-        std::cout << "Centroid " << c << ": ";
-        for (int j = 0; j < NUM_FEATURES; ++j) {
-            std::cout << centroids[c * NUM_FEATURES + j] << " ";
-        }
-        std::cout << std::endl;
-    }
+    // const auto& centroids = kmeans.getCentroids();
+    // std::cout << "\nCentroids:\n";
+    // for (int c = 0; c < K; ++c) {
+    //     std::cout << "Centroid " << c << ": ";
+    //     for (int j = 0; j < NUM_FEATURES; ++j) {
+    //         std::cout << centroids[c * NUM_FEATURES + j] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
     return 0;
 }
-
-
-
-

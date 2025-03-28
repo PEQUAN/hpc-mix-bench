@@ -313,7 +313,7 @@ int main() {
     std::cout << "Adjusted Mutual Information (AMI): " << ami << std::endl;
     std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
     
-    write_predictions(data, pred_labels, "../../results/dbscan/clusters.csv");
+    // write_predictions(data, pred_labels, "../../results/dbscan/clusters.csv");
     
     return 0;
 }

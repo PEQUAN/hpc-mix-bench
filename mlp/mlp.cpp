@@ -252,7 +252,6 @@ int main() {
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    // Evaluate
     std::vector<int> predictions;
     int correct = 0;
     for (const auto& point : test_data) {
@@ -264,8 +263,7 @@ int main() {
     double accuracy = static_cast<double>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
-    // Write predictions
-    write_predictions(test_data, predictions, "../mlp/pred.csv");
+    write_predictions(test_data, predictions, "../resutls/mlp/pred.csv");
     
     return 0;
 }

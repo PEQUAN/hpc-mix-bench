@@ -10,51 +10,15 @@
 #include <memory>  
 
 struct DataPoint {
-    std::vector<double> features;
+    std::vector<__PROMISE__> features;
     int label;
 };
-
-
-std::vector<DataPoint> read_csv(const std::string& filename) {
-    std::vector<DataPoint> data;
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return data;
-    }
-
-    std::string line;
-    getline(file, line);  // Skip header: ,feature1,feature2,...,label
-    
-    while (getline(file, line)) {
-        std::stringstream ss(line);
-        std::string value;
-        std::vector<double> features;
-        
-        // Skip the index column
-        getline(ss, value, ',');  // Ignore the first value (index)
-        
-        // Read features
-        while (getline(ss, value, ',')) {
-            features.push_back(std::stod(value));
-        }
-
-        // Last value is the true label
-        int true_label = (int)features.back();
-        features.pop_back();
-        data.push_back({features, true_label});
-    }
-    std::cout << "Loaded " << data.size() << " data points with "  << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
-    
-    file.close();
-    return data;
-}
 
 struct DecisionTree {
     struct Node {
         bool is_leaf = false;
         int class_label = -1;
-        double split_value = 0.0;
+        __PROMISE__ split_value = 0.0;
         int feature_index = -1;
         std::unique_ptr<Node> left;
         std::unique_ptr<Node> right;
@@ -63,34 +27,34 @@ struct DecisionTree {
     std::unique_ptr<Node> root;
     int max_depth;
     
-    double calculate_gini(const std::vector<DataPoint>& data) {
+    __PROMISE__ calculate_gini(const std::vector<DataPoint>& data) {
         if (data.empty()) {
             std::cerr << "Warning: Empty data in calculate_gini" << std::endl;
             return 0.0;
         }
         std::map<int, int> counts;
         for (const auto& point : data) counts[point.label]++;
-        double gini = 1.0;
+        __PROMISE__ gini = 1.0;
         for (const auto& pair : counts) {
-            double p = static_cast<double>(pair.second) / data.size();
+            __PROMISE__ p = static_cast<__PROMISE__>(pair.second) / data.size();
             gini -= p * p;
         }
         return gini;
     }
     
-    std::pair<int, double> find_best_split(const std::vector<DataPoint>& data, 
+    std::pair<int, __PROMISE__> find_best_split(const std::vector<DataPoint>& data, 
                                          const std::vector<int>& feature_indices) {
         if (data.empty() || feature_indices.empty()) {
             std::cerr << "Warning: Empty data or features in find_best_split" << std::endl;
             return {-1, 0.0};
         }
         
-        double best_gini = std::numeric_limits<double>::infinity();
+        __PROMISE__ best_gini = std::numeric_limits<__PROMISE__>::infinity();
         int best_feature = -1;
-        double best_value = 0.0;
+        __PROMISE__ best_value = 0.0;
         
         for (int f : feature_indices) {
-            std::vector<double> values;
+            std::vector<__PROMISE__> values;
             for (const auto& point : data) {
                 if (f >= static_cast<int>(point.features.size())) {
                     std::cerr << "Error: Feature index " << f << " out of bounds" << std::endl;
@@ -102,7 +66,7 @@ struct DecisionTree {
             if (values.size() < 2) continue;
             
             for (size_t i = 0; i < values.size() - 1; ++i) {
-                double split_val = (values[i] + values[i + 1]) / 2;
+                __PROMISE__ split_val = (values[i] + values[i + 1]) / 2;
                 std::vector<DataPoint> left, right;
                 for (const auto& point : data) {
                     if (point.features[f] < split_val) left.push_back(point);
@@ -110,7 +74,7 @@ struct DecisionTree {
                 }
                 if (left.empty() || right.empty()) continue;
                 
-                double gini = (left.size() * calculate_gini(left) + 
+                __PROMISE__ gini = (left.size() * calculate_gini(left) + 
                              right.size() * calculate_gini(right)) / data.size();
                 
                 if (gini < best_gini) {
@@ -180,7 +144,7 @@ public:
         root = build_tree(data, feature_indices, 0);
     }
     
-    int predict(const std::vector<double>& features) {
+    int predict(const std::vector<__PROMISE__>& features) {
         if (!root) {
             std::cerr << "Error: Tree not initialized in predict" << std::endl;
             return -1;
@@ -194,6 +158,8 @@ public:
             }
             current = (features[current->feature_index] < current->split_value) ? 
                       current->left.get() : current->right.get();
+
+            PROMISE_CHECK_VAR(current->split_value);
             if (!current) {
                 std::cerr << "Error: Null node in predict" << std::endl;
                 return -1;
@@ -265,7 +231,7 @@ public:
         if (trees.empty()) std::cerr << "Error: No trees built in RandomForest::fit" << std::endl;
     }
     
-    int predict(const std::vector<double>& features) {
+    int predict(const std::vector<__PROMISE__>& features) {
         if (trees.empty()) {
             std::cerr << "Error: No trees in RandomForest::predict" << std::endl;
             return -1;
@@ -291,8 +257,8 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     }
     std::vector<DataPoint> scaled_data = data;
     int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
+    std::vector<__PROMISE__> means(n_features, 0.0);
+    std::vector<__PROMISE__> stds(n_features, 0.0);
     
     for (const auto& point : data) {
         if (point.features.size() != n_features) {
@@ -309,7 +275,7 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
+            __PROMISE__ diff = point.features[i] - means[i];
             stds[i] += diff * diff;
         }
     }
@@ -324,6 +290,42 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
         }
     }
     return scaled_data;
+}
+
+
+std::vector<DataPoint> read_csv(const std::string& filename) {
+    std::vector<DataPoint> data;
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return data;
+    }
+
+    std::string line;
+    getline(file, line);  // Skip header: ,feature1,feature2,...,label
+    
+    while (getline(file, line)) {
+        std::stringstream ss(line);
+        std::string value;
+        std::vector<double> features;
+        
+        // Skip the index column
+        getline(ss, value, ',');  // Ignore the first value (index)
+        
+        // Read features
+        while (getline(ss, value, ',')) {
+            features.push_back(std::stod(value));
+        }
+
+        // Last value is the true label
+        int true_label = (int)features.back();
+        features.pop_back();
+        data.push_back({features, true_label});
+    }
+    std::cout << "Loaded " << data.size() << " data points with "  << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
+    
+    file.close();
+    return data;
 }
 
 
@@ -347,7 +349,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/classification/iris.csv");
+    std::vector<DataPoint> raw_data = read_csv("iris.csv");
     if (raw_data.empty()) {
         std::cerr << "Error: No valid data loaded from CSV" << std::endl;
         return 1;
@@ -388,10 +390,8 @@ int main() {
         if (pred == point.label) correct++;
     }
     
-    double accuracy = static_cast<double>(correct) / test_data.size() * 100;
+    __PROMISE__ accuracy = static_cast<__PROMISE__>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
-    
-    write_predictions(test_data, predictions, "../results/randomforest/predictions.csv");
     
     return 0;
 }

@@ -9,15 +9,15 @@
 #include <memory>
 
 struct DataPoint {
-    std::vector<double> features;
-    double target;
+    std::vector<__PROMISE__> features;
+    __PROMISE__ target;
 };
 
 struct DecisionTreeRegressor {
     struct Node {
         bool is_leaf = false;
-        double value = 0.0;
-        double split_value = 0.0;
+        __PROMISE__ value = 0.0;
+        __PROMISE__ split_value = 0.0;
         int feature_index = -1;
         std::unique_ptr<Node> left;
         std::unique_ptr<Node> right;
@@ -26,32 +26,32 @@ struct DecisionTreeRegressor {
     std::unique_ptr<Node> root;
     int max_depth;
     
-    double calculate_variance(const std::vector<DataPoint>& data) {
+    __PROMISE__ calculate_variance(const std::vector<DataPoint>& data) {
         if (data.empty()) return 0.0;
-        double mean = 0.0;
+        __PROMISE__ mean = 0.0;
         for (const auto& point : data) mean += point.target;
         mean /= data.size();
         
-        double variance = 0.0;
+        __PROMISE__ variance = 0.0;
         for (const auto& point : data) {
-            double diff = point.target - mean;
+            __PROMISE__ diff = point.target - mean;
             variance += diff * diff;
         }
         return variance / data.size();
     }
     
-    std::pair<int, double> find_best_split(const std::vector<DataPoint>& data, 
+    std::pair<int, __PROMISE__> find_best_split(const std::vector<DataPoint>& data, 
                                          const std::vector<int>& feature_indices) {
         if (data.empty() || feature_indices.empty()) return {-1, 0.0};
         
-        double best_reduction = -std::numeric_limits<double>::infinity();
+        __PROMISE__ best_reduction = -std::numeric_limits<__PROMISE__>::infinity();
         int best_feature = -1;
-        double best_value = 0.0;
+        __PROMISE__ best_value = 0.0;
         
-        double total_variance = calculate_variance(data);
+        __PROMISE__ total_variance = calculate_variance(data);
         
         for (int f : feature_indices) {
-            std::vector<double> values;
+            std::vector<__PROMISE__> values;
             for (const auto& point : data) {
                 if (f >= static_cast<int>(point.features.size())) return {-1, 0.0};
                 values.push_back(point.features[f]);
@@ -60,7 +60,7 @@ struct DecisionTreeRegressor {
             if (values.size() < 2) continue;
             
             for (size_t i = 0; i < values.size() - 1; ++i) {
-                double split_val = (values[i] + values[i + 1]) / 2;
+                __PROMISE__ split_val = (values[i] + values[i + 1]) / 2;
                 std::vector<DataPoint> left, right;
                 for (const auto& point : data) {
                     if (point.features[f] < split_val) left.push_back(point);
@@ -68,9 +68,9 @@ struct DecisionTreeRegressor {
                 }
                 if (left.empty() || right.empty()) continue;
                 
-                double left_var = calculate_variance(left);
-                double right_var = calculate_variance(right);
-                double reduction = total_variance - 
+                __PROMISE__ left_var = calculate_variance(left);
+                __PROMISE__ right_var = calculate_variance(right);
+                __PROMISE__ reduction = total_variance - 
                                  (left.size() * left_var + right.size() * right_var) / data.size();
                 
                 if (reduction > best_reduction) {
@@ -95,7 +95,7 @@ struct DecisionTreeRegressor {
         
         if (depth >= max_depth || data.size() < 2) {
             node->is_leaf = true;
-            double sum = 0.0;
+            __PROMISE__ sum = 0.0;
             for (const auto& point : data) sum += point.target;
             node->value = sum / data.size();
             return node;
@@ -104,7 +104,7 @@ struct DecisionTreeRegressor {
         auto [feature, value] = find_best_split(data, feature_indices);
         if (feature == -1) {
             node->is_leaf = true;
-            double sum = 0.0;
+            __PROMISE__ sum = 0.0;
             for (const auto& point : data) sum += point.target;
             node->value = sum / data.size();
             return node;
@@ -135,7 +135,7 @@ public:
         root = build_tree(data, feature_indices, 0);
     }
     
-    double predict(const std::vector<double>& features) {
+    __PROMISE__ predict(const std::vector<__PROMISE__>& features) {
         if (!root) return 0.0;
         Node* current = root.get();
         while (!current->is_leaf) {
@@ -200,12 +200,12 @@ public:
         }
     }
     
-    double predict(const std::vector<double>& features) {
+    __PROMISE__ predict(const std::vector<__PROMISE__>& features) {
         if (trees.empty()) return 0.0;
-        double sum = 0.0;
+        __PROMISE__ sum = 0.0;
         int valid_trees = 0;
         for (auto& tree : trees) {
-            double pred = tree.predict(features);
+            __PROMISE__ pred = tree.predict(features);
             sum += pred;
             valid_trees++;
         }
@@ -217,8 +217,8 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     if (data.empty()) return {};
     std::vector<DataPoint> scaled_data = data;
     int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
+    std::vector<__PROMISE__> means(n_features, 0.0);
+    std::vector<__PROMISE__> stds(n_features, 0.0);
     
     for (const auto& point : data) {
         if (point.features.size() != n_features) return {};
@@ -232,7 +232,7 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     
     for (const auto& point : data) {
         for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
+            __PROMISE__ diff = point.features[i] - means[i];
             stds[i] += diff * diff;
         }
     }
@@ -305,7 +305,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/regression/diabetes.csv");
+    std::vector<DataPoint> raw_data = read_csv("diabetes.csv");
     if (raw_data.empty()) {
         std::cerr << "Error: No valid data loaded from CSV" << std::endl;
         return 1;
@@ -334,18 +334,18 @@ int main() {
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    std::vector<double> predictions;
-    double mse = 0.0;
+    std::vector<__PROMISE__> predictions;
+    __PROMISE__ mse = 0.0;
     for (const auto& point : test_data) {
-        double pred = rf.predict(point.features);
+        __PROMISE__ pred = rf.predict(point.features);
         predictions.push_back(pred);
-        double diff = pred - point.target;
+        __PROMISE__ diff = pred - point.target;
         mse += diff * diff;
     }
+
+    PROMISE_CHECK_ARRAY(predictions.data(), predictions.size());
     mse /= test_data.size();
     std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
-    
-    write_predictions(test_data, predictions, "../results/randomforest/pred_reg.csv");
     
     return 0;
 }
