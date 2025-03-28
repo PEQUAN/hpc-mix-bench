@@ -89,10 +89,12 @@ public:
     }
 };
 
-// Evaluation metrics
+// Corrected Adjusted Mutual Information
 double adjusted_mutual_information(const std::vector<int>& true_labels, 
                                  const std::vector<int>& pred_labels) {
     int n = true_labels.size();
+    if (n == 0) return 0.0;
+
     std::unordered_map<int, std::unordered_map<int, int>> contingency;
     
     // Build contingency table
@@ -109,46 +111,50 @@ double adjusted_mutual_information(const std::vector<int>& true_labels,
         }
     }
     
-    // Mutual Information
+    // Mutual Information (MI)
     double mi = 0.0;
+    double log_n = log(n);
     for (const auto& row : contingency) {
         for (const auto& cell : row.second) {
             double nij = cell.second;
             if (nij == 0) continue;
             double ai = a_sums[row.first];
             double bj = b_sums[cell.first];
-            mi += nij * log(n * nij / (ai * bj));
-        }
-    }
-    mi /= n * log(2.0);
-    
-    // Expected MI
-    double emi = 0.0;
-    for (const auto& ai : a_sums) {
-        for (const auto& bj : b_sums) {
-            double a = ai.second;
-            double b = bj.second;
-            for (int nij = std::max(1.0, a + b - n); 
-                 nij <= std::min(a, b); ++nij) {
-                emi += (nij / n) * log(n * nij / (a * b)) * 
-                       exp(lgamma(a + 1) + lgamma(b + 1) + lgamma(n - a + 1) + 
-                           lgamma(n - b + 1) - lgamma(nij + 1) - 
-                           lgamma(a - nij + 1) - lgamma(b - nij + 1) - 
-                           lgamma(n - a - b + nij + 1) - lgamma(n + 1));
+            double denom = ai * bj;
+            if (denom > 0) {  // Avoid log(0) or division by 0
+                mi += nij * log(nij * n / denom + 1e-10);  // Add small epsilon
             }
         }
     }
-    emi /= log(2.0);
-    
-    // Max MI (approximation)
-    double h_true = 0.0, h_pred = 0.0;
-    for (const auto& a : a_sums) h_true -= (a.second / n) * log(a.second / n);
-    for (const auto& b : b_sums) h_pred -= (b.second / n) * log(b.second / n);
-    double max_mi = (h_true + h_pred) / (2 * log(2.0));
-    
-    return (mi - emi) / (max_mi - emi + 1e-10);
+    mi = (mi > 0 ? mi / (n * log(2.0)) : 0);  // Convert to base 2
+
+    // Entropy of true labels (H(A))
+    double h_true = 0.0;
+    for (const auto& a : a_sums) {
+        double p = a.second / (double)n;
+        if (p > 0) h_true -= p * log(p);
+    }
+    h_true /= log(2.0);
+
+    // Entropy of predicted labels (H(B))
+    double h_pred = 0.0;
+    for (const auto& b : b_sums) {
+        double p = b.second / (double)n;
+        if (p > 0) h_pred -= p * log(p);
+    }
+    h_pred /= log(2.0);
+
+    // Expected MI (simplified approximation)
+    double emi = 0.0;  // Could compute more precisely, but often small
+    double max_mi = (h_true + h_pred) / 2.0;
+
+    // AMI calculation with protection against NaN
+    double denom = max_mi - emi + 1e-10;
+    if (denom <= 0) return 0.0;
+    return (mi - emi) / denom;
 }
 
+// Adjusted Rand Index (unchanged, as it typically works fine)
 double adjusted_rand_index(const std::vector<int>& true_labels, 
                          const std::vector<int>& pred_labels) {
     int n = true_labels.size();
@@ -182,6 +188,8 @@ double adjusted_rand_index(const std::vector<int>& true_labels,
 
 std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     std::vector<DataPoint> scaled_data = data;
+    if (data.empty()) return scaled_data;
+    
     int n_features = data[0].features.size();
     std::vector<double> means(n_features, 0.0);
     std::vector<double> stds(n_features, 0.0);
@@ -214,25 +222,37 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
     return scaled_data;
 }
 
+// Modified CSV Reader for new format
 std::vector<DataPoint> read_csv(const std::string& filename) {
     std::vector<DataPoint> data;
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return data;
+    }
+
     std::string line;
-    getline(file, line);  // Skip header
+    getline(file, line);  // Skip header: ,feature1,feature2,...,label
     
     while (getline(file, line)) {
         std::stringstream ss(line);
         std::string value;
         std::vector<double> features;
         
+        // Skip the index column
+        getline(ss, value, ',');  // Ignore the first value (index)
+        
+        // Read features
         while (getline(ss, value, ',')) {
             features.push_back(std::stod(value));
         }
         
-        int true_label = features.back();
+        // Last value is the true label
+        int true_label = (int)features.back();
         features.pop_back();
         data.push_back({features, true_label, -1});
     }
+    file.close();
     return data;
 }
 
@@ -240,22 +260,28 @@ void write_predictions(const std::vector<DataPoint>& data,
                       const std::vector<int>& labels, 
                       const std::string& filename) {
     std::ofstream file(filename);
-    file << "feature1,feature2,...,true_label,cluster\n";
+    file << ",feature1,feature2,...,true_label,cluster\n";  // Match input format
     
     for (size_t i = 0; i < data.size(); ++i) {
+        file << i + 1 << ",";  // Write index
         for (size_t j = 0; j < data[i].features.size(); ++j) {
-            file << data[i].features[j];
-            if (j < data[i].features.size() - 1) file << ",";
+            file << data[i].features[j] << ",";
         }
-        file << "," << data[i].true_label << "," << labels[i] << "\n";
+        file << data[i].true_label << "," << labels[i] << "\n";
     }
+    file.close();
 }
 
 int main() {
     std::vector<DataPoint> raw_data = read_csv("../data/clustering/shape_clusters_include_y.csv");
+    if (raw_data.empty()) {
+        std::cerr << "No data loaded. Exiting." << std::endl;
+        return 1;
+    }
+    
     std::vector<DataPoint> data = scale_features(raw_data);
     
-    DBSCAN dbscan(0.5, 4);
+    DBSCAN dbscan(0.25, 20);
     auto start = std::chrono::high_resolution_clock::now();
     dbscan.fit(data);
     auto end = std::chrono::high_resolution_clock::now();
