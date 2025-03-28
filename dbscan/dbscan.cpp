@@ -252,10 +252,10 @@ void write_predictions(const std::vector<DataPoint>& data,
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/clustering/X_20d_10.csv");
+    std::vector<DataPoint> raw_data = read_csv("../data/clustering/shape_clusters_include_y.csv");
     std::vector<DataPoint> data = scale_features(raw_data);
     
-    DBSCAN dbscan(0.6, 12);
+    DBSCAN dbscan(0.5, 4);
     auto start = std::chrono::high_resolution_clock::now();
     dbscan.fit(data);
     auto end = std::chrono::high_resolution_clock::now();

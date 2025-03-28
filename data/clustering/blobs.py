@@ -22,10 +22,10 @@ if __name__ == "__main__":
     print(f"write {num} {dim}-data of {n_clusters} clusters:")
     print("X:\n", X[:5])
     print("y:\n", y[:5])
-    pd.DataFrame(X).to_csv(f"X_{dim}d_{n_clusters}.csv", index=False, header=False)
-    pd.DataFrame(y).to_csv(f"y_{dim}d_{n_clusters}.csv", index=False, header=False)
+    #pd.DataFrame(X).to_csv(f"X_{dim}d_{n_clusters}.csv", index=False, header=False)
+    #pd.DataFrame(y).to_csv(f"y_{dim}d_{n_clusters}.csv", index=False, header=False)
 
     X_new = np.hstack((X, y.reshape(-1, 1)))
     X_new = pd.DataFrame(X_new)
-    pd.DataFrame(X_new).to_csv(f"X_{dim}d_{n_clusters}_include_y.csv", index=True, header=True)
+    pd.DataFrame(X_new).to_csv(f"blobs_{dim}d_{n_clusters}_include_y.csv", index=True, header=True)
     
