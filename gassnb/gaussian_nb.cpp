@@ -103,22 +103,36 @@ public:
 std::vector<DataPoint> read_csv(const std::string& filename) {
     std::vector<DataPoint> data;
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return data;
+    }
+
     std::string line;
-    getline(file, line);  // Skip header
+    getline(file, line);  // Skip header: ,feature1,feature2,...,label
     
     while (getline(file, line)) {
         std::stringstream ss(line);
         std::string value;
         std::vector<double> features;
         
+        // Skip the index column
+        getline(ss, value, ',');  // Ignore the first value (index)
+        
+        // Read features
         while (getline(ss, value, ',')) {
             features.push_back(std::stod(value));
         }
-        
-        int label = features.back();
+
+        // Last value is the true label
+        int true_label = (int)features.back();
         features.pop_back();
-        data.push_back({features, label});
+        data.push_back({features, true_label});
     }
+    std::cout << "Loaded " << data.size() << " data points with "  
+              << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
+    
+    file.close();
     return data;
 }
 
@@ -140,7 +154,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 
 int main() {
     // Read data
-    std::vector<DataPoint> data = read_csv("../data/iris/iris.csv");
+    std::vector<DataPoint> data = read_csv("../data/classification/iris.csv");
     
     // Train-test split (80-20)
     size_t train_size = static_cast<size_t>(0.8 * data.size());
@@ -169,7 +183,7 @@ int main() {
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
     // Write predictions
-    write_predictions(test_data, predictions, "../gassnb/predictions.csv");
+    write_predictions(test_data, predictions, "../results/gassnb/predictions.csv");
     
     return 0;
 }

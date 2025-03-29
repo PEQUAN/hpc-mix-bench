@@ -53,38 +53,37 @@ std::vector<DataPoint> read_csv(const std::string& filename) {
     return data;
 }
 
-template<class TDIST, class TSTORAGE>
 class KMeans {
 private:
     int numPoints;
     int numFeatures;
     int k;
-    std::vector<TSTORAGE> data;
+    std::vector<double> data;
     std::vector<int> labels;
     std::vector<int> groundTruth;
-    std::vector<TSTORAGE> centroids;
+    std::vector<double> centroids;
     double runtime;
     unsigned int seed;
     bool useFixedSeed;
 
-    std::vector<TDIST> getPoint(int idx) const {
+    std::vector<double> getPoint(int idx) const {
         if (idx < 0 || idx >= numPoints) {
             std::cerr << "Error: Invalid point index " << idx << std::endl;
-            return std::vector<TDIST>(numFeatures, 0.0);
+            return std::vector<double>(numFeatures, 0.0);
         }
-        std::vector<TDIST> point(numFeatures);
+        std::vector<double> point(numFeatures);
         for (int j = 0; j < numFeatures; ++j) {
             point[j] = data[idx * numFeatures + j];
         }
         return point;
     }
 
-    TDIST euclideanDistance(const std::vector<TDIST>& p1, const std::vector<TDIST>& p2) const {
+    double euclideanDistance(const std::vector<double>& p1, const std::vector<double>& p2) const {
         if (p1.size() != p2.size()) {
             std::cerr << "Error: Mismatched dimensions in euclideanDistance" << std::endl;
             return 0.0;
         }
-        TDIST sum = 0.0;
+        double sum = 0.0;
         for (size_t i = 0; i < p1.size(); ++i) {
             sum += (p1[i] - p2[i]) * (p1[i] - p2[i]);
         }
@@ -104,22 +103,22 @@ private:
 
         std::uniform_int_distribution<> dis(0, numPoints - 1);
         int firstCentroid = dis(gen);
-        std::vector<TDIST> centroid = getPoint(firstCentroid);
+        std::vector<double> centroid = getPoint(firstCentroid);
         for (int j = 0; j < numFeatures; ++j) {
-            centroids[j] = static_cast<TDIST>(centroid[j]);
+            centroids[j] = static_cast<double>(centroid[j]);
         }
 
         for (int c = 1; c < k; ++c) {
-            std::vector<TDIST> distances(numPoints, std::numeric_limits<TDIST>::max());
+            std::vector<double> distances(numPoints, std::numeric_limits<double>::max());
             for (int i = 0; i < numPoints; ++i) {
                 auto point = getPoint(i);
-                TDIST minDist = std::numeric_limits<TDIST>::max();
+                double minDist = std::numeric_limits<double>::max();
                 for (int j = 0; j < c; ++j) {
-                    std::vector<TDIST> cent(numFeatures);
+                    std::vector<double> cent(numFeatures);
                     for (int f = 0; f < numFeatures; ++f) {
                         cent[f] = centroids[j * numFeatures + f];
                     }
-                    TDIST dist = static_cast<TDIST>(euclideanDistance(point, cent));
+                    double dist = static_cast<double>(euclideanDistance(point, cent));
                     minDist = std::min(minDist, dist);
                 }
                 distances[i] = minDist * minDist;
@@ -160,7 +159,7 @@ public:
 
         for (int i = 0; i < numPoints; ++i) {
             for (int j = 0; j < numFeatures; ++j) {
-                data[i * numFeatures + j] = static_cast<TSTORAGE>(dataPoints[i].features[j]);
+                data[i * numFeatures + j] = static_cast<double>(dataPoints[i].features[j]);
             }
             groundTruth[i] = dataPoints[i].label;
         }
@@ -183,15 +182,15 @@ public:
 
             for (int i = 0; i < numPoints; ++i) {
                 auto point = getPoint(i);
-                TDIST minDist = std::numeric_limits<TDIST>::max();
+                double minDist = std::numeric_limits<double>::max();
                 int newLabel = 0;
 
                 for (int c = 0; c < k; ++c) {
-                    std::vector<TDIST> centroid(numFeatures);
+                    std::vector<double> centroid(numFeatures);
                     for (int j = 0; j < numFeatures; ++j) {
                         centroid[j] = centroids[c * numFeatures + j];
                     }
-                    TDIST dist = static_cast<TDIST>(euclideanDistance(point, centroid));
+                    double dist = static_cast<double>(euclideanDistance(point, centroid));
                     if (dist < minDist) {
                         minDist = dist;
                         newLabel = c;
@@ -238,11 +237,11 @@ public:
         for (int i = 0; i < numPoints; ++i) {
             auto point = getPoint(i);
             int cluster = labels[i];
-            std::vector<TDIST> centroid(numFeatures);
+            std::vector<double> centroid(numFeatures);
             for (int j = 0; j < numFeatures; ++j) {
                 centroid[j] = centroids[cluster * numFeatures + j];
             }
-            TDIST dist = euclideanDistance(point, centroid);
+            double dist = euclideanDistance(point, centroid);
             sse += dist * dist;
         }
         return sse;
@@ -412,7 +411,7 @@ public:
     }
 
     const std::vector<int>& getLabels() const { return labels; }
-    const std::vector<TSTORAGE>& getCentroids() const { return centroids; }
+    const std::vector<double>& getCentroids() const { return centroids; }
     double getRuntime() const { return runtime; }
 };
 
@@ -431,7 +430,7 @@ int main(int argc, char *argv[]) {
         SEED = atoi(argv[3]); 
     }
     
-    KMeans<float, float> kmeans(K, NUM_FEATURES, SEED, USE_FIXED_SEED);
+    KMeans kmeans(K, NUM_FEATURES, SEED, USE_FIXED_SEED);
 
     std::vector<DataPoint> dataPoints = read_csv("../data/clustering/blobs_20d_10_include_y.csv");
     if (dataPoints.empty()) {
