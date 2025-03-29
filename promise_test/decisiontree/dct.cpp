@@ -11,7 +11,7 @@
 struct Node { // Node structure
     bool is_leaf = false;
     int class_label = -1;
-    double split_value = 0.0;
+    __PROMISE__ split_value = 0.0;
     int feature_index = -1;
     Node* left = nullptr;
     Node* right = nullptr;
@@ -19,7 +19,7 @@ struct Node { // Node structure
 };
 
 struct DataPoint {
-    std::vector<double> features;
+    std::vector<__PROMISE__> features;
     int label;
 };
 
@@ -29,34 +29,34 @@ private:
     int max_depth;
     int min_samples_split;
 
-    double calculate_entropy(const std::vector<DataPoint>& data) {
+    __PROMISE__ calculate_entropy(const std::vector<DataPoint>& data) {
         std::map<int, int> label_counts;
         for (const auto& point : data) {
             label_counts[point.label]++;
         }
-        double entropy = 0.0;
+        __PROMISE__ entropy = 0.0;
         for (const auto& pair : label_counts) {
-            double p = static_cast<double>(pair.second) / data.size();
+            __PROMISE__ p = static_cast<__PROMISE__>(pair.second) / data.size();
             entropy -= p * log2(p);
         }
         return entropy;
     }
 
-    std::pair<int, double> find_best_split(const std::vector<DataPoint>& data) {
-        double best_gain = -1.0;
+    std::pair<int, __PROMISE__> find_best_split(const std::vector<DataPoint>& data) {
+        __PROMISE__ best_gain = -1.0;
         int best_feature = -1;
-        double best_value = 0.0;
-        double current_entropy = calculate_entropy(data);
+        __PROMISE__ best_value = 0.0;
+        __PROMISE__ current_entropy = calculate_entropy(data);
         
         for (size_t f = 0; f < data[0].features.size(); ++f) {
-            std::vector<double> values;
+            std::vector<__PROMISE__> values;
             for (const auto& point : data) {
                 values.push_back(point.features[f]);
             }
             std::sort(values.begin(), values.end());
             
             for (size_t i = 0; i < values.size() - 1; ++i) {
-                double split_val = (values[i] + values[i + 1]) / 2;
+                __PROMISE__ split_val = (values[i] + values[i + 1]) / 2;
                 std::vector<DataPoint> left, right;
                 for (const auto& point : data) {
                     if (point.features[f] < split_val) {
@@ -67,9 +67,9 @@ private:
                 }
                 if (left.empty() || right.empty()) continue;
                 
-                double gain = current_entropy - 
-                    (static_cast<double>(left.size()) / data.size() * calculate_entropy(left) +
-                     static_cast<double>(right.size()) / data.size() * calculate_entropy(right));
+                __PROMISE__ gain = current_entropy - 
+                    (static_cast<__PROMISE__>(left.size()) / data.size() * calculate_entropy(left) +
+                     static_cast<__PROMISE__>(right.size()) / data.size() * calculate_entropy(right));
                 
                 if (gain > best_gain) {
                     best_gain = gain;
@@ -131,7 +131,7 @@ public:
         root = build_tree(data, 0);
     }
     
-    int predict(const std::vector<double>& features) {
+    int predict(const std::vector<__PROMISE__>& features) {
         Node* current = root;
         while (!current->is_leaf) {
             if (features[current->feature_index] < current->split_value) {
@@ -139,10 +139,12 @@ public:
             } else {
                 current = current->right;
             }
+            PROMISE_CHECK_VAR(current->split_value);
         }
         return current->class_label;
     }
 };
+
 
 // Function to read CSV file
 std::vector<DataPoint> read_csv(const std::string& filename) {
@@ -199,7 +201,7 @@ void write_predictions(const std::vector<DataPoint>& data,
 
 int main(int argc, char* argv[]) {
     // Read data from CSV (assuming format: feature1,feature2,...,label)
-    std::vector<DataPoint> data = read_csv("../data/classification/iris.csv");
+    std::vector<DataPoint> data = read_csv("iris.csv");
     
     // Split into train and test (simple 80-20 split)
     size_t train_size = static_cast<size_t>(0.8 * data.size());
@@ -225,11 +227,11 @@ int main(int argc, char* argv[]) {
         if (pred == point.label) correct++;
     }
     
-    double accuracy = static_cast<double>(correct) / test_data.size() * 100;
+    __PROMISE__ accuracy = static_cast<__PROMISE__>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
     // Write predictions to CSV
-    write_predictions(test_data, predictions, "../results/dct/predictions.csv");
+    // write_predictions(test_data, predictions, "../results/dct/predictions.csv");
     
     return 0;
 }
