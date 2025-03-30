@@ -1,9 +1,9 @@
-03/28 23:34:43: 🤘 cadnaPromise 🤘
-03/28 23:34:43: Using the compiler: g++
-03/28 23:34:43: We are working with 1 file and 25 different types
-03/28 23:34:43: The expectation is 12 digits.
-03/28 23:34:43: a) Get a reference result with cadna (double)
-03/28 23:34:45: kmeans.cpp: In member function ‘double_st KMeans::euclideanDistance(const std::vector<double_st>&, const std::vector<double_st>&) const’:
+03/30 22:12:36: 🤘 cadnaPromise 🤘
+03/30 22:12:36: Using the compiler: g++
+03/30 22:12:36: We are working with 1 file and 25 different types
+03/30 22:12:36: The expectation is 12 digits.
+03/30 22:12:36: a) Get a reference result with cadna (double)
+03/30 22:12:38: kmeans.cpp: In member function ‘double_st KMeans::euclideanDistance(const std::vector<double_st>&, const std::vector<double_st>&) const’:
 kmeans.cpp:97:25: error: call of overloaded ‘sqrt(double_st)’ is ambiguous
    97 |         return std::sqrt(1.0f * sum);
       |                ~~~~~~~~~^~~~~~~~~~~~
@@ -123,5 +123,5 @@ kmeans.cpp:320:39: note:   mismatched types ‘std::initializer_list<_Tp>’ and
   320 |         return std::max(-1.0, std::min(1.0, ami));
       |                               ~~~~~~~~^~~~~~~~~~
 
-03/28 23:34:45: Compilation failed
+03/30 22:12:38: Compilation failed
 Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
