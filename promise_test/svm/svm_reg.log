@@ -1,0 +1,75 @@
+04/01 10:22:45: 🤘 cadnaPromise 🤘
+04/01 10:22:45: Using the compiler: g++
+04/01 10:22:45: We are working with 1 file and 33 different types
+04/01 10:22:45: The expectation is 12 digits.
+04/01 10:22:45: a) Get a reference result with cadna (double)
+04/01 10:22:48: svm_reg.cpp: In member function ‘void SVMRegressor::fit(const std::vector<DataPoint>&)’:
+svm_reg.cpp:59:29: error: call of overloaded ‘abs(double_st&)’ is ambiguous
+   59 |                 if (std::abs(error) > epsilon) {
+      |                     ~~~~~~~~^~~~~~~
+In file included from /usr/include/c++/13/cstdlib:79,
+                 from /usr/include/c++/13/ext/string_conversions.h:43,
+                 from /usr/include/c++/13/bits/basic_string.h:4109,
+                 from /usr/include/c++/13/string:54,
+                 from /usr/include/c++/13/bits/locale_classes.h:40,
+                 from /usr/include/c++/13/bits/ios_base.h:41,
+                 from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/ostream:40,
+                 from /usr/include/c++/13/iostream:41,
+                 from /home/xinye/.local/lib/python3.10/site-packages/cadnaPromise/cadna//include/cadna.h:26,
+                 from svm_reg.cpp:1:
+/usr/include/stdlib.h:980:12: note: candidate: ‘int abs(int)’
+  980 | extern int abs (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            ^~~
+In file included from /usr/include/c++/13/cstdlib:81:
+/usr/include/c++/13/bits/std_abs.h:56:3: note: candidate: ‘long int std::abs(long int)’
+   56 |   abs(long __i) { return __builtin_labs(__i); }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:61:3: note: candidate: ‘long long int std::abs(long long int)’
+   61 |   abs(long long __x) { return __builtin_llabs (__x); }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:71:3: note: candidate: ‘constexpr double std::abs(double)’
+   71 |   abs(double __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:75:3: note: candidate: ‘constexpr float std::abs(float)’
+   75 |   abs(float __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:79:3: note: candidate: ‘constexpr long double std::abs(long double)’
+   79 |   abs(long double __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:85:3: note: candidate: ‘constexpr __int128 std::abs(__int128)’
+   85 |   abs(__GLIBCXX_TYPE_INT_N_0 __x) { return __x >= 0 ? __x : -__x; }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:137:3: note: candidate: ‘constexpr __float128 std::abs(__float128)’
+  137 |   abs(__float128 __x)
+      |   ^~~
+svm_reg.cpp:65:44: error: call of overloaded ‘abs(double_st&)’ is ambiguous
+   65 |                     total_error += std::abs(error) - epsilon;
+      |                                    ~~~~~~~~^~~~~~~
+/usr/include/stdlib.h:980:12: note: candidate: ‘int abs(int)’
+  980 | extern int abs (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            ^~~
+/usr/include/c++/13/bits/std_abs.h:56:3: note: candidate: ‘long int std::abs(long int)’
+   56 |   abs(long __i) { return __builtin_labs(__i); }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:61:3: note: candidate: ‘long long int std::abs(long long int)’
+   61 |   abs(long long __x) { return __builtin_llabs (__x); }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:71:3: note: candidate: ‘constexpr double std::abs(double)’
+   71 |   abs(double __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:75:3: note: candidate: ‘constexpr float std::abs(float)’
+   75 |   abs(float __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:79:3: note: candidate: ‘constexpr long double std::abs(long double)’
+   79 |   abs(long double __x)
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:85:3: note: candidate: ‘constexpr __int128 std::abs(__int128)’
+   85 |   abs(__GLIBCXX_TYPE_INT_N_0 __x) { return __x >= 0 ? __x : -__x; }
+      |   ^~~
+/usr/include/c++/13/bits/std_abs.h:137:3: note: candidate: ‘constexpr __float128 std::abs(__float128)’
+  137 |   abs(__float128 __x)
+      |   ^~~
+
+04/01 10:22:48: Compilation failed
+Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
