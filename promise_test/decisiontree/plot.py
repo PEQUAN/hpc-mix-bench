@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from cadnaPromise.run import runPromise
 
-method = 'bhsd'
+method = 'sd'
 
-digits = [2, 4, 6, 8, 10, 12]
+digits = [2, 4]
 precision_settings = list()
 
 
@@ -21,14 +21,18 @@ if __name__ == "__main__":
     x = digits
 
     heights = {cat: [] for cat in categories}
+    categories_new = []
     for setting in precision_settings:
         for cat in categories:
             if cat in heights and cat in setting:
                 try:
                     heights[cat].append(len(setting[cat]))
+                    categories_new.append(cat)
                 except:
                     pass
 
+    categories  = categories_new
+    heights = {height: heights[height] for height in heights}
     fig, ax = plt.subplots(figsize=(8, 6))
 
     bottom = np.zeros(len(precision_settings))
@@ -37,6 +41,7 @@ if __name__ == "__main__":
     for i, category in enumerate(categories):
         ax.bar(x, heights[category], bottom=bottom, label=category, 
             color=colors[i], width=0.4)
+        
         bottom += heights[category]
 
     ax.set_xlabel('Number of digits')
