@@ -52,5 +52,5 @@ if __name__ == "__main__":
         total_height = sum(heights[cat][i] for cat in categories if cat in heights)
     
     plt.tight_layout()
-    plt.savefig('precision_dt.png', bbox_inches='tight', dpi=300)
+    plt.savefig('precision_mlp.png', bbox_inches='tight', dpi=300)
     plt.show()
