@@ -4,7 +4,7 @@ from cadnaPromise.run import runPromise
 
 method = 'bhsd'
 
-digits = [2, 4, 6, 8, 10, 12]
+digits = [2, 12]
 precision_settings = list()
 
 
@@ -52,5 +52,5 @@ if __name__ == "__main__":
         total_height = sum(heights[cat][i] for cat in categories if cat in heights)
     
     plt.tight_layout()
-    plt.savefig('precision_bt.png', bbox_inches='tight', dpi=300)
+    plt.savefig('precision_cg.png', bbox_inches='tight', dpi=300)
     plt.show()
