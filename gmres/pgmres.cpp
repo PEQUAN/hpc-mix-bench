@@ -5,7 +5,6 @@
 #include <random>
 #include <numeric>
 
-// Dense matrix class
 class Matrix {
 private:
     std::vector<double> data;

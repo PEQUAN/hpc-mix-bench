@@ -106,7 +106,7 @@ struct BiCGSTABResult {
     int iterations;
 };
 
-BiCGSTABResult bicgstab(const CSRMatrix& A, const std::vector<double>& b, int max_iter = 1000, double tol = 1e-6) {
+BiCGSTABResult bicgstab(const CSRMatrix& A, const std::vector<double>& b, int max_iter = 1000, double tol = 1e-5) {
     int n = A.n;
     std::vector<double> x(n, 0.0);
     std::vector<double> r = b;
@@ -172,14 +172,24 @@ BiCGSTABResult bicgstab(const CSRMatrix& A, const std::vector<double>& b, int ma
 
 std::vector<double> generate_rhs(int n) {
     std::vector<double> b(n);
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    std::mt19937 gen(2025); // Fixed seed value
     std::uniform_real_distribution<> dis(1.0, 10.0);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);
     }
     return b;
 }
+
+// std::vector<double> generate_rhs(int n) {
+//     std::vector<double> b(n);
+//     std::random_device rd;
+//     std::mt19937 gen(rd());
+//    std::uniform_real_distribution<> dis(1.0, 10.0);
+//    for (int i = 0; i < n; ++i) {
+//        b[i] = dis(gen);
+//    }
+//    return b;
+// }
 
 void write_solution(const std::vector<double>& x, const std::string& filename) {
     std::ofstream file(filename);
@@ -214,7 +224,7 @@ int main() {
     std::vector<double> Ax = matvec(A, result.x);
     double verify_residual = norm(axpy(-1.0, Ax, b));
     std::cout << "Verification residual: " << verify_residual << std::endl;
-
+    std::cout << "verify residual:" << verify_residual << std::endl;
     write_solution(result.x, "results/bicgstab/bicgstab_solution.csv");
 
     return 0;

@@ -1,6 +1,3 @@
-#ifndef _Alignof
-#define _Alignof(type) alignof(type)
-#endif
 
 #include <iostream>
 #include <chrono>
@@ -9,14 +6,14 @@
 #include <sstream>
 #include <random>
 #include <algorithm>
-#include <utility> // For std::pair
+#include <utility> 
 
 struct CSRMatrix {
-    int n;          // Matrix dimension
-    int nnz;        // Number of non-zeros
-    double* values; // Non-zero values
-    int* col_indices; // Column indices
-    int* row_ptr;   // Row pointers (size n+1)
+    int n;          
+    int nnz;       
+    double* values; 
+    int* col_indices; 
+    int* row_ptr;  
 
     CSRMatrix() : n(0), nnz(0), values(nullptr), col_indices(nullptr), row_ptr(nullptr) {}
 

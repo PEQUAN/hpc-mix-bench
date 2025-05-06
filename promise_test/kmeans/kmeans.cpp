@@ -17,7 +17,6 @@ struct DataPoint {
     int label;
 };
 
-
 std::vector<DataPoint> read_csv(const std::string& filename) {
     std::vector<DataPoint> data;
     std::ifstream file(filename);
@@ -27,17 +26,16 @@ std::vector<DataPoint> read_csv(const std::string& filename) {
     }
 
     std::string line;
-    getline(file, line);  // Skip header: ,feature1,feature2,...,label
+    getline(file, line); 
     
     while (getline(file, line)) {
         std::stringstream ss(line);
         std::string value;
-        std::vector<double> features;
+        std::vector<__PROMISE__> features;
         
         // Skip the index column
         getline(ss, value, ',');  // Ignore the first value (index)
         
-        // Read features
         while (getline(ss, value, ',')) {
             features.push_back(std::stod(value));
         }
@@ -47,6 +45,7 @@ std::vector<DataPoint> read_csv(const std::string& filename) {
         features.pop_back();
         data.push_back({features, true_label});
     }
+    
     std::cout << "Loaded " << data.size() << " data points with "  
               << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
     
@@ -62,7 +61,7 @@ private:
     std::vector<__PROMISE__> data;
     std::vector<int> labels;
     std::vector<int> groundTruth;
-    std::vector<__PROMISE__> centroids;
+    
     __PROMISE__ runtime;
     unsigned int seed;
     bool useFixedSeed;
@@ -79,16 +78,16 @@ private:
         return point;
     }
 
-    double euclideanDistance(const std::vector<double>& p1, const std::vector<double>& p2) const {
+    __PROMISE__ euclideanDistance(const std::vector<__PROMISE__>& p1, const std::vector<__PROMISE__>& p2) const {
         if (p1.size() != p2.size()) {
             std::cerr << "Error: Mismatched dimensions in euclideanDistance" << std::endl;
             return 0.0;
         }
-        double sum = 0.0;
+        __PROMISE__ sum = 0.0;
         for (size_t i = 0; i < p1.size(); ++i) {
-            sum += (double)((p1[i] - p2[i]) * (p1[i] - p2[i]));
+            sum += (p1[i] - p2[i]) * (p1[i] - p2[i]);
         }
-        return std::sqrt(1.0f * sum);
+        return sqrt(sum);
     }
 
     void initializeCentroids() {
@@ -120,7 +119,7 @@ private:
                         cent[f] = centroids[j * numFeatures + f];
                     }
                     __PROMISE__ dist = static_cast<__PROMISE__>(euclideanDistance(point, cent));
-                    minDist = std::min(minDist, dist);
+                    minDist = min(minDist, dist);
                 }
                 distances[i] = minDist * minDist;
             }
@@ -135,6 +134,7 @@ private:
     }
 
 public:
+    std::vector<__PROMISE__> centroids;
     KMeans(int k_, int numFeatures_, unsigned int seed_ = 0, bool useFixedSeed_ = false)
         : k(k_), numFeatures(numFeatures_), numPoints(0), runtime(0.0),
           seed(seed_), useFixedSeed(useFixedSeed_) {}
@@ -227,94 +227,27 @@ public:
         }
 
         auto end = std::chrono::high_resolution_clock::now();
-        runtime = std::chrono::duration<>(end - start).count();
+        runtime = std::chrono::duration<__PROMISE__>(end - start).count();
 
         std::cout << "Converged after " << iterations << " iterations" << std::endl;
         std::cout << "Runtime: " << runtime << " seconds" << std::endl;
     }
 
-    double calculateSSE() const {
-        double sse = 0.0;
+    __PROMISE__ calculateSSE() const {
+        __PROMISE__ sse = 0.0;
         for (int i = 0; i < numPoints; ++i) {
             auto point = getPoint(i);
             int cluster = labels[i];
-            std::vector<double> centroid(numFeatures);
+            std::vector<__PROMISE__> centroid(numFeatures);
             for (int j = 0; j < numFeatures; ++j) {
                 centroid[j] = centroids[cluster * numFeatures + j];
             }
-            double dist = euclideanDistance(point, centroid);
+            __PROMISE__ dist = euclideanDistance(point, centroid);
             sse += dist * dist;
         }
         return sse;
     }
-
-    double calculateAMI() const {
-        if (groundTruth.empty()) {
-            std::cerr << "No ground truth labels available for AMI calculation" << std::endl;
-            return 0.0;
-        }
-
-        int maxLabel = *std::max_element(groundTruth.begin(), groundTruth.end()) + 1;
-        int maxCluster = k;
-        std::vector<std::vector<int>> contingency(maxCluster, std::vector<int>(maxLabel, 0));
-        for (int i = 0; i < numPoints; ++i) {
-            contingency[labels[i]][groundTruth[i]]++;
-        }
-
-        std::vector<int> a(maxCluster, 0), b(maxLabel, 0);
-        for (int i = 0; i < maxCluster; ++i) {
-            for (int j = 0; j < maxLabel; ++j) {
-                a[i] += contingency[i][j];
-                b[j] += contingency[i][j];
-            }
-        }
-
-        double mi = 0.0;
-        for (int i = 0; i < maxCluster; ++i) {
-            for (int j = 0; j < maxLabel; ++j) {
-                if (contingency[i][j] > 0) {
-                    double p_ij = contingency[i][j] / static_cast<double>(numPoints);
-                    double p_i = a[i] / static_cast<double>(numPoints);
-                    double p_j = b[j] / static_cast<double>(numPoints);
-                    mi += p_ij * std::log(p_ij / (p_i * p_j));
-                }
-            }
-        }
-
-        double ha = 0.0, hb = 0.0;
-        for (int i = 0; i < maxCluster; ++i) {
-            if (a[i] > 0) {
-                double p_i = a[i] / static_cast<double>(numPoints);
-                ha -= p_i * std::log(p_i);
-            }
-        }
-        for (int j = 0; j < maxLabel; ++j) {
-            if (b[j] > 0) {
-                double p_j = b[j] / static_cast<double>(numPoints);
-                hb -= p_j * std::log(p_j);
-            }
-        }
-
-        double emi = 0.0;
-        for (int i = 0; i < maxCluster; ++i) {
-            for (int j = 0; j < maxLabel; ++j) {
-                if (a[i] > 0 && b[j] > 0) {
-                    double nij = (static_cast<double>(a[i]) * b[j]) / numPoints;
-                    if (nij > 0) {
-                        emi += (nij / numPoints) * std::log(numPoints * nij / (a[i] * b[j]));
-                    }
-                }
-            }
-        }
-
-        if (ha + hb == 0) return 0.0;
-        double denominator = (ha + hb) / 2.0 - emi;
-        if (denominator == 0) return 0.0;
-        double ami = (mi - emi) / denominator;
-        return std::max(-1.0, std::min(1.0, ami));
-    }
-
-    double calculateARI() const {
+    __PROMISE__ calculateARI() const {
         if (groundTruth.empty()) {
             std::cerr << "No ground truth labels available for ARI calculation" << std::endl;
             return 0.0;
@@ -335,81 +268,26 @@ public:
             }
         }
 
-        double sum_nij = 0.0, sum_a = 0.0, sum_b = 0.0;
+        __PROMISE__ sum_nij = 0.0, sum_a = 0.0, sum_b = 0.0;
         for (int i = 0; i < maxCluster; ++i) {
             for (int j = 0; j < maxLabel; ++j) {
-                sum_nij += (static_cast<double>(contingency[i][j]) * (contingency[i][j] - 1)) / 2.0;
+                sum_nij += (static_cast<__PROMISE__>(contingency[i][j]) * (contingency[i][j] - 1)) / 2.0;
             }
-            sum_a += (static_cast<double>(a[i]) * (a[i] - 1)) / 2.0;
+            sum_a += (static_cast<__PROMISE__>(a[i]) * (a[i] - 1)) / 2.0;
         }
         for (int j = 0; j < maxLabel; ++j) {
-            sum_b += (static_cast<double>(b[j]) * (b[j] - 1)) / 2.0;
+            sum_b += (static_cast<__PROMISE__>(b[j]) * (b[j] - 1)) / 2.0;
         }
 
-        double n = numPoints;
-        double expected = (sum_a * sum_b) / (n * (n - 1) / 2.0);
-        double max_index = (sum_a + sum_b) / 2.0;
-        double index = sum_nij;
+        __PROMISE__ n = numPoints;
+        __PROMISE__ expected = (sum_a * sum_b) / (n * (n - 1) / 2.0);
+        __PROMISE__ max_index = (sum_a + sum_b) / 2.0;
+        __PROMISE__ index = sum_nij;
 
         if (max_index == expected) return 0.0;
         return (index - expected) / (max_index - expected);
     }
 
-    bool saveLabelsToCSV(const std::string& filename) const {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error opening output labels file: " << filename << std::endl;
-            return false;
-        }
-
-        file << "point_index,cluster_label\n";
-        for (int i = 0; i < numPoints; ++i) {
-            file << i << "," << labels[i] << "\n";
-        }
-
-        file.close();
-        std::cout << "Output labels saved to: " << filename << std::endl;
-        return true;
-    }
-
-    bool saveRuntimeToCSV(const std::string& filename) const {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error opening runtime file: " << filename << std::endl;
-            return false;
-        }
-
-        file << "runtime_seconds\n" << runtime << "\n";
-        file.close();
-        std::cout << "Runtime saved to: " << filename << std::endl;
-        return true;
-    }
-
-    bool saveCentroidsToCSV(const std::string& filename) const {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            std::cerr << "Error opening centroids file: " << filename << std::endl;
-            return false;
-        }
-
-        file << "centroid_index";
-        for (int j = 0; j < numFeatures; ++j) {
-            file << ",feature_" << j;
-        }
-        file << "\n";
-
-        for (int c = 0; c < k; ++c) {
-            file << c;
-            for (int j = 0; j < numFeatures; ++j) {
-                file << "," << centroids[c * numFeatures + j];
-            }
-            file << "\n";
-        }
-
-        file.close();
-        std::cout << "Centroids saved to: " << filename << std::endl;
-        return true;
-    }
 
     const std::vector<int>& getLabels() const { return labels; }
     const std::vector<__PROMISE__>& getCentroids() const { return centroids; }
@@ -433,7 +311,7 @@ int main(int argc, char *argv[]) {
     
     KMeans kmeans(K, NUM_FEATURES, SEED, USE_FIXED_SEED);
 
-    std::vector<DataPoint> dataPoints = read_csv("../data/clustering/blobs_20d_10_include_y.csv");
+    std::vector<DataPoint> dataPoints = read_csv("blobs_2d_10_include_y.csv");
     if (dataPoints.empty()) {
         std::cerr << "Failed to read CSV data" << std::endl;
         return 1;
@@ -445,19 +323,14 @@ int main(int argc, char *argv[]) {
     }
 
     kmeans.fit();
-    kmeans.saveLabelsToCSV("../results/kmeans/output_labels.csv");
-    kmeans.saveRuntimeToCSV("../results/kmeans/runtime.csv");
-    kmeans.saveCentroidsToCSV("../results/kmeans/centroids.csv");
+    //__PROMISE__ SSE = kmeans.calculateSSE(); 
+    std::cout << "\nEvaluation Metrics:" << std::endl;
+    //std::cout << "SSE: " << SSE << std::endl;
+    //std::cout << "AMI: " << kmeans.calculateAMI() << std::endl;
+    //std::cout << "ARI: " << kmeans.calculateARI() << std::endl;
 
-    __PROMISE__ SSE = kmeans.calculateSSE(); 
-    // std::cout << "\nEvaluation Metrics:" << std::endl;
-    // std::cout << "SSE: " << SSE << std::endl;
-    // std::cout << "AMI: " << kmeans.calculateAMI() << std::endl;
-    // std::cout << "ARI: " << kmeans.calculateARI() << std::endl;
-
-    const auto& centroids = kmeans.getCentroids();
-
-    PROMISE_CHECK_ARRAY(centroids.data(), centroids.size());
+    PROMISE_CHECK_ARRAY(kmeans.centroids.data(), K*NUM_FEATURES);
+    // const auto& centroids = kmeans.getCentroids();
     // std::cout << "\nCentroids:\n";
     // for (int c = 0; c < K; ++c) {
     //     std::cout << "Centroid " << c << ": ";

@@ -9,7 +9,7 @@
 #include <algorithm>
 
 struct DataPoint {
-    std::vector<double> features;
+    std::vector<__PROMISE__> features;
     int true_label;  // Ground truth
     int cluster;     // Predicted cluster
 };
@@ -88,6 +88,45 @@ public:
         return labels;
     }
 };
+
+
+std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
+    std::vector<DataPoint> scaled_data = data;
+    if (data.empty()) return scaled_data;
+    
+    int n_features = data[0].features.size();
+    std::vector<__PROMISE__> means(n_features, 0.0);
+    std::vector<__PROMISE__> stds(n_features, 0.0);
+    
+    for (const auto& point : data) {
+        for (int i = 0; i < n_features; ++i) {
+            means[i] += point.features[i];
+        }
+    }
+    for (int i = 0; i < n_features; ++i) {
+        means[i] /= data.size();
+    }
+    
+    for (const auto& point : data) {
+        for (int i = 0; i < n_features; ++i) {
+            __PROMISE__ diff = point.features[i] - means[i];
+            stds[i] += diff * diff;
+        }
+    }
+    for (int i = 0; i < n_features; ++i) {
+        stds[i] = sqrt(stds[i] / data.size());
+        if (stds[i] < 1e-9) stds[i] = 1e-9;
+    }
+    
+    for (auto& point : scaled_data) {
+        for (int i = 0; i < n_features; ++i) {
+            point.features[i] = (point.features[i] - means[i]) / stds[i];
+        }
+    }
+    return scaled_data;
+}
+
+
 
 double adjusted_mutual_information(const std::vector<int>& true_labels, 
                                  const std::vector<int>& pred_labels) {
@@ -190,43 +229,6 @@ double adjusted_rand_index(const std::vector<int>& true_labels,
     return (index - expected) / (max_index - expected + 1e-10);
 }
 
-
-std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
-    std::vector<DataPoint> scaled_data = data;
-    if (data.empty()) return scaled_data;
-    
-    int n_features = data[0].features.size();
-    std::vector<__PROMISE__> means(n_features, 0.0);
-    std::vector<__PROMISE__> stds(n_features, 0.0);
-    
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            means[i] += point.features[i];
-        }
-    }
-    for (int i = 0; i < n_features; ++i) {
-        means[i] /= data.size();
-    }
-    
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            __PROMISE__ diff = point.features[i] - means[i];
-            stds[i] += diff * diff;
-        }
-    }
-    for (int i = 0; i < n_features; ++i) {
-        stds[i] = sqrt(stds[i] / data.size());
-        if (stds[i] < 1e-9) stds[i] = 1e-9;
-    }
-    
-    for (auto& point : scaled_data) {
-        for (int i = 0; i < n_features; ++i) {
-            point.features[i] = (point.features[i] - means[i]) / stds[i];
-        }
-    }
-    return scaled_data;
-}
-
 std::vector<DataPoint> read_csv(const std::string& filename) {
     std::vector<DataPoint> data;
     std::ifstream file(filename);
@@ -308,10 +310,12 @@ int main() {
     std::cout << "Number of noise points: " << 
                  std::count(pred_labels.begin(), pred_labels.end(), -1) << std::endl;
     
-    double ami = adjusted_mutual_information(true_labels, pred_labels);
-    double ari = adjusted_rand_index(true_labels, pred_labels);
+    __PROMISE__ ami = adjusted_mutual_information(true_labels, pred_labels);
+    __PROMISE__ ari = adjusted_rand_index(true_labels, pred_labels);
     std::cout << "Adjusted Mutual Information (AMI): " << ami << std::endl;
     std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
+    
+    PROMISE_CHECK_VAR(ami);
     PROMISE_CHECK_VAR(ari);
     // write_predictions(data, pred_labels, "../../results/dbscan/clusters.csv");
     

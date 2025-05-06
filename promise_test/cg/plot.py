@@ -10,7 +10,7 @@ precision_settings = list()
 
 if __name__ == "__main__":
     for digit in digits:
-        testargs = ['--precs='+method, '--nbDigits=' + str(digit),
+        testargs = ['--precs='+method, '--nbDigits=' + str(digit), '--noParsing',
                     '--conf=promise.yml', '--fp=fp.json']
         
         t = runPromise(testargs)

@@ -11,10 +11,10 @@
 using namespace std;
 using namespace std::chrono;
 
-// Function to read CSV file into a 1D vector (row-major)
 vector<double> readCSV(const string& filename, int& rows, int& cols) {
     vector<double> data;
     
+// read CSV file into a 1D vector (row-major)
     ifstream file(filename);
     if (!file.is_open()) {
         cerr << "Error: Could not open file " << filename << endl;

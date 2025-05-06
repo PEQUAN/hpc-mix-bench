@@ -224,7 +224,7 @@ std::vector<DataPoint> read_csv(const std::string& filename) {
     }
 
     std::string line;
-    getline(file, line);  // Skip header: ,feature1,feature2,...,label
+    getline(file, line); 
     
     while (getline(file, line)) {
         std::stringstream ss(line);

@@ -1,7 +1,3 @@
-#ifndef _Alignof
-#define _Alignof(type) alignof(type)
-#endif
-
 #include <iostream>
 #include <chrono>
 #include <cmath>
@@ -10,11 +6,11 @@
 #include <random>
 
 struct CSRMatrix {
-    int n;          // Matrix dimension
-    int nnz;        // Number of non-zeros
-    double* values; // Non-zero values
-    int* col_indices; // Column indices
-    int* row_ptr;   // Row pointers (size n+1)
+    int n;    
+    int nnz;  
+    double* values; 
+    int* col_indices;
+    int* row_ptr;   
 
     CSRMatrix() : n(0), nnz(0), values(nullptr), col_indices(nullptr), row_ptr(nullptr) {}
 
@@ -45,17 +41,16 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
     A.n = n;
 
-    // Temporary storage for entries per row
     struct RowEntry {
-        int* cols;      // Column indices
-        double* vals;   // Values
-        int size;       // Current number of entries
-        int capacity;   // Allocated capacity
+        int* cols;     
+        double* vals;   
+        int size;      
+        int capacity;  
     };
     RowEntry* temp = new RowEntry[n];
     for (int i = 0; i < n; ++i) {
         temp[i].size = 0;
-        temp[i].capacity = 10; // Initial capacity
+        temp[i].capacity = 10;
         temp[i].cols = new int[temp[i].capacity];
         temp[i].vals = new double[temp[i].capacity];
     }

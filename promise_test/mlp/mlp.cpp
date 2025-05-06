@@ -1,17 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
+
 #include <random>
 #include <chrono>
 #include <cmath>
 #include <algorithm>
 #include <numeric>
-
-struct DataPoint {
-    std::vector<__PROMISE__> features;
-    int label;
-};
+#include "read.hpp"
 
 class MLPClassifier {
 private:
@@ -74,7 +70,7 @@ private:
     }
 
 public:
-    MLPClassifier(int in_size, int hid_size, int out_size, __PROMISE__ lr = 0.1, unsigned int s = 42)
+    MLPClassifier(int in_size, int hid_size, int out_size, double lr = 0.1, unsigned int s = 42)
         : input_size(in_size), hidden_size(hid_size), output_size(out_size), 
           learning_rate(lr), seed(s) {  // Added seed parameter with default value
         initialize_weights();
@@ -82,7 +78,7 @@ public:
     
     void fit(const std::vector<DataPoint>& data, int epochs = 100) {
         for (int epoch = 0; epoch < epochs; ++epoch) {
-            __PROMISE__ total_loss = 0.0;
+            double total_loss = 0.0;
             for (const auto& point : data) {
                 std::vector<__PROMISE__> h(hidden_size);
                 std::vector<__PROMISE__> h_input(hidden_size, 0.0);
@@ -149,7 +145,8 @@ public:
         std::vector<__PROMISE__> h(hidden_size);
         std::vector<__PROMISE__> output = forward(features, h);
 
-        PROMISE_CHECK_ARRAY(output.data(), output_size);
+        // PROMISE_CHECK_ARRAY(output.data(), output_size);
+        PROMISE_CHECK_VAR(output[1]);
         return std::distance(output.begin(), 
                            std::max_element(output.begin(), output.end()));
     }
@@ -187,28 +184,6 @@ std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
         }
     }
     return scaled_data;
-}
-
-std::vector<DataPoint> read_csv(const std::string& filename) {
-    std::vector<DataPoint> data;
-    std::ifstream file(filename);
-    std::string line;
-    getline(file, line);  // Skip header
-    
-    while (getline(file, line)) {
-        std::stringstream ss(line);
-        std::string value;
-        std::vector<__PROMISE__> features;
-        
-        while (getline(ss, value, ',')) {
-            features.push_back(std::stod(value));
-        }
-        
-        int label = features.back();
-        features.pop_back();
-        data.push_back({features, label});
-    }
-    return data;
 }
 
 void write_predictions(const std::vector<DataPoint>& data, 

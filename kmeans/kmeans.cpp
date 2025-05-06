@@ -61,7 +61,7 @@ private:
     std::vector<double> data;
     std::vector<int> labels;
     std::vector<int> groundTruth;
-    std::vector<double> centroids;
+    
     double runtime;
     unsigned int seed;
     bool useFixedSeed;
@@ -134,6 +134,7 @@ private:
     }
 
 public:
+    std::vector<double> centroids;
     KMeans(int k_, int numFeatures_, unsigned int seed_ = 0, bool useFixedSeed_ = false)
         : k(k_), numFeatures(numFeatures_), numPoints(0), runtime(0.0),
           seed(seed_), useFixedSeed(useFixedSeed_) {}
@@ -454,6 +455,12 @@ int main(int argc, char *argv[]) {
     std::cout << "AMI: " << kmeans.calculateAMI() << std::endl;
     std::cout << "ARI: " << kmeans.calculateARI() << std::endl;
 
+    for (int i=0; i<K; i++){
+        for (int j=0; j<NUM_FEATURES; j++){
+            std::cout << kmeans.centroids[i * NUM_FEATURES + j] << " ";
+        }
+        std::cout << std::endl;
+    }
     // const auto& centroids = kmeans.getCentroids();
     // std::cout << "\nCentroids:\n";
     // for (int c = 0; c < K; ++c) {

@@ -1,6 +1,3 @@
-#ifndef _Alignof
-#define _Alignof(type) alignof(type)
-#endif
 
 #include <iostream>
 #include <vector>

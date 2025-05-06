@@ -173,8 +173,7 @@ BiCGSTABResult bicgstab(const CSRMatrix& A, const std::vector<__PROMISE__>& b, i
 
 std::vector<__PROMISE__> generate_rhs(int n) {
     std::vector<__PROMISE__> b(n);
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    std::mt19937 gen(2025);
     std::uniform_real_distribution<> dis(1.0, 10.0);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);

@@ -6,7 +6,9 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-
+#include <numeric>
+#include <random>
+#include <set>
 
 struct Node { // Node structure
     bool is_leaf = false;
@@ -15,6 +17,8 @@ struct Node { // Node structure
     int feature_index = -1;
     Node* left = nullptr;
     Node* right = nullptr;
+    std::map<int, int> class_counts; // Store class counts at leaf nodes
+    int total_samples = 0; // Total samples in leaf node
     ~Node() { delete left; delete right; }
 };
 
@@ -89,6 +93,8 @@ private:
             for (const auto& point : data) {
                 counts[point.label]++;
             }
+            node->class_counts = counts;
+            node->total_samples = data.size();
             node->class_label = std::max_element(counts.begin(), counts.end(),
                 [](const auto& a, const auto& b) { return a.second < b.second; })->first;
             return node;
@@ -101,6 +107,8 @@ private:
             for (const auto& point : data) {
                 counts[point.label]++;
             }
+            node->class_counts = counts;
+            node->total_samples = data.size();
             node->class_label = std::max_element(counts.begin(), counts.end(),
                 [](const auto& a, const auto& b) { return a.second < b.second; })->first;
             return node;
@@ -142,33 +150,62 @@ public:
         }
         return current->class_label;
     }
+
+    // New method to predict class probabilities
+    std::vector<double> predict_proba(const std::vector<double>& features, int num_classes) {
+        Node* current = root;
+        while (!current->is_leaf) {
+            if (features[current->feature_index] < current->split_value) {
+                current = current->left;
+            } else {
+                current = current->right;
+            }
+        }
+        std::vector<double> probs(num_classes, 0.0);
+        if (current->total_samples > 0) {
+            for (const auto& [label, count] : current->class_counts) {
+                probs[label] = static_cast<double>(count) / current->total_samples;
+            }
+        } else {
+            probs[current->class_label] = 1.0; // Fallback to class label if no samples
+        }
+        return probs;
+    }
 };
 
 // Function to read CSV file
 std::vector<DataPoint> read_csv(const std::string& filename) {
     std::vector<DataPoint> data;
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return data;
+    }
+
     std::string line;
-    
-    // Skip header if it exists
-    getline(file, line);
+    getline(file, line);  // Skip header: ,feature1,feature2,...,label
     
     while (getline(file, line)) {
         std::stringstream ss(line);
         std::string value;
         std::vector<double> features;
         
+        // Skip the index column
+        getline(ss, value, ',');  // Ignore the first value (index)
+        
         // Read features
         while (getline(ss, value, ',')) {
             features.push_back(std::stod(value));
         }
-        
-        // Last value is the label
-        int label = features.back();
+
+        // Last value is the true label
+        int true_label = (int)features.back();
         features.pop_back();
-        
-        data.push_back({features, label});
+        data.push_back({features, true_label});
     }
+    std::cout << "Loaded " << data.size() << " data points with "  << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
+    
+    file.close();
     return data;
 }
 
@@ -188,14 +225,81 @@ void write_predictions(const std::vector<DataPoint>& data,
     }
 }
 
+// Function to compute AUC for binary classification
+double compute_binary_auc(const std::vector<double>& scores, const std::vector<int>& labels, int positive_class) {
+    // Create pairs of (score, label)
+    std::vector<std::pair<double, int>> score_label_pairs;
+    for (size_t i = 0; i < scores.size(); ++i) {
+        int binary_label = (labels[i] == positive_class) ? 1 : 0;
+        score_label_pairs.emplace_back(scores[i], binary_label);
+    }
+    
+    // Sort by scores in descending order
+    std::sort(score_label_pairs.begin(), score_label_pairs.end(), 
+              [](const auto& a, const auto& b) { return a.first > b.first; });
+    
+    // Compute TPR and FPR
+    std::vector<double> tpr, fpr;
+    double tp = 0, fp = 0;
+    double p = std::count_if(labels.begin(), labels.end(), 
+                             [positive_class](int l) { return l == positive_class; });
+    double n = labels.size() - p;
+    
+    tpr.push_back(0.0);
+    fpr.push_back(0.0);
+    
+    for (size_t i = 0; i < score_label_pairs.size(); ++i) {
+        if (score_label_pairs[i].second == 1) {
+            tp += 1;
+        } else {
+            fp += 1;
+        }
+        tpr.push_back(tp / p);
+        fpr.push_back(fp / n);
+    }
+    
+    // Compute AUC using trapezoidal rule
+    double auc = 0.0;
+    for (size_t i = 1; i < tpr.size(); ++i) {
+        auc += (fpr[i] - fpr[i-1]) * (tpr[i] + tpr[i-1]) / 2;
+    }
+    
+    return auc;
+}
+
+// Function to compute macro-averaged AUC for multi-class
+double compute_macro_auc(const std::vector<std::vector<double>>& probas, 
+                        const std::vector<int>& labels, int num_classes) {
+    double auc_sum = 0.0;
+    for (int c = 0; c < num_classes; ++c) {
+        std::vector<double> scores;
+        for (const auto& proba : probas) {
+            scores.push_back(proba[c]);
+        }
+        double auc = compute_binary_auc(scores, labels, c);
+        auc_sum += auc;
+    }
+    return auc_sum / num_classes;
+}
+
 int main(int argc, char* argv[]) {
     // Read data from CSV (assuming format: feature1,feature2,...,label)
-    std::vector<DataPoint> data = read_csv("../data/iris/iris.csv");
-    
+    std::vector<DataPoint> data = read_csv("../data/classification/iris.csv");
+    // Shuffle data with a fixed seed
+    std::mt19937 gen(42); // Fixed seed for reproducibility
+    std::shuffle(data.begin(), data.end(), gen);
+
     // Split into train and test (simple 80-20 split)
     size_t train_size = static_cast<size_t>(0.8 * data.size());
     std::vector<DataPoint> train_data(data.begin(), data.begin() + train_size);
     std::vector<DataPoint> test_data(data.begin() + train_size, data.end());
+    
+    // Determine number of classes
+    std::set<int> unique_labels;
+    for (const auto& point : data) {
+        unique_labels.insert(point.label);
+    }
+    int num_classes = unique_labels.size();
     
     // Train the model and measure time
     DecisionTree tree(3, 2);
@@ -206,21 +310,31 @@ int main(int argc, char* argv[]) {
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    // Make predictions and calculate accuracy
+    // Make predictions and calculate accuracy and AUC
     std::vector<int> predictions;
+    std::vector<std::vector<double>> probas;
     int correct = 0;
 
     for (const auto& point : test_data) {
         int pred = tree.predict(point.features);
         predictions.push_back(pred);
+        probas.push_back(tree.predict_proba(point.features, num_classes));
         if (pred == point.label) correct++;
     }
     
     double accuracy = static_cast<double>(correct) / test_data.size() * 100;
     std::cout << "Accuracy: " << accuracy << "%" << std::endl;
     
+    // Calculate macro-averaged AUC
+    std::vector<int> test_labels;
+    for (const auto& point : test_data) {
+        test_labels.push_back(point.label);
+    }
+    double auc = compute_macro_auc(probas, test_labels, num_classes);
+    std::cout << "Macro-averaged AUC: " << auc << std::endl;
+    
     // Write predictions to CSV
-    write_predictions(test_data, predictions, "../dct/predictions.csv");
+    write_predictions(test_data, predictions, "../results/dct/predictions.csv");
     
     return 0;
 }
