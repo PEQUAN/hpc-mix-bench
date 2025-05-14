@@ -216,9 +216,9 @@ CGResult conjugate_gradient(const CSRMatrix& A, const double* b, int max_iter = 
 
 double* generate_rhs(int n) {
     double* b = new double[n];
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(1.0, 10.0);
+
+    std::mt19937 gen(1000);
+    std::uniform_real_distribution<> dis(0, 10);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);
     }

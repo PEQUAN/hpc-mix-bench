@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -13,42 +12,96 @@
 const bool USE_FIXED_SEED = true;
 
 struct DataPoint {
-    std::vector<__PROMISE__> features;
+    __PR_1__* features; // Dynamically allocated array for features
     int label;
-};
+    size_t numFeatures;
 
-std::vector<DataPoint> read_csv(const std::string& filename) {
-    std::vector<DataPoint> data;
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return data;
+    // Default constructor
+    DataPoint() : features(nullptr), label(0), numFeatures(0) {}
+
+    // Parameterized constructor
+    DataPoint(size_t numFeatures_) : numFeatures(numFeatures_), label(0) {
+        features = new __PR_1__[numFeatures];
     }
 
+    // Destructor
+    ~DataPoint() {
+        delete[] features;
+    }
+
+    // Copy constructor
+    DataPoint(const DataPoint& other) : numFeatures(other.numFeatures), label(other.label) {
+        features = new __PROMISE__[numFeatures];
+        for (size_t i = 0; i < numFeatures; ++i) {
+            features[i] = other.features[i];
+        }
+    }
+
+    // Copy assignment operator
+    DataPoint& operator=(const DataPoint& other) {
+        if (this != &other) {
+            delete[] features;
+            numFeatures = other.numFeatures;
+            label = other.label;
+            features = new __PROMISE__[numFeatures];
+            for (size_t i = 0; i < numFeatures; ++i) {
+                features[i] = other.features[i];
+            }
+        }
+        return *this;
+    }
+};
+
+DataPoint* read_csv(const std::string& filename, size_t numFeatures, size_t& numPoints) {
+    std::ifstream file(filename);
+    numPoints = 0;
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return nullptr;
+    }
+
+    // Count number of data points
     std::string line;
-    getline(file, line); 
-    
+    getline(file, line); // Skip header
+    while (getline(file, line)) {
+        ++numPoints;
+    }
+    file.clear();
+    file.seekg(0);
+
+    // Allocate array for data points using default constructor
+    DataPoint* data = new DataPoint[numPoints];
+    size_t idx = 0;
+
+    getline(file, line); // Skip header
     while (getline(file, line)) {
         std::stringstream ss(line);
         std::string value;
-        std::vector<__PROMISE__> features;
-        
-        // Skip the index column
-        getline(ss, value, ',');  // Ignore the first value (index)
-        
-        while (getline(ss, value, ',')) {
-            features.push_back(std::stod(value));
-        }
 
-        // Last value is the true label
-        int true_label = (int)features.back();
-        features.pop_back();
-        data.push_back({features, true_label});
+        // Skip the index column
+        getline(ss, value, ',');
+
+        // Initialize DataPoint
+        data[idx].numFeatures = numFeatures;
+        data[idx].features = new __PR_1__[numFeatures];
+        data[idx].label = 0;
+
+        // Read features
+        size_t featureIdx = 0;
+        while (getline(ss, value, ',')) {
+            if (featureIdx < numFeatures) {
+                data[idx].features[featureIdx] = std::stod(value);
+            } else {
+                // Last value is the label
+                data[idx].label = static_cast<int>(std::stod(value));
+            }
+            ++featureIdx;
+        }
+        ++idx;
     }
-    
-    std::cout << "Loaded " << data.size() << " data points with "  
-              << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
-    
+
+    std::cout << "Loaded " << numPoints << " data points with " << numFeatures << " features each" << std::endl;
+
     file.close();
     return data;
 }
@@ -58,33 +111,30 @@ private:
     int numPoints;
     int numFeatures;
     int k;
-    std::vector<__PROMISE__> data;
-    std::vector<int> labels;
-    std::vector<int> groundTruth;
-    
-    __PROMISE__ runtime;
+    __PR_1__* data;          // Flattened array: numPoints * numFeatures
+    int* labels;           // Array of size numPoints
+    int* groundTruth;      // Array of size numPoints
+    __PR_1__* centroids;     // Array of size k * numFeatures
+    double runtime;
     unsigned int seed;
     bool useFixedSeed;
 
-    std::vector<__PROMISE__> getPoint(int idx) const {
+    void getPoint(int idx, __PROMISE__* point) const {
         if (idx < 0 || idx >= numPoints) {
             std::cerr << "Error: Invalid point index " << idx << std::endl;
-            return std::vector<__PROMISE__>(numFeatures, 0.0);
+            for (int j = 0; j < numFeatures; ++j) {
+                point[j] = 0.0;
+            }
+            return;
         }
-        std::vector<__PROMISE__> point(numFeatures);
         for (int j = 0; j < numFeatures; ++j) {
             point[j] = data[idx * numFeatures + j];
         }
-        return point;
     }
 
-    __PROMISE__ euclideanDistance(const std::vector<__PROMISE__>& p1, const std::vector<__PROMISE__>& p2) const {
-        if (p1.size() != p2.size()) {
-            std::cerr << "Error: Mismatched dimensions in euclideanDistance" << std::endl;
-            return 0.0;
-        }
+    __PROMISE__ euclideanDistance(const __PROMISE__* p1, const __PROMISE__* p2) const {
         __PROMISE__ sum = 0.0;
-        for (size_t i = 0; i < p1.size(); ++i) {
+        for (int i = 0; i < numFeatures; ++i) {
             sum += (p1[i] - p2[i]) * (p1[i] - p2[i]);
         }
         return sqrt(sum);
@@ -103,66 +153,107 @@ private:
 
         std::uniform_int_distribution<> dis(0, numPoints - 1);
         int firstCentroid = dis(gen);
-        std::vector<__PROMISE__> centroid = getPoint(firstCentroid);
+        __PR_1__* tempPoint = new __PR_1__[numFeatures];
+        getPoint(firstCentroid, tempPoint);
         for (int j = 0; j < numFeatures; ++j) {
-            centroids[j] = static_cast<__PROMISE__>(centroid[j]);
+            centroids[j] = tempPoint[j];
         }
+        delete[] tempPoint;
 
+        __PROMISE__* distances = new __PROMISE__[numPoints];
         for (int c = 1; c < k; ++c) {
-            std::vector<__PROMISE__> distances(numPoints, std::numeric_limits<__PROMISE__>::max());
             for (int i = 0; i < numPoints; ++i) {
-                auto point = getPoint(i);
-                __PROMISE__ minDist = std::numeric_limits<__PROMISE__>::max();
+                distances[i] = std::numeric_limits<__PROMISE__>::max();
+                __PR_1__* point = new __PR_1__[numFeatures];
+                getPoint(i, point);
                 for (int j = 0; j < c; ++j) {
-                    std::vector<__PROMISE__> cent(numFeatures);
-                    for (int f = 0; f < numFeatures; ++f) {
-                        cent[f] = centroids[j * numFeatures + f];
-                    }
-                    __PROMISE__ dist = static_cast<__PROMISE__>(euclideanDistance(point, cent));
-                    minDist = min(minDist, dist);
+                    __PROMISE__* cent = centroids + j * numFeatures;
+                    __PROMISE__ dist = euclideanDistance(point, cent);
+                    distances[i] = min(distances[i], dist * dist);
                 }
-                distances[i] = minDist * minDist;
+                delete[] point;
             }
 
-            std::discrete_distribution<> dist(distances.begin(), distances.end());
-            int nextCentroid = dist(gen);
-            auto newCentroid = getPoint(nextCentroid);
+            // Discrete distribution simulation
+            __PROMISE__ sum = 0.0;
+            for (int i = 0; i < numPoints; ++i) {
+                sum += distances[i];
+            }
+            std::uniform_real_distribution<> dist(0, sum);
+            __PROMISE__ r = dist(gen);
+            __PROMISE__ cumulative = 0.0;
+            int nextCentroid = 0;
+            for (int i = 0; i < numPoints; ++i) {
+                cumulative += distances[i];
+                if (r <= cumulative) {
+                    nextCentroid = i;
+                    break;
+                }
+            }
+
+            __PR_1__* newCentroid = new __PR_1__[numFeatures];
+            getPoint(nextCentroid, newCentroid);
             for (int j = 0; j < numFeatures; ++j) {
                 centroids[c * numFeatures + j] = newCentroid[j];
             }
+            delete[] newCentroid;
         }
+        delete[] distances;
     }
 
 public:
-    std::vector<__PROMISE__> centroids;
-    KMeans(int k_, int numFeatures_, unsigned int seed_ = 0, bool useFixedSeed_ = false)
+    KMeans(int k_, int numFeatures_, unsigned int seed_ = 0, bool useFixedSeed_ = true)
         : k(k_), numFeatures(numFeatures_), numPoints(0), runtime(0.0),
-          seed(seed_), useFixedSeed(useFixedSeed_) {}
+          seed(seed_), useFixedSeed(useFixedSeed_),
+          data(nullptr), labels(nullptr), groundTruth(nullptr), centroids(nullptr) {}
 
-    bool loadFromDataPoints(const std::vector<DataPoint>& dataPoints) {
-        if (dataPoints.empty()) {
+    ~KMeans() {
+        delete[] data;
+        delete[] labels;
+        delete[] groundTruth;
+        delete[] centroids;
+    }
+
+    bool loadFromDataPoints(const DataPoint* dataPoints, int numPoints_) {
+        if (numPoints_ == 0) {
             std::cerr << "No data points provided" << std::endl;
             return false;
         }
 
-        numPoints = dataPoints.size();
-        if (dataPoints[0].features.size() != static_cast<size_t>(numFeatures)) {
-            std::cerr << "Feature count mismatch: expected " << numFeatures 
-                      << ", got " << dataPoints[0].features.size() << std::endl;
-            numPoints = 0;
-            return false;
-        }
+        numPoints = numPoints_;
+        delete[] data;
+        delete[] groundTruth;
+        delete[] labels;
+        delete[] centroids;
 
-        data.resize(numPoints * numFeatures);
-        groundTruth.resize(numPoints);
-        labels.resize(numPoints, 0);
-        centroids.resize(k * numFeatures, 0.0);
+        data = new __PROMISE__[numPoints * numFeatures];
+        groundTruth = new int[numPoints];
+        labels = new int[numPoints];
+        centroids = new __PROMISE__[k * numFeatures];
 
         for (int i = 0; i < numPoints; ++i) {
+            if (static_cast<size_t>(numFeatures) != dataPoints[i].numFeatures) {
+                std::cerr << "Feature count mismatch: expected " << numFeatures
+                          << ", got " << dataPoints[i].numFeatures << std::endl;
+                numPoints = 0;
+                delete[] data;
+                delete[] groundTruth;
+                delete[] labels;
+                delete[] centroids;
+                data = nullptr;
+                groundTruth = nullptr;
+                labels = nullptr;
+                centroids = nullptr;
+                return false;
+            }
             for (int j = 0; j < numFeatures; ++j) {
-                data[i * numFeatures + j] = static_cast<__PROMISE__>(dataPoints[i].features[j]);
+                data[i * numFeatures + j] = dataPoints[i].features[j];
             }
             groundTruth[i] = dataPoints[i].label;
+            labels[i] = 0;
+        }
+        for (int i = 0; i < k * numFeatures; ++i) {
+            centroids[i] = 0.0;
         }
         return true;
     }
@@ -173,25 +264,26 @@ public:
             return;
         }
 
-        auto start = std::chrono::high_resolution_clock::now();
         initializeCentroids();
         bool changed = true;
         int iterations = 0;
+
+        __PR_1__* point = new __PR_1__[numFeatures];
+        __PR_2__* centroid = new __PR_2__[numFeatures];
 
         while (changed && iterations < maxIterations) {
             changed = false;
 
             for (int i = 0; i < numPoints; ++i) {
-                auto point = getPoint(i);
-                __PROMISE__ minDist = std::numeric_limits<__PROMISE__>::max();
+                getPoint(i, point);
+                __PROMISE__ minDist = 999999.0;
                 int newLabel = 0;
 
                 for (int c = 0; c < k; ++c) {
-                    std::vector<__PROMISE__> centroid(numFeatures);
                     for (int j = 0; j < numFeatures; ++j) {
                         centroid[j] = centroids[c * numFeatures + j];
                     }
-                    __PROMISE__ dist = static_cast<__PROMISE__>(euclideanDistance(point, centroid));
+                    __PROMISE__ dist = euclideanDistance(point, centroid);
                     if (dist < minDist) {
                         minDist = dist;
                         newLabel = c;
@@ -204,8 +296,10 @@ public:
                 }
             }
 
-            std::vector<int> counts(k, 0);
-            std::fill(centroids.begin(), centroids.end(), 0.0);
+            int* counts = new int[k]();
+            for (int i = 0; i < k * numFeatures; ++i) {
+                centroids[i] = 0.0;
+            }
 
             for (int i = 0; i < numPoints; ++i) {
                 int cluster = labels[i];
@@ -223,122 +317,94 @@ public:
                 }
             }
 
+            delete[] counts;
             iterations++;
         }
 
-        auto end = std::chrono::high_resolution_clock::now();
-        runtime = std::chrono::duration<__PROMISE__>(end - start).count();
+        delete[] point;
+        delete[] centroid;
+
 
         std::cout << "Converged after " << iterations << " iterations" << std::endl;
         std::cout << "Runtime: " << runtime << " seconds" << std::endl;
     }
 
     __PROMISE__ calculateSSE() const {
-        __PROMISE__ sse = 0.0;
+        double sse = 0.0;
+        double* point = new double[numFeatures];
+        double* centroid = new double[numFeatures];
+
         for (int i = 0; i < numPoints; ++i) {
-            auto point = getPoint(i);
+            getPoint(i, point);
             int cluster = labels[i];
-            std::vector<__PROMISE__> centroid(numFeatures);
             for (int j = 0; j < numFeatures; ++j) {
                 centroid[j] = centroids[cluster * numFeatures + j];
             }
-            __PROMISE__ dist = euclideanDistance(point, centroid);
+            double dist = euclideanDistance(point, centroid);
             sse += dist * dist;
         }
+
+        delete[] point;
+        delete[] centroid;
         return sse;
     }
-    __PROMISE__ calculateARI() const {
-        if (groundTruth.empty()) {
-            std::cerr << "No ground truth labels available for ARI calculation" << std::endl;
-            return 0.0;
-        }
-
-        int maxLabel = *std::max_element(groundTruth.begin(), groundTruth.end()) + 1;
-        int maxCluster = k;
-        std::vector<std::vector<int>> contingency(maxCluster, std::vector<int>(maxLabel, 0));
-        for (int i = 0; i < numPoints; ++i) {
-            contingency[labels[i]][groundTruth[i]]++;
-        }
-
-        std::vector<int> a(maxCluster, 0), b(maxLabel, 0);
-        for (int i = 0; i < maxCluster; ++i) {
-            for (int j = 0; j < maxLabel; ++j) {
-                a[i] += contingency[i][j];
-                b[j] += contingency[i][j];
-            }
-        }
-
-        __PROMISE__ sum_nij = 0.0, sum_a = 0.0, sum_b = 0.0;
-        for (int i = 0; i < maxCluster; ++i) {
-            for (int j = 0; j < maxLabel; ++j) {
-                sum_nij += (static_cast<__PROMISE__>(contingency[i][j]) * (contingency[i][j] - 1)) / 2.0;
-            }
-            sum_a += (static_cast<__PROMISE__>(a[i]) * (a[i] - 1)) / 2.0;
-        }
-        for (int j = 0; j < maxLabel; ++j) {
-            sum_b += (static_cast<__PROMISE__>(b[j]) * (b[j] - 1)) / 2.0;
-        }
-
-        __PROMISE__ n = numPoints;
-        __PROMISE__ expected = (sum_a * sum_b) / (n * (n - 1) / 2.0);
-        __PROMISE__ max_index = (sum_a + sum_b) / 2.0;
-        __PROMISE__ index = sum_nij;
-
-        if (max_index == expected) return 0.0;
-        return (index - expected) / (max_index - expected);
-    }
 
 
-    const std::vector<int>& getLabels() const { return labels; }
-    const std::vector<__PROMISE__>& getCentroids() const { return centroids; }
+    const int* getLabels() const { return labels; }
+    __PROMISE__* getCentroids() const { return centroids; }
     __PROMISE__ getRuntime() const { return runtime; }
 };
 
-int main(int argc, char *argv[]) {
-    size_t K(2), NUM_FEATURES(2);
-    size_t SEED(42);
+int main(int argc, char* argv[]) {
+    size_t K = 2;
+    size_t NUM_FEATURES = 2;
+    size_t SEED = 0;
 
-    if(argc == 2){
+    if (argc == 2) {
         K = atoi(argv[1]);
-    } else if(argc == 3){
+    } else if (argc == 3) {
         K = atoi(argv[1]);
         NUM_FEATURES = atoi(argv[2]);
-    } else if(argc > 3){
+    } else if (argc > 3) {
         K = atoi(argv[1]);
-        NUM_FEATURES = atoi(argv[2]); 
-        SEED = atoi(argv[3]); 
+        NUM_FEATURES = atoi(argv[2]);
+        SEED = atoi(argv[3]);
     }
-    
+
     KMeans kmeans(K, NUM_FEATURES, SEED, USE_FIXED_SEED);
 
-    std::vector<DataPoint> dataPoints = read_csv("blobs_2d_10_include_y.csv");
-    if (dataPoints.empty()) {
+    size_t numPoints;
+    DataPoint* dataPoints = read_csv("blobs_20d_10_include_y.csv", NUM_FEATURES, numPoints);
+    if (!dataPoints) {
         std::cerr << "Failed to read CSV data" << std::endl;
         return 1;
     }
 
-    if (!kmeans.loadFromDataPoints(dataPoints)) {
+    if (!kmeans.loadFromDataPoints(dataPoints, numPoints)) {
         std::cerr << "Failed to load data points into KMeans" << std::endl;
+        delete[] dataPoints;
         return 1;
     }
 
     kmeans.fit();
-    //__PROMISE__ SSE = kmeans.calculateSSE(); 
-    std::cout << "\nEvaluation Metrics:" << std::endl;
-    //std::cout << "SSE: " << SSE << std::endl;
-    //std::cout << "AMI: " << kmeans.calculateAMI() << std::endl;
-    //std::cout << "ARI: " << kmeans.calculateARI() << std::endl;
 
-    PROMISE_CHECK_ARRAY(kmeans.centroids.data(), K*NUM_FEATURES);
-    // const auto& centroids = kmeans.getCentroids();
-    // std::cout << "\nCentroids:\n";
-    // for (int c = 0; c < K; ++c) {
-    //     std::cout << "Centroid " << c << ": ";
-    //     for (int j = 0; j < NUM_FEATURES; ++j) {
-    //         std::cout << centroids[c * NUM_FEATURES + j] << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    double SSE = kmeans.calculateSSE();
+    std::cout << "\nEvaluation Metrics:" << std::endl;
+    std::cout << "SSE: " << SSE << std::endl;
+
+    __PR_1__* centroids = kmeans.getCentroids();
+    for (int i = 0; i < K; ++i) {
+        for (int j = 0; j < NUM_FEATURES; ++j) {
+            std::cout << centroids[i * NUM_FEATURES + j] << " ";
+            PROMISE_CHECK_VAR(centroids[i * NUM_FEATURES + j]);
+        }
+        std::cout << std::endl;
+    }
+
+    int check_elements = NUM_FEATURES*K;
+   
+    // Cleanup
+    delete[] dataPoints;
 
     return 0;
 }
