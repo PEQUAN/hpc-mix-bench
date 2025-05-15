@@ -12,7 +12,7 @@
 
 struct CSRMatrix {
     int n;
-    __PR_3__* values;
+    __PROMISE__* values;
     int* col_indices;
     int* row_ptr;
     int nnz; // number of non-zeros
@@ -52,7 +52,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     A.n = n;
     A.nnz = 0;
 
-    A.values = new __PR_3__[MAX_NZ];
+    A.values = new __PROMISE__[MAX_NZ];
     A.col_indices = new int[MAX_NZ];
     A.row_ptr = new int[n + 1];
 
@@ -125,7 +125,7 @@ void free_csr_matrix(CSRMatrix& A) {
 }
 
 __PROMISE__* csr_to_dense(const CSRMatrix& A) {
-    __PR_2__* dense = new __PR_2__[A.n * A.n]();
+    __PROMISE__* dense = new __PROMISE__[A.n * A.n]();
     for (int i = 0; i < A.n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
             dense[i * A.n + A.col_indices[j]] = A.values[j];
@@ -167,7 +167,7 @@ void lu_factorize_with_pivoting(__PROMISE__* A, int* pivot, int n) {
 }
 
 __PROMISE__* forward_substitution(const __PROMISE__* LU, const __PROMISE__* b, const int* pivot, int n) {
-    __PR_1__* y = new __PR_1__[n]();
+    __PROMISE__* y = new __PROMISE__[n]();
     for (int i = 0; i < n; ++i) {
         int pi = pivot[i];
         y[i] = b[pi];
