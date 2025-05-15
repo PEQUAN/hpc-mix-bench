@@ -3,7 +3,7 @@ import numpy as np
 from cadnaPromise.run import runPromise
 
 method = 'bhsd'
-digits = [2, 6, 10, 14]
+digits = [2, 3, 4, 5]
 precision_settings = []
 
 if __name__ == "__main__":
@@ -56,5 +56,5 @@ if __name__ == "__main__":
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3)
 
     plt.tight_layout()
-    plt.savefig('precision_dbscan.png', bbox_inches='tight', dpi=300)
+    plt.savefig('precision_bt.png', bbox_inches='tight', dpi=300)
     plt.show()

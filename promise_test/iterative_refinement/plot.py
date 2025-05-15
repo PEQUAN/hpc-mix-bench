@@ -3,7 +3,7 @@ import numpy as np
 from cadnaPromise.run import runPromise
 
 method = 'bhsd'
-digits = [2, 4, 6, 8, 10]
+digits = [2, 4, 6, 8]
 precision_settings = []
 
 if __name__ == "__main__":

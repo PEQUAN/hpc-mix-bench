@@ -12,7 +12,7 @@
 
 struct CSRMatrix {
     int n;
-    __PROMISE__* values;
+    __PR_3__* values;
     int* col_indices;
     int* row_ptr;
     int nnz; // number of non-zeros
@@ -52,7 +52,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     A.n = n;
     A.nnz = 0;
 
-    A.values = new __PROMISE__[MAX_NZ];
+    A.values = new __PR_3__[MAX_NZ];
     A.col_indices = new int[MAX_NZ];
     A.row_ptr = new int[n + 1];
 
@@ -125,7 +125,7 @@ void free_csr_matrix(CSRMatrix& A) {
 }
 
 __PROMISE__* csr_to_dense(const CSRMatrix& A) {
-    __PROMISE__* dense = new __PROMISE__[A.n * A.n]();
+    double* dense = new double[A.n * A.n]();
     for (int i = 0; i < A.n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
             dense[i * A.n + A.col_indices[j]] = A.values[j];
@@ -166,8 +166,8 @@ void lu_factorize_with_pivoting(__PROMISE__* A, int* pivot, int n) {
     }
 }
 
-__PROMISE__* forward_substitution(const __PROMISE__* LU, const __PROMISE__* b, const int* pivot, int n) {
-    __PROMISE__* y = new __PROMISE__[n]();
+__PR_1__* forward_substitution(const __PROMISE__* LU, const __PROMISE__* b, const int* pivot, int n) {
+    __PR_1__* y = new __PR_1__[n]();
     for (int i = 0; i < n; ++i) {
         int pi = pivot[i];
         y[i] = b[pi];
@@ -178,7 +178,7 @@ __PROMISE__* forward_substitution(const __PROMISE__* LU, const __PROMISE__* b, c
     return y;
 }
 
-__PROMISE__* backward_substitution(const __PROMISE__* LU, const __PROMISE__* y, int n) {
+__PR_4__* backward_substitution(const __PROMISE__* LU, const __PROMISE__* y, int n) {
     __PR_4__* x = new __PR_4__[n]();
     for (int i = n - 1; i >= 0; --i) {
         x[i] = y[i];
@@ -217,7 +217,7 @@ __PROMISE__* axpy(__PROMISE__ alpha, const __PROMISE__* x, const __PROMISE__* y,
     return result;
 }
 
-__PROMISE__ norm(const __PROMISE__* v, int n) {
+__PR_9__ norm(const __PROMISE__* v, int n) {
     __PROMISE__ d = dot(v, v, n);
     if (isnan(d) || isinf(d)) return -1.0;
     return sqrt(d);
@@ -236,7 +236,7 @@ IRResult iterative_refinement(const CSRMatrix& A, const __PROMISE__* b, __PROMIS
     __PR_8__* r = new __PR_8__[n];
     for (int i = 0; i < n; ++i) r[i] = b[i];
     
-    __PROMISE__ initial_norm = norm(b, n);
+    __PR_9__ initial_norm = norm(b, n);
     if (initial_norm < 0) {
         std::cerr << "Error: Initial b has invalid norm" << std::endl;
         IRResult result = {x, -1.0, 0};
@@ -247,15 +247,15 @@ IRResult iterative_refinement(const CSRMatrix& A, const __PROMISE__* b, __PROMIS
 
     int k;
     for (k = 0; k < max_iter; ++k) {
-        __PROMISE__ r_norm = norm(r, n);
+        __PR_9__ r_norm = norm(r, n);
         if (r_norm < 0) {
             std::cerr << "Error: Residual became NaN or Inf at iteration " << k << std::endl;
             break;
         }
         if (r_norm < tol_abs) break;
 
-        __PROMISE__* y = forward_substitution(LU, r, pivot, n);
-        __PROMISE__* d = backward_substitution(LU, y, n);
+        __PR_1__* y = forward_substitution(LU, r, pivot, n);
+        __PR_4__* d = backward_substitution(LU, y, n);
         __PROMISE__* new_x = axpy(1.0, d, x, n);
         delete[] x;
         x = new_x;
