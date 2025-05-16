@@ -51,7 +51,7 @@ double norm(const double* v, int n) {
     return sqrt(dot(v, v, n));
 }
 
-double* axpy(double alpha, const double* x, const double* y, int n) {
+double* axpy(float alpha, const double* x, const double* y, int n) {
     double* result = new double[n];
     for (int i = 0; i < n; ++i) {
         result[i] = alpha * x[i] + y[i];
@@ -61,12 +61,12 @@ double* axpy(double alpha, const double* x, const double* y, int n) {
 
 class DiagonalPreconditioner {
 private:
-    double* diag_inv;
+    float* diag_inv;
     int n;
 
 public:
     DiagonalPreconditioner(const Matrix& A) : n(A.size()) {
-        diag_inv = new double[n];
+        diag_inv = new float[n];
         for (int i = 0; i < n; ++i) {
             if (A.get(i, i) != 0.0) {
                 diag_inv[i] = 1.0 / A.get(i, i);
@@ -91,12 +91,12 @@ public:
 
 struct GMRESResult {
     double* x;
-    double residual;
+    float residual;
     int iterations;
 };
 
 GMRESResult gmres(const Matrix& A, const double* b, 
-                  const DiagonalPreconditioner& M, int max_iter, double tol) {
+                  const DiagonalPreconditioner& M, int max_iter, float tol) {
     int n = A.size();
     double* x = new double[n](); 
     double* Ax = A.matvec(x);
@@ -186,7 +186,7 @@ GMRESResult gmres(const Matrix& A, const double* b,
 
     Ax = A.matvec(x);
     double* r_new = axpy(-1.0, Ax, b, n);
-    double residual = norm(r_new, n);
+    float residual = norm(r_new, n);
     delete[] Ax;
     delete[] r_new;
     delete[] r;
@@ -244,9 +244,10 @@ int main() {
 
     double* Ax = A.matvec(result.x);
     double* error_vec = axpy(-1.0, Ax, b, n);
-    double error = norm(error_vec, n);
+    float error = norm(error_vec, n);
     std::cout << "Verification residual: " << error << std::endl;
 
+    PROMISE_CHECK_ARRAY(Ax, n);
     delete[] Ax;
     delete[] error_vec;
     delete[] result.x;
