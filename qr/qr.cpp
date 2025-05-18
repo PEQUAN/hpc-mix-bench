@@ -8,7 +8,7 @@
 const double EPS = 1e-10; // Tolerance for convergence
 const int MAX_ITER = 1000; // Maximum QR iterations
 
-// CSRMatrix structure
+
 struct CSRMatrix {
     int n;
     double* values;
@@ -107,7 +107,6 @@ CSRMatrix generate_random_matrix(int n, double sparsity = 0.01) {
     return A;
 }
 
-// Convert CSRMatrix to dense 1D array (row-major)
 void csr_to_dense(int n, const CSRMatrix& A, double* dense) {
     std::memset(dense, 0, n * n * sizeof(double));
     for (int i = 0; i < n; ++i) {
@@ -118,7 +117,6 @@ void csr_to_dense(int n, const CSRMatrix& A, double* dense) {
     }
 }
 
-// Matrix operations (1D row-major)
 void copy_matrix(int n, const double* A, double* B) {
     std::memcpy(B, A, n * n * sizeof(double));
 }
@@ -142,7 +140,6 @@ void matrix_mult(int n, const double* A, const double* B, double* C) {
                 C[i*n + j] += A[i*n + k] * B[k*n + j];
 }
 
-// Householder reflection
 void householder(int n, int k, double* A) {
     double* v = new double[n];
     double norm = 0.0;
@@ -184,7 +181,6 @@ void to_hessenberg(int n, double* A) {
     }
 }
 
-// Givens rotation
 void givens_rotation(int n, int i, double a, double b, double& c, double& s) {
     double r = std::sqrt(a * a + b * b);
     if (r < EPS) { c = 1.0; s = 0.0; return; }
@@ -192,7 +188,6 @@ void givens_rotation(int n, int i, double a, double b, double& c, double& s) {
     s = b / r;
 }
 
-// QR decomposition
 void qr_decomposition(int n, const double* A, double* Q, double* R) {
     copy_matrix(n, A, R);
     zero_matrix(n, Q);
@@ -219,31 +214,26 @@ void qr_decomposition(int n, const double* A, double* Q, double* R) {
     }
 }
 
-// Approximate eigenvector via inverse iteration (for evaluation)
 void inverse_iteration(int n, const double* A, double lambda, double* v) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(-1.0, 1.0);
 
-    // Initialize random vector
     for (int i = 0; i < n; i++) v[i] = dis(gen);
     double norm = 0.0;
     for (int i = 0; i < n; i++) norm += v[i] * v[i];
     norm = std::sqrt(norm);
     for (int i = 0; i < n; i++) v[i] /= norm;
 
-    // Simple LU solver for (A - lambda I)v = b
     for (int iter = 0; iter < 5; iter++) {
         double* b = new double[n];
         std::memcpy(b, v, n * sizeof(double));
         double* temp_v = new double[n]();
 
-        // Forward and backward substitution (simplified, assumes A - lambda I is non-singular)
         double* M = new double[n * n];
         copy_matrix(n, A, M);
         for (int i = 0; i < n; i++) M[i*n + i] -= lambda;
 
-        // LU decomposition (no pivoting, for simplicity)
         for (int k = 0; k < n - 1; k++) {
             for (int i = k + 1; i < n; i++) {
                 if (std::abs(M[k*n + k]) < EPS) continue;
@@ -254,7 +244,6 @@ void inverse_iteration(int n, const double* A, double lambda, double* v) {
             }
         }
 
-        // Backward substitution
         for (int i = n - 1; i >= 0; i--) {
             double sum = b[i];
             for (int j = i + 1; j < n; j++)
@@ -262,7 +251,6 @@ void inverse_iteration(int n, const double* A, double lambda, double* v) {
             temp_v[i] = sum / M[i*n + i];
         }
 
-        // Normalize
         norm = 0.0;
         for (int i = 0; i < n; i++) norm += temp_v[i] * temp_v[i];
         norm = std::sqrt(norm);
@@ -274,7 +262,6 @@ void inverse_iteration(int n, const double* A, double lambda, double* v) {
     }
 }
 
-// QR algorithm
 void qr_algorithm(int n, double* A, double* eigenvalues) {
     double* Ak = new double[n * n];
     double* Q = new double[n * n];
@@ -315,8 +302,8 @@ void qr_algorithm(int n, double* A, double* eigenvalues) {
     delete[] temp;
 }
 
-// Evaluate QR factorization: ||A - QR||_F
 double evaluate_qr_factorization(int n, const double* A, const double* Q, const double* R) {
+// Evaluate QR factorization: ||A - QR||_F
     double* QR = new double[n * n];
     double* residual = new double[n * n];
     matrix_mult(n, Q, R, QR);
@@ -329,7 +316,6 @@ double evaluate_qr_factorization(int n, const double* A, const double* Q, const 
     return norm;
 }
 
-// Compute eigenvalue residual: ||A v - lambda v||_2
 double compute_eigen_residual(int n, const double* A, double lambda, const double* v) {
     double* Av = new double[n]();
     for (int i = 0; i < n; i++)
@@ -348,22 +334,18 @@ double compute_eigen_residual(int n, const double* A, double lambda, const doubl
 }
 
 int main() {
-    int n = 100; // Large size
+    int n = 100; 
     double sparsity = 0.01;
 
-    // Generate random sparse matrix
     CSRMatrix A = generate_random_matrix(n, sparsity);
 
-    // Convert to dense
     double* dense_A = new double[n * n];
     csr_to_dense(n, A, dense_A);
 
-    // Compute eigenvalues
     double* eigenvalues = new double[n];
     qr_algorithm(n, dense_A, eigenvalues);
 
 
-    // Evaluate QR factorization
     double* Q = new double[n * n];
     double* R = new double[n * n];
     qr_decomposition(n, dense_A, Q, R);
