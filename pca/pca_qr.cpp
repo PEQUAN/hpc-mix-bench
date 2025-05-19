@@ -7,11 +7,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <random>
-
-struct Matrix;
-
-Matrix create_matrix(int r, int c);
-void free_matrix(Matrix& A);
+#include <vector>
+#include <algorithm>
 
 struct Matrix {
     int rows, cols;
@@ -32,7 +29,6 @@ struct Matrix {
         other.data = nullptr;
     }
 
-    // Assignment function for copy assignment
     void assign(const Matrix& other) {
         if (this != &other) {
             if (data) {
@@ -48,7 +44,6 @@ struct Matrix {
         }
     }
 
-    // Assignment function for move assignment
     void assign(Matrix&& other) noexcept {
         if (this != &other) {
             if (data) {
@@ -264,6 +259,70 @@ void computeReconstructionError(const Matrix& original, const Matrix& reconstruc
     rmse = std::sqrt(error / (original.rows * original.cols));
 }
 
+// QR Decomposition using Gram-Schmidt
+void qr_decomposition(const Matrix& A, Matrix& Q, Matrix& R) {
+    if (!A.data || A.rows != A.cols) {
+        std::cerr << "Error: Invalid matrix for QR decomposition ("
+                  << A.rows << "x" << A.cols << ")" << std::endl;
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
+    int n = A.rows;
+    Q.assign(create_matrix(n, n));
+    R.assign(create_matrix(n, n));
+    if (!Q.data || !R.data) {
+        std::cerr << "Error: Failed to allocate Q or R matrices" << std::endl;
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
+
+    Matrix v = create_matrix(n, 1);
+    if (!v.data) {
+        free_matrix(v);
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
+
+    for (int j = 0; j < n; ++j) {
+        for (int i = 0; i < n; ++i) {
+            v.data[i] = A.data[i * A.cols + j];
+        }
+        for (int k = 0; k < j; ++k) {
+            double dot = 0.0;
+            for (int i = 0; i < n; ++i) {
+                dot += v.data[i] * Q.data[i * Q.cols + k];
+            }
+            R.data[k * R.cols + j] = dot;
+            for (int i = 0; i < n; ++i) {
+                v.data[i] -= dot * Q.data[i * Q.cols + k];
+            }
+            // In modified Gram-Schmidt, v is updated after each projection
+        }
+        double norm = 0.0;
+        for (int i = 0; i < n; ++i) {
+            norm += v.data[i] * v.data[i];
+        }
+        norm = std::sqrt(norm);
+        if (norm < 1e-10) {
+            std::cerr << "Warning: Zero norm in QR decomposition at column " << j
+                      << ", indicating rank deficiency. Setting Q column to zero." << std::endl;
+            for (int i = 0; i < n; ++i) {
+                Q.data[i * Q.cols + j] = 0.0;
+            }
+            R.data[j * R.cols + j] = 0.0;
+            continue;
+        }
+        for (int i = 0; i < n; ++i) {
+            Q.data[i * Q.cols + j] = v.data[i] / norm;
+        }
+        R.data[j * R.cols + j] = norm;
+    }
+    free_matrix(v);
+}
+
 class PCA {
 private:
     int n_components;
@@ -271,87 +330,6 @@ private:
     Matrix projected;
     Matrix eigenvectors;
     Matrix eigenvalues;
-
-    void power_iteration(const Matrix& A, double& eigenvalue, Matrix& eigenvector, int max_iter = 1000) {
-        if (!A.data || A.rows != A.cols) {
-            std::cerr << "Error: Invalid matrix for power iteration ("
-                      << A.rows << "x" << A.cols << ")" << std::endl;
-            eigenvalue = 0.0;
-            free_matrix(eigenvector);
-            eigenvector.assign(create_matrix(0, 0));
-            return;
-        }
-        int n = A.rows;
-        free_matrix(eigenvector);
-        eigenvector.assign(create_matrix(n, 1));
-        if (!eigenvector.data) {
-            std::cerr << "Error: Failed to allocate eigenvector" << std::endl;
-            eigenvalue = 0.0;
-            return;
-        }
-
-        std::mt19937 gen(42);
-        std::uniform_real_distribution<> dis(0.0, 1.0);
-        double norm = 0.0;
-        for (int i = 0; i < n; ++i) {
-            double val = dis(gen);
-            eigenvector.data[i * eigenvector.cols + 0] = val;
-            norm += val * val;
-        }
-        norm = std::sqrt(norm);
-        if (norm < 1e-16) {
-            std::cerr << "Error: Zero norm in eigenvector initialization" << std::endl;
-            eigenvalue = 0.0;
-            free_matrix(eigenvector);
-            return;
-        }
-        for (int i = 0; i < n; ++i) {
-            eigenvector.data[i * eigenvector.cols + 0] /= norm;
-        }
-
-        Matrix temp = create_matrix(n, 1);
-        if (!temp.data) {
-            std::cerr << "Error: Failed to allocate temp vector in power iteration" << std::endl;
-            eigenvalue = 0.0;
-            free_matrix(temp);
-            free_matrix(eigenvector);
-            return;
-        }
-        double prev_eigenvalue = 0.0;
-        for (int iter = 0; iter < max_iter; ++iter) {
-            for (int i = 0; i < n; ++i) {
-                double sum = 0.0;
-                for (int j = 0; j < n; ++j) {
-                    sum += A.data[i * A.cols + j] * eigenvector.data[j * eigenvector.cols + 0];
-                }
-                temp.data[i * temp.cols + 0] = sum;
-            }
-            eigenvalue = 0.0;
-            for (int i = 0; i < n; ++i) {
-                eigenvalue += eigenvector.data[i * eigenvector.cols + 0] * temp.data[i * temp.cols + 0];
-            }
-            norm = 0.0;
-            for (int i = 0; i < n; ++i) {
-                norm += temp.data[i * temp.cols + 0] * temp.data[i * temp.cols + 0];
-            }
-            norm = std::sqrt(norm);
-            if (norm < 1e-16) {
-                std::cerr << "Error: Zero norm in power iteration at iter " << iter << std::endl;
-                eigenvalue = 0.0;
-                free_matrix(temp);
-                free_matrix(eigenvector);
-                return;
-            }
-            for (int i = 0; i < n; ++i) {
-                eigenvector.data[i * eigenvector.cols + 0] = temp.data[i * temp.cols + 0] / norm;
-            }
-            if (iter > 0 && std::abs(eigenvalue - prev_eigenvalue) < 1e-16) {
-                break;
-            }
-            prev_eigenvalue = eigenvalue;
-        }
-        free_matrix(temp);
-    }
 
     void computeEigenvectors(Matrix& data, int rows, int cols) {
         if (!data.data) {
@@ -371,51 +349,92 @@ private:
             }
         }
 
-        free_matrix(eigenvectors);
-        eigenvectors.assign(create_matrix(cols, n_components));
-        free_matrix(eigenvalues);
-        eigenvalues.assign(create_matrix(1, n_components));
-        if (!eigenvectors.data || !eigenvalues.data) {
-            std::cerr << "Error: Failed to allocate eigenvectors or eigenvalues" << std::endl;
+        Matrix A = create_matrix(cols, cols);
+        A.assign(cov);
+        Matrix Q_acc = create_matrix(cols, cols);
+        if (!Q_acc.data || !A.data) {
+            std::cerr << "Error: Failed to allocate matrices for QR algorithm" << std::endl;
+            free_matrix(A);
+            free_matrix(Q_acc);
             free_matrix(cov);
             return;
         }
-        Matrix A;
-        A.assign(cov);
-        for (int k = 0; k < n_components; ++k) {
-            double eigenvalue;
-            Matrix eigenvector;
-            power_iteration(A, eigenvalue, eigenvector);
-            if (!eigenvector.data) {
-                std::cerr << "Error: Power iteration failed for component " << k + 1 << std::endl;
-                free_matrix(A);
-                free_matrix(cov);
-                return;
-            }
-            eigenvalues.data[0 * eigenvalues.cols + k] = eigenvalue;
-            for (int i = 0; i < cols; ++i) {
-                eigenvectors.data[i * eigenvectors.cols + k] = eigenvector.data[i * eigenvector.cols + 0];
-            }
-
-            Matrix vvt = matrix_multiply(eigenvector, transpose(eigenvector));
-            if (!vvt.data) {
-                std::cerr << "Error: Failed to compute v*v^T for deflation" << std::endl;
-                free_matrix(eigenvector);
-                free_matrix(A);
-                free_matrix(cov);
-                return;
-            }
-            for (int i = 0; i < A.rows; ++i) {
-                for (int j = 0; j < A.cols; ++j) {
-                    A.data[i * A.cols + j] -= eigenvalue * vvt.data[i * vvt.cols + j];
-                }
-            }
-            free_matrix(vvt);
-            free_matrix(eigenvector);
-
-            std::cout << "Eigenvalue " << k + 1 << ": " << eigenvalue << std::endl;
+        for (int i = 0; i < cols; ++i) {
+            Q_acc.data[i * Q_acc.cols + i] = 1.0;
         }
+
+        int max_iter = 100;
+        for (int iter = 0; iter < max_iter; ++iter) {
+            Matrix Q, R;
+            qr_decomposition(A, Q, R);
+            if (!Q.data || !R.data) {
+                std::cerr << "Error: QR decomposition failed at iteration " << iter << std::endl;
+                free_matrix(A);
+                free_matrix(Q_acc);
+                free_matrix(cov);
+                return;
+            }
+            Matrix RQ = matrix_multiply(R, Q);
+            if (!RQ.data) {
+                std::cerr << "Error: Matrix multiplication failed in QR algorithm" << std::endl;
+                free_matrix(Q);
+                free_matrix(R);
+                free_matrix(A);
+                free_matrix(Q_acc);
+                free_matrix(cov);
+                return;
+            }
+            A.assign(RQ);
+            Matrix Q_acc_new = matrix_multiply(Q_acc, Q);
+            if (!Q_acc_new.data) {
+                std::cerr << "Error: Accumulator update failed in QR algorithm" << std::endl;
+                free_matrix(Q);
+                free_matrix(R);
+                free_matrix(RQ);
+                free_matrix(A);
+                free_matrix(Q_acc);
+                free_matrix(cov);
+                return;
+            }
+            Q_acc.assign(Q_acc_new);
+            free_matrix(Q);
+            free_matrix(R);
+            free_matrix(RQ);
+            free_matrix(Q_acc_new);
+        }
+
+        eigenvalues.assign(create_matrix(1, n_components));
+        eigenvectors.assign(create_matrix(cols, n_components));
+        if (!eigenvalues.data || !eigenvectors.data) {
+            std::cerr << "Error: Failed to allocate eigenvalues or eigenvectors" << std::endl;
+            free_matrix(A);
+            free_matrix(Q_acc);
+            free_matrix(cov);
+            return;
+        }
+
+        struct EigenPair {
+            double value;
+            int index;
+        };
+        std::vector<EigenPair> eigen_pairs(cols);
+        for (int i = 0; i < cols; ++i) {
+            eigen_pairs[i] = {A.data[i * A.cols + i], i};
+        }
+        std::sort(eigen_pairs.begin(), eigen_pairs.end(),
+                  [](const EigenPair& a, const EigenPair& b) { return std::abs(a.value) > std::abs(b.value); });
+
+        for (int k = 0; k < n_components; ++k) {
+            int idx = eigen_pairs[k].index;
+            eigenvalues.data[k] = eigen_pairs[k].value;
+            for (int i = 0; i < cols; ++i) {
+                eigenvectors.data[i * eigenvectors.cols + k] = Q_acc.data[i * Q_acc.cols + idx];
+            }
+            // std::cout << "Eigenvalue " << k + 1 << ": " << eigenvalues.data[k] << std::endl;
+        }
+
         free_matrix(A);
+        free_matrix(Q_acc);
         free_matrix(cov);
 
         for (int k = 0; k < n_components; ++k) {
@@ -424,7 +443,7 @@ private:
                 for (int i = 0; i < cols; ++i) {
                     dot += eigenvectors.data[i * eigenvectors.cols + k] * eigenvectors.data[i * eigenvectors.cols + m];
                 }
-                std::cout << "Dot product of eigenvectors " << m + 1 << " and " << k + 1 << ": " << dot << std::endl;
+                // std::cout << "Dot product of eigenvectors " << m + 1 << " and " << k + 1 << ": " << dot << std::endl;
             }
         }
     }
@@ -469,7 +488,6 @@ public:
             std::cerr << "Error: Projection failed" << std::endl;
             return create_matrix(0, 0);
         }
-       
 
         Matrix Vt = transpose(eigenvectors);
         if (!Vt.data) {
@@ -528,7 +546,7 @@ public:
                 post_center_mean += data.data[i * data.cols + j];
             }
             post_center_mean /= data.rows;
-            std::cout << "Column " << j + 1 << " mean after centering: " << post_center_mean << std::endl;
+            // std::cout << "Column " << j + 1 << " mean after centering: " << post_center_mean << std::endl;
             if (std::abs(post_center_mean) > 1e-10) {
                 std::cerr << "Warning: Column " << j + 1 << " is not centered properly (mean = "
                           << post_center_mean << ")" << std::endl;
@@ -545,7 +563,7 @@ int main(int argc, char* argv[]) {
     double sparsity = 0.5;
 
     unsigned int seed = 42;
-    unsigned int n_components = 5;
+    unsigned int n_components = 20;
 
     if (argc > 1) {
         n_components = std::atoi(argv[1]);
@@ -587,6 +605,11 @@ int main(int argc, char* argv[]) {
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
+    double check_x[10]; // add for check
+    for (int i=0; i<10; i++){
+        check_x[i] = reconstructed.data[i];
+        std::cout << check_x[i] << " ";
+    }
     double rmse, frobenius;
     computeReconstructionError(data, reconstructed, rmse, frobenius);
     if (rmse < 0) {
