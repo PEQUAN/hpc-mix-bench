@@ -12,14 +12,14 @@
 
 struct Matrix {
     int rows, cols;
-    __PROMISE__* data;
+    __PR_1__* data;
 
     Matrix() : rows(0), cols(0), data(nullptr) {}
 
     Matrix(const Matrix& other) : rows(other.rows), cols(other.cols), data(nullptr) {
         if (other.data && rows > 0 && cols > 0) {
-            data = new __PROMISE__[rows * cols];
-            std::memcpy(data, other.data, rows * cols * sizeof(__PROMISE__));
+            data = new __PR_1__[rows * cols];
+            std::memcpy(data, other.data, rows * cols * sizeof(__PR_1__));
         }
     }
 
@@ -78,7 +78,7 @@ Matrix create_matrix(int r, int c) {
     A.cols = c;
     if (r > 0 && c > 0) {
         try {
-            A.data = new __PROMISE__[r * c]();
+            A.data = new __PR_1__[r * c]();
         } catch (const std::bad_alloc&) {
             std::cerr << "Error: Failed to allocate matrix (" << r << "x" << c << ")" << std::endl;
             A.rows = 0;
@@ -133,7 +133,7 @@ Matrix transpose(const Matrix& A) {
     return result;
 }
 
-Matrix generate_random_matrix(int n_samples, int n_features, __PROMISE__ sparsity = 0.8, unsigned int seed = 42) {
+Matrix generate_random_matrix(int n_samples, int n_features, __PROMISE__ sparsity = 0.01, unsigned int seed = 42) {
     if (sparsity < 0.0 || sparsity > 1.0) {
         std::cerr << "Error: Sparsity must be between 0.0 and 1.0" << std::endl;
         return create_matrix(0, 0);
@@ -150,13 +150,13 @@ Matrix generate_random_matrix(int n_samples, int n_features, __PROMISE__ sparsit
     }
 
     std::mt19937 gen(seed);
-    std::uniform_real_distribution<> value_dis(-10.0, 10.0);
-    std::uniform_real_distribution<> sparsity_dis(0.0, 1.0);
+    std::uniform_real_distribution<> value_dis(-20.0, 20.0);
+    std::uniform_real_distribution<> sparsity_dis(0.0, 3.0);
 
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < n_features; ++j) {
             if (sparsity_dis(gen) >= sparsity) {
-                data.data[i * data.cols + j] = value_dis(gen);
+                data.data[i * data.cols + j] = value_dis(gen) * 10;
             }
         }
     }
@@ -187,11 +187,14 @@ Matrix scale_matrix(const Matrix& input) {
             }
         }
     }
-
-    __PROMISE__ temp = 0.0;
     for (int j = 0; j < input.cols; ++j) {
-
-        means[j] = counts[j] > 0 ? means[j] / counts[j] : temp;
+        if (counts[j] > 0 ){
+            means[j] = means[j] / counts[j];
+        }
+        else{
+            means[j] = 0.0;
+        }
+        // means[j] = counts[j] > 0 ? means[j] / counts[j] : 0.0;
     }
 
     for (int i = 0; i < input.rows; ++i) {
@@ -203,10 +206,14 @@ Matrix scale_matrix(const Matrix& input) {
             }
         }
     }
-
-    temp = 1.0;
     for (int j = 0; j < input.cols; ++j) {
-        stds[j] = counts[j] > 0 ? sqrt(stds[j] / counts[j]) : temp;
+        if (counts[j] > 0){
+            stds[j] = sqrt(stds[j] / counts[j]);
+        }
+        else{
+            stds[j] = 1.0;
+        }
+        // stds[j] = counts[j] > 0 ? sqrt(stds[j] / counts[j]) : 1.0;
         if (stds[j] < 1e-9) stds[j] = 1e-9;
     }
 
@@ -224,28 +231,6 @@ Matrix scale_matrix(const Matrix& input) {
     delete[] counts;
     return scaled;
 }
-
-
-void computeReconstructionError(const Matrix& original, const Matrix& reconstructed, __PROMISE__& rmse, __PROMISE__& frobenius) {
-    if (!original.data || !reconstructed.data || original.rows != reconstructed.rows || original.cols != reconstructed.cols) {
-        std::cerr << "Dimension mismatch or invalid data in reconstruction error calculation: original ("
-                  << original.rows << "x" << original.cols << "), reconstructed ("
-                  << reconstructed.rows << "x" << reconstructed.cols << ")" << std::endl;
-        rmse = frobenius = -1.0;
-        return;
-    }
-    __PROMISE__ error = 0.0;
-    for (int i = 0; i < original.rows; ++i) {
-        for (int j = 0; j < original.cols; ++j) {
-            __PROMISE__ diff = original.data[i * original.cols + j] - reconstructed.data[i * reconstructed.cols + j];
-            error += diff * diff;
-        }
-    }
-    frobenius = sqrt(error);
-    rmse = sqrt(error / (original.rows * original.cols));
-}
-
-// QR Decomposition using Householder Reflections
 void qr_decomposition(const Matrix& A, Matrix& Q, Matrix& R) {
     if (!A.data || A.rows != A.cols) {
         std::cerr << "Error: Invalid matrix for QR decomposition ("
@@ -264,16 +249,7 @@ void qr_decomposition(const Matrix& A, Matrix& Q, Matrix& R) {
         return;
     }
 
-    // Initialize R as a copy of A
-    for (int i = 0; i < n * n; ++i) {
-        R.data[i] = A.data[i];
-    }
-    // Initialize Q as identity
-    for (int i = 0; i < n; ++i) {
-        Q.data[i * Q.cols + i] = 1.0;
-    }
-
-    Matrix v = create_matrix(n, 1); // Householder vector
+    Matrix v = create_matrix(n, 1);
     if (!v.data) {
         free_matrix(v);
         free_matrix(Q);
@@ -282,68 +258,107 @@ void qr_decomposition(const Matrix& A, Matrix& Q, Matrix& R) {
     }
 
     for (int j = 0; j < n; ++j) {
-        // Extract subcolumn from j to n-1 in column j
-        int len = n - j;
-        for (int i = 0; i < len; ++i) {
-            v.data[i] = R.data[(i + j) * R.cols + j];
+        for (int i = 0; i < n; ++i) {
+            v.data[i] = A.data[i * A.cols + j];
         }
-        for (int i = len; i < n; ++i) {
-            v.data[i] = 0.0;
+        for (int k = 0; k < j; ++k) {
+            double dot = 0.0;
+            for (int i = 0; i < n; ++i) {
+                dot += v.data[i] * Q.data[i * Q.cols + k];
+            }
+            R.data[k * R.cols + j] = dot;
+            for (int i = 0; i < n; ++i) {
+                v.data[i] -= dot * Q.data[i * Q.cols + k];
+            }
+            // In modified Gram-Schmidt, v is updated after each projection
         }
-
-        // Compute norm of the subcolumn
-        __PROMISE__ norm = 0.0;
-        for (int i = 0; i < len; ++i) {
+        double norm = 0.0;
+        for (int i = 0; i < n; ++i) {
             norm += v.data[i] * v.data[i];
         }
         norm = sqrt(norm);
         if (norm < 1e-10) {
-            std::cerr << "Warning: Zero norm in Householder QR at column " << j
-                      << ", indicating rank deficiency. Continuing with zero reflection." << std::endl;
-            continue; // Skip reflection for zero column
-        }
-
-        // Compute Householder vector: v = x - ||x|| e_1
-        __PROMISE__ alpha = (v.data[0] >= 0 ? -norm : norm); // Choose sign to avoid cancellation
-        v.data[0] -= alpha;
-        __PROMISE__ v_norm = 0.0;
-        for (int i = 0; i < len; ++i) {
-            v_norm += v.data[i] * v.data[i];
-        }
-        v_norm = sqrt(v_norm);
-        if (v_norm < 1e-10) {
-            continue; // Skip if v is zero after adjustment
+            std::cerr << "Warning: Zero norm in QR decomposition at column " << j
+                      << ", indicating rank deficiency. Setting Q column to zero." << std::endl;
+            for (int i = 0; i < n; ++i) {
+                Q.data[i * Q.cols + j] = 0.0;
+            }
+            R.data[j * R.cols + j] = 0.0;
+            continue;
         }
         for (int i = 0; i < n; ++i) {
-            v.data[i] /= v_norm;
+            Q.data[i * Q.cols + j] = v.data[i] / norm;
         }
-
-        // Apply Householder reflection to R: R = (I - 2vv^T)R
-        for (int k = j; k < n; ++k) { // Update columns j to n-1
-            __PROMISE__ dot = 0.0;
-            for (int i = j; i < n; ++i) {
-                dot += v.data[i - j] * R.data[i * R.cols + k];
-            }
-            for (int i = j; i < n; ++i) {
-                R.data[i * R.cols + k] -= 2.0 * dot * v.data[i - j];
-            }
-        }
-
-        // Update Q: Q = Q (I - 2vv^T)
-        for (int k = 0; k < n; ++k) { // Update all columns of Q
-            __PROMISE__ dot = 0.0;
-            for (int i = j; i < n; ++i) {
-                dot += v.data[i - j] * Q.data[i * Q.cols + k];
-            }
-            for (int i = j; i < n; ++i) {
-                Q.data[i * Q.cols + k] -= 2.0 * dot * v.data[i - j];
-            }
-        }
+        R.data[j * R.cols + j] = norm;
     }
-
     free_matrix(v);
 }
+/*
+void qr_decomposition(const Matrix& A, Matrix& Q, Matrix& R) {
+    if (!A.data || A.rows != A.cols) {
+        std::cerr << "Error: Invalid matrix for QR decomposition ("
+                  << A.rows << "x" << A.cols << ")" << std::endl;
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
+    int n = A.rows;
+    Q.assign(create_matrix(n, n));
+    R.assign(create_matrix(n, n));
+    if (!Q.data || !R.data) {
+        std::cerr << "Error: Failed to allocate Q or R matrices" << std::endl;
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
 
+    Matrix u = create_matrix(n, 1);
+    Matrix v = create_matrix(n, 1);
+    if (!u.data || !v.data) {
+        free_matrix(u);
+        free_matrix(v);
+        free_matrix(Q);
+        free_matrix(R);
+        return;
+    }
+
+    for (int j = 0; j < n; ++j) {
+        for (int i = 0; i < n; ++i) {
+            v.data[i] = A.data[i * A.cols + j];
+        }
+        for (int k = 0; k < j; ++k) {
+            double dot = 0.0;
+            for (int i = 0; i < n; ++i) {
+                dot += v.data[i] * Q.data[i * Q.cols + k];
+            }
+            for (int i = 0; i < n; ++i) {
+                v.data[i] -= dot * Q.data[i * Q.cols + k];
+            }
+            R.data[k * R.cols + j] = dot;
+        }
+        double norm = 0.0;
+        for (int i = 0; i < n; ++i) {
+            norm += v.data[i] * v.data[i];
+        }
+        norm = sqrt(norm);
+        if (norm < 1e-10) {
+            std::cerr << "Warning: Zero norm in QR decomposition at column " << j
+                      << ", indicating rank deficiency. Setting Q column to zero." << std::endl;
+            for (int i = 0; i < n; ++i) {
+                Q.data[i * Q.cols + j] = 0.0;
+            }
+            R.data[j * R.cols + j] = 0.0;
+            continue;
+        }
+        for (int i = 0; i < n; ++i) {
+            Q.data[i * Q.cols + j] = v.data[i] / norm;
+        }
+        R.data[j * R.cols + j] = norm;
+    }
+    free_matrix(u);
+    free_matrix(v);
+}
+*/
 class PCA {
 private:
     int n_components;
@@ -439,28 +454,9 @@ private:
             int index;
         };
         std::vector<EigenPair> eigen_pairs(cols);
-        int valid_pairs = 0;
         for (int i = 0; i < cols; ++i) {
-            if (abs(A.data[i * A.cols + i]) > 1e-10) {
-                eigen_pairs[valid_pairs] = {A.data[i * A.cols + i], i};
-                valid_pairs++;
-            }
+            eigen_pairs[i] = {A.data[i * A.cols + i], i};
         }
-        if (valid_pairs < n_components) {
-            std::cerr << "Warning: Only " << valid_pairs << " non-zero eigenvalues found, but "
-                      << n_components << " components requested. Adjusting n_components." << std::endl;
-            n_components = valid_pairs;
-            eigenvalues.assign(create_matrix(1, n_components));
-            eigenvectors.assign(create_matrix(cols, n_components));
-            if (!eigenvalues.data || !eigenvectors.data) {
-                std::cerr << "Error: Failed to reallocate eigenvalues or eigenvectors" << std::endl;
-                free_matrix(A);
-                free_matrix(Q_acc);
-                free_matrix(cov);
-                return;
-            }
-        }
-        eigen_pairs.resize(valid_pairs);
         std::sort(eigen_pairs.begin(), eigen_pairs.end(),
                   [](const EigenPair& a, const EigenPair& b) { return abs(a.value) > abs(b.value); });
 
@@ -470,7 +466,7 @@ private:
             for (int i = 0; i < cols; ++i) {
                 eigenvectors.data[i * eigenvectors.cols + k] = Q_acc.data[i * Q_acc.cols + idx];
             }
-            std::cout << "Eigenvalue " << k + 1 << ": " << eigenvalues.data[k] << std::endl;
+            // std::cout << "Eigenvalue " << k + 1 << ": " << eigenvalues.data[k] << std::endl;
         }
 
         free_matrix(A);
@@ -483,7 +479,7 @@ private:
                 for (int i = 0; i < cols; ++i) {
                     dot += eigenvectors.data[i * eigenvectors.cols + k] * eigenvectors.data[i * eigenvectors.cols + m];
                 }
-                std::cout << "Dot product of eigenvectors " << m + 1 << " and " << k + 1 << ": " << dot << std::endl;
+                // std::cout << "Dot product of eigenvectors " << m + 1 << " and " << k + 1 << ": " << dot << std::endl;
             }
         }
     }
@@ -586,7 +582,7 @@ public:
                 post_center_mean += data.data[i * data.cols + j];
             }
             post_center_mean /= data.rows;
-            std::cout << "Column " << j + 1 << " mean after centering: " << post_center_mean << std::endl;
+            // std::cout << "Column " << j + 1 << " mean after centering: " << post_center_mean << std::endl;
             if (abs(post_center_mean) > 1e-10) {
                 std::cerr << "Warning: Column " << j + 1 << " is not centered properly (mean = "
                           << post_center_mean << ")" << std::endl;
@@ -598,15 +594,17 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-    int n_samples = 10000;
-    int n_features = 20;
-    __PROMISE__ sparsity = 0.5;
+    int n_samples = 100;
+    int n_features = 80;
+    double sparsity = 0.1;
 
-    unsigned int seed = 42;
-    unsigned int n_components = 20;
+    unsigned int seed = 2025;
+    unsigned int n_components = 10;
+
 
     std::cout << "Generating random matrix: " << n_samples << " x " << n_features
               << ", sparsity = " << sparsity << ", seed = " << seed << std::endl;
+
     Matrix raw_data = generate_random_matrix(n_samples, n_features, sparsity, seed);
     if (!raw_data.data) {
         std::cerr << "Error: Failed to generate random matrix" << std::endl;
@@ -632,14 +630,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int check_len = data.rows * data.cols;
+    int check_len=100;
+
     double check_x[check_len]; // add for check
     for (int i=0; i< check_len; i++){
         check_x[i]= reconstructed.data[i] / check_len;
     }
 
     PROMISE_CHECK_ARRAY(check_x, check_len);
-
 
     int non_zero_count = 0;
     for (int i = 0; i < data.rows; ++i) {

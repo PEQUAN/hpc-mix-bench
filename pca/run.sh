@@ -1,2 +1,2 @@
-g++ pca_qr.cpp -o pca_qr
-./pca_qr
+g++ pca_hqr.cpp -o pca_hqr
+./pca_hqr

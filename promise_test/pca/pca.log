@@ -1,13 +1,6 @@
-05/19 18:03:55: 🤘 cadnaPromise 🤘
-05/19 18:03:55: Using the compiler: g++
-05/19 18:03:55: We are working with 1 file and 20 different types
-05/19 18:03:55: The expectation is 1 digits.
-05/19 18:03:55: a) Get a reference result with cadna (double)
-05/19 18:03:57: pca.cpp: In function ‘Matrix scale_matrix(const Matrix&)’:
-pca.cpp:197:34: error: operands to ‘?:’ have different types ‘double_st’ and ‘double’
-  197 |         means[j] = counts[j] > 0 ? means[j] / counts[j] : 0.0;
-      |                    ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pca.cpp:197:34: note:   and each type can be converted to the other
-
-05/19 18:03:57: Compilation failed
-Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
+05/20 12:54:17: 🤘 cadnaPromise 🤘
+05/20 12:54:17: Using the compiler: g++
+05/20 12:54:18: We are working with 1 file and 34 different types
+05/20 12:54:18: The expectation is 1 digits.
+05/20 12:54:18: a) Get a reference result with cadna (double)
+05/20 12:54:23: ('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable check_x: expect 1 and found 0')
