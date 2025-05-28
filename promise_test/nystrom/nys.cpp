@@ -6,7 +6,7 @@
 
 
 struct DataPoint {
-    __PROMISE__* features; // Native array for features
+    __PROMISE__* features; 
     __PROMISE__ target;    
     int n_features;
 };
@@ -16,14 +16,16 @@ struct Matrix {
     __PROMISE__* data; // Row-major storage
 };
 
-Matrix create_matrix(int r, int c) {
-    // matrix in row-major order
+
+Matrix create_matrix(int r, int c) {// Allocate matrix in row-major order
     Matrix A = {r, c, nullptr};
     if (r > 0 && c > 0) {
         A.data = new __PROMISE__[r * c]();
     }
     return A;
 }
+
+// Free matrix memory
 void free_matrix(Matrix& A) {
     if (A.data) {
         delete[] A.data;
@@ -32,7 +34,8 @@ void free_matrix(Matrix& A) {
     A.rows = A.cols = 0;
 }
 
-double& matrix_at(Matrix& A, int i, int j) {
+// Access matrix element (i,j) with bounds checking, returns value
+__PROMISE__ matrix_at(const Matrix& A, int i, int j) {
     if (i < 0 || i >= A.rows || j < 0 || j >= A.cols) {
         std::cerr << "Error: Matrix access out of bounds at (" << i << "," << j
                   << "), size (" << A.rows << "x" << A.cols << ")" << std::endl;
@@ -41,28 +44,28 @@ double& matrix_at(Matrix& A, int i, int j) {
     return A.data[i * A.cols + j];
 }
 
-const __PROMISE__ matrix_at(const Matrix& A, int i, int j) {
+// Set matrix element (i,j) with bounds checking
+void set_matrix_at(Matrix& A, int i, int j, __PROMISE__ value) {
     if (i < 0 || i >= A.rows || j < 0 || j >= A.cols) {
         std::cerr << "Error: Matrix access out of bounds at (" << i << "," << j
                   << "), size (" << A.rows << "x" << A.cols << ")" << std::endl;
         throw std::out_of_range("Matrix access out of bounds");
     }
-    return A.data[i * A.cols + j];
+    A.data[i * A.cols + j] = value;
 }
 
-// Transpose matrix
 Matrix transpose(const Matrix& A) {
     Matrix result = create_matrix(A.cols, A.rows);
     if (!result.data) return result;
     for (int i = 0; i < A.rows; ++i) {
         for (int j = 0; j < A.cols; ++j) {
-            matrix_at(result, j, i) = matrix_at(A, i, j);
+            set_matrix_at(result, j, i, matrix_at(A, i, j));
         }
     }
     return result;
 }
 
-// Matrix multiplication
+
 Matrix matrix_multiply(const Matrix& A, const Matrix& B) {
     if (A.cols != B.rows) {
         std::cerr << "Matrix multiplication error: incompatible dimensions ("
@@ -77,13 +80,14 @@ Matrix matrix_multiply(const Matrix& A, const Matrix& B) {
             for (int k = 0; k < A.cols; ++k) {
                 sum += matrix_at(A, i, k) * matrix_at(B, k, j);
             }
-            matrix_at(result, i, j) = sum;
+            set_matrix_at(result, i, j, sum);
         }
     }
     return result;
 }
 
-Matrix pseudo_inverse(const Matrix& A) {
+
+Matrix pseudo_inverse(const Matrix& A) { // Pseudo-inverse using diagonal regularization
     int n = A.rows, m = A.cols;
     Matrix AtA = matrix_multiply(transpose(A), A);
     if (!AtA.data) return create_matrix(0, 0);
@@ -95,7 +99,8 @@ Matrix pseudo_inverse(const Matrix& A) {
 
     __PROMISE__ lambda = 1e-6;
     for (int i = 0; i < m; ++i) {
-        matrix_at(AtA, i, i) += lambda;
+        __PROMISE__ diag = matrix_at(AtA, i, i) + lambda;
+        set_matrix_at(AtA, i, i, diag);
     }
 
     if (n == m && n <= 50) {
@@ -106,12 +111,12 @@ Matrix pseudo_inverse(const Matrix& A) {
             return create_matrix(0, 0);
         }
         for (int i = 0; i < m; ++i) {
-            matrix_at(inv, i, i) = 1.0 / matrix_at(AtA, i, i);
+            set_matrix_at(inv, i, i, 1.0 / matrix_at(AtA, i, i));
         }
         Matrix temp = matrix_multiply(inv, transpose(A));
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                matrix_at(result, i, j) = matrix_at(temp, i, j);
+                set_matrix_at(result, i, j, matrix_at(temp, i, j));
             }
         }
         free_matrix(inv);
@@ -121,9 +126,9 @@ Matrix pseudo_inverse(const Matrix& A) {
     return result;
 }
 
-// Generate random dataset with sparsity control
+
 DataPoint* generate_random_data(int n_samples, int n_features, __PROMISE__ sparsity = 0.8, unsigned int seed = 42) {
-    if (sparsity < 0.0 || sparsity > 1.0) {
+    if (sparsity < 0.0 || sparsity > 1.0) {// Generate random dataset with sparsity control
         std::cerr << "Error: Sparsity must be between 0.0 and 1.0" << std::endl;
         return nullptr;
     }
@@ -142,8 +147,8 @@ DataPoint* generate_random_data(int n_samples, int n_features, __PROMISE__ spars
         data[i].n_features = n_features;
         data[i].target = 0.0;
 
-        // Ensure at least one non-zero element per row
-        std::uniform_int_distribution<> idx_dis(0, n_features - 1);
+        
+        std::uniform_int_distribution<> idx_dis(0, n_features - 1);// Ensure at least one non-zero element per row
         int non_zero_idx = idx_dis(gen);
         data[i].features[non_zero_idx] = value_dis(gen);
 
@@ -168,8 +173,9 @@ void free_data(DataPoint* data, int n_samples) {
     delete[] data;
 }
 
-// Scale features (standardization, handling sparse data)
+
 DataPoint* scale_features(DataPoint* data, int n_samples, int n_features) {
+    // Scale features (standardization, handling sparse data)
     if (!data || n_samples <= 0 || n_features <= 0) return nullptr;
     DataPoint* scaled_data = new DataPoint[n_samples];
     __PROMISE__* means = new __PROMISE__[n_features]();
@@ -228,12 +234,13 @@ DataPoint* scale_features(DataPoint* data, int n_samples, int n_features) {
     return scaled_data;
 }
 
+// Convert DataPoint array to Matrix
 Matrix data_to_matrix(DataPoint* data, int n_samples, int n_features) {
     Matrix X = create_matrix(n_samples, n_features);
     if (!X.data) return X;
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < n_features; ++j) {
-            matrix_at(X, i, j) = data[i].features[j];
+            set_matrix_at(X, i, j, data[i].features[j]);
         }
     }
     return X;
@@ -275,7 +282,7 @@ public:
         // Randomly select n_components indices
         int* indices = new int[n_features];
         for (int i = 0; i < n_features; ++i) indices[i] = i;
-        std::mt19937 gen(std::random_device{}());
+        std::mt19937 gen(42);
         for (int i = n_features - 1; i > 0; --i) {
             std::uniform_int_distribution<> dis(0, i);
             int j = dis(gen);
@@ -297,7 +304,7 @@ public:
         }
         for (int i = 0; i < n_samples; ++i) {
             for (int j = 0; j < n_components; ++j) {
-                matrix_at(C, i, j) = matrix_at(X, i, sampled_indices[j]);
+                set_matrix_at(C, i, j, matrix_at(X, i, sampled_indices[j]));
             }
         }
 
@@ -403,6 +410,7 @@ int main() {
         }
 
         Nystrom nystrom(n_components);
+
         nystrom.fit(X);
         Matrix X_reduced = nystrom.transform(X);
         if (!X_reduced.data) {
@@ -422,16 +430,15 @@ int main() {
             return 1;
         }
 
-
         __PROMISE__ recon_error = compute_reconstruction_error(X, X_reconstructed);
         std::cout << "Reconstruction Error (Frobenius norm): " << recon_error << std::endl;
 
-        int check_len = X_reconstructed.rows * X_reconstructed.cols;
+        int check_len = X_reduced.rows * X_reduced.cols;
         double check_x[check_len]; // add for check
         for (int i=0; i< check_len; i++){
-            check_x[i]= X_reconstructed.data[i];
+            check_x[i]= X_reduced.data[i];
         }
-    
+        // PROMISE_CHECK_VAR(recon_error);
         PROMISE_CHECK_ARRAY(check_x, check_len);
     
     

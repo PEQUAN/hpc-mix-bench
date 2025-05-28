@@ -1,28 +1,12 @@
-05/28 09:18:55: 🤘 cadnaPromise 🤘
-05/28 09:18:55: Using the compiler: g++
-05/28 09:18:55: We are working with 1 file and 20 different types
-05/28 09:18:55: The expectation is 1 digits.
-05/28 09:18:55: a) Get a reference result with cadna (double)
-05/28 09:18:58: nys.cpp: In function ‘double& matrix_at(Matrix&, int, int)’:
-nys.cpp:47:33: error: cannot bind non-const lvalue reference of type ‘double&’ to an rvalue of type ‘double’
-   47 |     return A.data[i * A.cols + j];
-      |            ~~~~~~~~~~~~~~~~~~~~~^
-In file included from nys.cpp:1:
-/home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/cadna.h:936:3: note:   after user-defined conversion: ‘double_st::operator double()’
-  936 |   operator double();
-      |   ^~~~~~~~
-nys.cpp: In function ‘Matrix pseudo_inverse(const Matrix&)’:
-nys.cpp:104:30: error: ambiguous overload for ‘operator+=’ (operand types are ‘double’ and ‘double_st’)
-  104 |         matrix_at(AtA, i, i) += lambda;
-      |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, double)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, float)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, long long unsigned int)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, long long int)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, long unsigned int)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, long int)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, unsigned int)’ (built-in)
-nys.cpp:104:30: note: candidate: ‘operator+=(double&, int)’ (built-in)
-
-05/28 09:18:58: Compilation failed
-Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
+05/28 15:45:05: 🤘 cadnaPromise 🤘
+05/28 15:45:05: Using the compiler: g++
+05/28 15:45:05: We are working with 1 file and 22 different types
+05/28 15:45:05: The expectation is 10 digits.
+05/28 15:45:05: a) Get a reference result with cadna (double)
+05/28 15:45:09: b) Check with highest format (Double)
+05/28 15:45:11: c) Delta-Debug Single/Double
+05/28 15:46:24: d) Delta-Debug Half/Single
+05/28 15:46:43: The final result contains 13x double, 8x float and 1x half_float::half.
+05/28 15:46:43: It tooks 97.90s
+05/28 15:46:43: 👉 78 compilations (51 failed) for 67.20s
+05/28 15:46:43: 👉 27 executions   (0 failed) for 22.31s
