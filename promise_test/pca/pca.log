@@ -1,6 +1,6 @@
-05/20 13:04:09: 🤘 cadnaPromise 🤘
-05/20 13:04:09: Using the compiler: g++
-05/20 13:04:09: We are working with 1 file and 34 different types
-05/20 13:04:09: The expectation is 1 digits.
-05/20 13:04:09: a) Get a reference result with cadna (double)
-05/20 13:04:15: ('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable check_x: expect 1 and found 0')
+05/30 19:58:41: 🤘 cadnaPromise 🤘
+05/30 19:58:41: Using the compiler: g++
+05/30 19:58:41: We are working with 1 file and 29 different types
+05/30 19:58:41: The expectation is 1 digits.
+05/30 19:58:41: a) Get a reference result with cadna (double)
+05/30 19:58:46: ('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable check_x: expect 1 and found 0')

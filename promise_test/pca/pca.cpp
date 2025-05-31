@@ -12,14 +12,14 @@
 
 struct Matrix {
     int rows, cols;
-    __PROMISE__* data;
+    __PR_3__* data;
 
     Matrix() : rows(0), cols(0), data(nullptr) {}
 
     Matrix(const Matrix& other) : rows(other.rows), cols(other.cols), data(nullptr) {
         if (other.data && rows > 0 && cols > 0) {
-            data = new __PROMISE__[rows * cols];
-            std::memcpy(data, other.data, rows * cols * sizeof(__PROMISE__));
+            data = new __PR_3__[rows * cols];
+            std::memcpy(data, other.data, rows * cols * sizeof(__PR_3__));
         }
     }
 
@@ -173,8 +173,8 @@ Matrix scale_matrix(const Matrix& input) {
     Matrix scaled = create_matrix(input.rows, input.cols);
     if (!scaled.data) return scaled;
 
-    __PROMISE__* means = new __PROMISE__[input.cols]();
-    __PROMISE__* stds = new __PROMISE__[input.cols]();
+    __PR_1__* means = new __PR_1__[input.cols]();
+    __PR_2__* stds = new __PR_2__[input.cols]();
     int* counts = new int[input.cols]();
 
     for (int i = 0; i < input.rows; ++i) {
@@ -647,9 +647,6 @@ int main(int argc, char* argv[]) {
             if (data.data[i * data.cols + j] != 0.0) non_zero_count++;
         }
     }
-    std::cout << "Non-zero elements: " << non_zero_count << ", sparsity: "
-              << (1.0 - (__PROMISE__)non_zero_count / (data.rows * data.cols)) << std::endl;
-
     free_matrix(data);
     free_matrix(reconstructed);
     return 0;
