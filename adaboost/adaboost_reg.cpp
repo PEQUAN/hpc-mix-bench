@@ -1,66 +1,178 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 #include <chrono>
 #include <algorithm>
 #include <cmath>
-#include <memory>
+#include <limits>
+#include <random>
+
+const int MAX_SAMPLES = 1000;  // Maximum number of samples
+const int N_FEATURES = 3;     // Number of features after dropping RAD , increase to 4, mse=3
+const int MAX_ESTIMATORS = 2; // Number of estimators
+const double LEARNING_RATE = 1; // Learning rate for AdaBoost
 
 struct DataPoint {
-    std::vector<double> features;
-    double target;
+    double features[N_FEATURES];
+    double target;  // MEDV
 };
 
-struct DecisionStump {
-    int feature_index;
-    double split_value;
-    double left_value;
-    double right_value;
+struct DecisionTree {
+    int feature_index1;
+    double split_value1;
+    int feature_index2_left;  // Second split for left branch
+    int feature_index2_right; // Second split for right branch
+    double split_value2_left;
+    double split_value2_right;
+    double left_left_value;   // Leaf for left-left
+    double left_right_value;  // Leaf for left-right
+    double right_left_value;  // Leaf for right-left
+    double right_right_value; // Leaf for right-right
 
-    double predict(const std::vector<double>& features) {
-        return features[feature_index] < split_value ? left_value : right_value;
+    double predict(const double features[]) {
+        if (features[feature_index1] < split_value1) {
+            // Left branch
+            if (feature_index2_left == -1) return left_left_value;
+            return features[feature_index2_left] < split_value2_left ? left_left_value : left_right_value;
+        } else {
+            // Right branch
+            if (feature_index2_right == -1) return right_left_value;
+            return features[feature_index2_right] < split_value2_right ? right_left_value : right_right_value;
+        }
     }
 
-    void fit(const std::vector<DataPoint>& data, const std::vector<double>& weights) {
-        int n_features = data[0].features.size();
+    void fit(const DataPoint data[], const double weights[], int n_samples) {
         double best_error = std::numeric_limits<double>::infinity();
         
-        for (int f = 0; f < n_features; ++f) {
-            std::vector<double> values;
-            for (const auto& point : data) values.push_back(point.features[f]);
-            std::sort(values.begin(), values.end());
+        // First split
+        for (int f1 = 0; f1 < N_FEATURES; ++f1) {
+            double values[MAX_SAMPLES];
+            for (int i = 0; i < n_samples; ++i) values[i] = data[i].features[f1];
+            std::sort(values, values + n_samples);
             
-            for (size_t i = 0; i < values.size() - 1; ++i) {
-                double split = (values[i] + values[i + 1]) / 2;
+            for (int i = 0; i < n_samples - 1; ++i) {
+                double split1 = (values[i] + values[i + 1]) / 2;
                 double left_sum = 0.0, right_sum = 0.0;
                 double left_weight = 0.0, right_weight = 0.0;
+                int left_count = 0, right_count = 0;
                 
-                for (size_t j = 0; j < data.size(); ++j) {
-                    if (data[j].features[f] < split) {
+                for (int j = 0; j < n_samples; ++j) {
+                    if (data[j].features[f1] < split1) {
                         left_sum += weights[j] * data[j].target;
                         left_weight += weights[j];
+                        left_count++;
                     } else {
                         right_sum += weights[j] * data[j].target;
                         right_weight += weights[j];
+                        right_count++;
                     }
                 }
                 
-                double left_val = left_weight > 0 ? left_sum / left_weight : 0.0;
-                double right_val = right_weight > 0 ? right_sum / right_weight : 0.0;
-                double error = 0.0;
+                double left_val = left_weight > 1e-10 ? left_sum / left_weight : 0.0;
+                double right_val = right_weight > 1e-10 ? right_sum / right_weight : 0.0;
                 
-                for (size_t j = 0; j < data.size(); ++j) {
-                    double pred = data[j].features[f] < split ? left_val : right_val;
-                    error += weights[j] * std::abs(data[j].target - pred);
+                double left_left_val = left_val, left_right_val = left_val; // Second split on left branch
+                int f2_left = -1;
+                double split2_left = 0.0;
+                double left_error = 0.0;
+                if (left_count > 1) {
+                    double best_left_error = std::numeric_limits<double>::infinity();
+                    for (int f2 = 0; f2 < N_FEATURES; ++f2) {
+                        for (int k = 0; k < n_samples - 1; ++k) {
+                            double split2 = (values[k] + values[k + 1]) / 2;
+                            double ll_sum = 0.0, lr_sum = 0.0;
+                            double ll_weight = 0.0, lr_weight = 0.0;
+                            
+                            for (int j = 0; j < n_samples; ++j) {
+                                if (data[j].features[f1] < split1 && data[j].features[f2] < split2) {
+                                    ll_sum += weights[j] * data[j].target;
+                                    ll_weight += weights[j];
+                                } else if (data[j].features[f1] < split1) {
+                                    lr_sum += weights[j] * data[j].target;
+                                    lr_weight += weights[j];
+                                }
+                            }
+                            
+                            double ll_val = ll_weight > 1e-10 ? ll_sum / ll_weight : 0.0;
+                            double lr_val = lr_weight > 1e-10 ? lr_sum / lr_weight : 0.0;
+                            double error = 0.0;
+                            for (int j = 0; j < n_samples; ++j) {
+                                if (data[j].features[f1] < split1) {
+                                    double pred = data[j].features[f2] < split2 ? ll_val : lr_val;
+                                    double resid = data[j].target - pred;
+                                    error += weights[j] * resid * resid;
+                                }
+                            }
+                            if (error < best_left_error) {
+                                best_left_error = error;
+                                f2_left = f2;
+                                split2_left = split2;
+                                left_left_val = ll_val;
+                                left_right_val = lr_val;
+                            }
+                        }
+                    }
+                    left_error = best_left_error;
                 }
                 
-                if (error < best_error) {
-                    best_error = error;
-                    feature_index = f;
-                    split_value = split;
-                    left_value = left_val;
-                    right_value = right_val;
+                // Second split on right branch
+                double right_left_val = right_val, right_right_val = right_val;
+                int f2_right = -1;
+                double split2_right = 0.0;
+                double right_error = 0.0;
+                if (right_count > 1) {
+                    double best_right_error = std::numeric_limits<double>::infinity();
+                    for (int f2 = 0; f2 < N_FEATURES; ++f2) {
+                        for (int k = 0; k < n_samples - 1; ++k) {
+                            double split2 = (values[k] + values[k + 1]) / 2;
+                            double rl_sum = 0.0, rr_sum = 0.0;
+                            double rl_weight = 0.0, rr_weight = 0.0;
+                            
+                            for (int j = 0; j < n_samples; ++j) {
+                                if (data[j].features[f1] >= split1 && data[j].features[f2] < split2) {
+                                    rl_sum += weights[j] * data[j].target;
+                                    rl_weight += weights[j];
+                                } else if (data[j].features[f1] >= split1) {
+                                    rr_sum += weights[j] * data[j].target;
+                                    rr_weight += weights[j];
+                                }
+                            }
+                            
+                            double rl_val = rl_weight > 1e-10 ? rl_sum / rl_weight : 0.0;
+                            double rr_val = rr_weight > 1e-10 ? rr_sum / rr_weight : 0.0;
+                            double error = 0.0;
+                            for (int j = 0; j < n_samples; ++j) {
+                                if (data[j].features[f1] >= split1) {
+                                    double pred = data[j].features[f2] < split2 ? rl_val : rr_val;
+                                    double resid = data[j].target - pred;
+                                    error += weights[j] * resid * resid;
+                                }
+                            }
+                            if (error < best_right_error) {
+                                best_right_error = error;
+                                f2_right = f2;
+                                split2_right = split2;
+                                right_left_val = rl_val;
+                                right_right_val = rr_val;
+                            }
+                        }
+                    }
+                    right_error = best_right_error;
+                }
+                
+                double total_error = left_error + right_error;
+                if (total_error < best_error) {
+                    best_error = total_error;
+                    feature_index1 = f1;
+                    split_value1 = split1;
+                    feature_index2_left = f2_left;
+                    feature_index2_right = f2_right;
+                    split_value2_left = split2_left;
+                    split_value2_right = split2_right;
+                    left_left_value = left_left_val;
+                    left_right_value = left_right_val;
+                    right_left_value = right_left_val;
+                    right_right_value = right_right_val;
                 }
             }
         }
@@ -69,190 +181,342 @@ struct DecisionStump {
 
 class AdaBoostRegressor {
 private:
-    std::vector<DecisionStump> stumps;
-    std::vector<double> stump_weights;
+    DecisionTree trees[MAX_ESTIMATORS];
+    double tree_weights[MAX_ESTIMATORS];
     int n_estimators;
+    int n_trees;
 
 public:
-    AdaBoostRegressor(int n_est = 50) : n_estimators(n_est) {}
+    AdaBoostRegressor(int n_est = MAX_ESTIMATORS) : n_estimators(n_est), n_trees(0) {}
     
-    void fit(const std::vector<DataPoint>& data) {
-        if (data.empty()) return;
-        int n_samples = data.size();
-        std::vector<double> weights(n_samples, 1.0 / n_samples);
-        double total_weight = 1.0;
+    void fit(const DataPoint data[], int n_samples) {
+        if (n_samples == 0) return;
+        double weights[MAX_SAMPLES];
+        double predictions[MAX_SAMPLES];
+        for (int i = 0; i < n_samples; ++i) {
+            weights[i] = 1.0 / n_samples;
+            predictions[i] = 0.0;
+        }
 
-        for (int t = 0; t < n_estimators; ++t) {
-            DecisionStump stump;
-            stump.fit(data, weights);
-            double error = 0.0;
-            std::vector<double> residuals(n_samples);
+        for (int t = 0; t < n_estimators && n_trees < MAX_ESTIMATORS; ++t) {
+            DecisionTree tree;
+            tree.fit(data, weights, n_samples);
             
+            // Compute loss (normalized squared error)
+            double max_loss = 0.0;
+            double loss_sum = 0.0;
+            double losses[MAX_SAMPLES];
             for (int i = 0; i < n_samples; ++i) {
-                residuals[i] = std::abs(data[i].target - stump.predict(data[i].features));
-                error += weights[i] * residuals[i];
+                double pred = tree.predict(data[i].features);
+                double resid = std::abs(data[i].target - pred);
+                losses[i] = resid * resid;
+                if (losses[i] > max_loss) max_loss = losses[i];
             }
-            error /= total_weight;
-            if (error >= 0.5) break;  // Stop if error too large
-            
-            double alpha = 0.5 * std::log((1.0 - error) / (error + 1e-10));
-            stumps.push_back(stump);
-            stump_weights.push_back(alpha);
-            
-            total_weight = 0.0;
+            if (max_loss < 1e-10) break;
             for (int i = 0; i < n_samples; ++i) {
-                weights[i] *= std::exp(alpha * residuals[i]);
+                losses[i] /= max_loss;
+                loss_sum += weights[i] * losses[i];
+            }
+            double error = loss_sum;
+            if (error > 0.999) break;
+            
+            // Compute tree weight with learning rate
+            double beta = error / (1.0 - error + 1e-10);
+            double alpha = LEARNING_RATE * 0.5 * std::log(1.0 / (beta + 1e-10));
+            if (alpha <= 0) continue;
+            
+            // Update predictions and weights
+            trees[n_trees] = tree;
+            tree_weights[n_trees] = alpha;
+            n_trees++;
+            double total_weight = 0.0;
+            for (int i = 0; i < n_samples; ++i) {
+                double pred = tree.predict(data[i].features);
+                predictions[i] += alpha * pred;
+                weights[i] *= std::pow(losses[i], 1.0 - error);
                 total_weight += weights[i];
             }
             for (int i = 0; i < n_samples; ++i) {
-                weights[i] /= total_weight;
+                weights[i] /= (total_weight + 1e-10);
             }
         }
+        std::cout << "Trained " << n_trees << " trees" << std::endl;
     }
     
-    double predict(const std::vector<double>& features) {
+    double predict(const double features[]) {
         double sum = 0.0;
         double weight_sum = 0.0;
-        for (size_t i = 0; i < stumps.size(); ++i) {
-            sum += stump_weights[i] * stumps[i].predict(features);
-            weight_sum += stump_weights[i];
+        for (int i = 0; i < n_trees; ++i) {
+            sum += tree_weights[i] * trees[i].predict(features);
+            weight_sum += tree_weights[i];
         }
         return sum / (weight_sum + 1e-10);
     }
 };
 
-std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
-    if (data.empty()) return {};
-    std::vector<DataPoint> scaled_data = data;
-    int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
-    
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            means[i] += point.features[i];
+void compute_feature_stats(const DataPoint data[], int n_samples, double means[], double stds[]) {
+    for (int j = 0; j < N_FEATURES; ++j) {
+        means[j] = 0.0;
+        stds[j] = 0.0;
+    }
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (!std::isnan(data[i].features[j])) {
+                means[j] += data[i].features[j];
+            }
         }
     }
-    for (int i = 0; i < n_features; ++i) {
-        means[i] /= data.size();
+    for (int j = 0; j < N_FEATURES; ++j) {
+        means[j] /= n_samples;
     }
-    
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
-            stds[i] += diff * diff;
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (!std::isnan(data[i].features[j])) {
+                double diff = data[i].features[j] - means[j];
+                stds[j] += diff * diff;
+            }
         }
     }
-    for (int i = 0; i < n_features; ++i) {
-        stds[i] = sqrt(stds[i] / data.size());
-        if (stds[i] < 1e-9) stds[i] = 1e-9;
+    for (int j = 0; j < N_FEATURES; ++j) {
+        stds[j] = sqrt(stds[j] / n_samples);
+        if (stds[j] < 1e-9) stds[j] = 1e-9;
     }
-    
-    for (auto& point : scaled_data) {
-        for (int i = 0; i < n_features; ++i) {
-            point.features[i] = (point.features[i] - means[i]) / stds[i];
-        }
-    }
-    return scaled_data;
 }
 
-std::vector<DataPoint> read_csv(const std::string& filename) {
-    std::vector<DataPoint> data;
+void transform_features(DataPoint data[], int n_samples) {
+    // Apply log-transformation to CRIM (0), ZN (1), and LSTAT (11 after dropping RAD)
+    int indices[] = {0, 1, 11};
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j : indices) {
+            if (!std::isnan(data[i].features[j]) && data[i].features[j] > 0) {
+                data[i].features[j] = std::log(data[i].features[j] + 1e-10);
+            }
+        }
+    }
+}
+
+int remove_outliers(DataPoint data[], int n_samples, int& new_n_samples) {
+    double means[N_FEATURES];
+    double stds[N_FEATURES];
+    compute_feature_stats(data, n_samples, means, stds);
+    
+    DataPoint temp_data[MAX_SAMPLES];
+    new_n_samples = 0;
+    for (int i = 0; i < n_samples; ++i) {
+        bool is_outlier = false;
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (!std::isnan(data[i].features[j])) {
+                double z = std::abs((data[i].features[j] - means[j]) / stds[j]);
+                if (z > 3.0) {
+                    is_outlier = true;
+                    break;
+                }
+            }
+        }
+        if (!is_outlier) {
+            temp_data[new_n_samples] = data[i];
+            new_n_samples++;
+        }
+    }
+    
+    for (int i = 0; i < new_n_samples; ++i) {
+        data[i] = temp_data[i];
+    }
+    return new_n_samples > 0 ? 0 : 1;
+}
+
+void scale_features(const DataPoint data[], DataPoint scaled_data[], int n_samples) {
+    if (n_samples == 0) return;
+    double means[N_FEATURES];
+    double stds[N_FEATURES];
+    compute_feature_stats(data, n_samples, means, stds);
+    
+    for (int i = 0; i < n_samples; ++i) {
+        scaled_data[i] = data[i];
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (!std::isnan(scaled_data[i].features[j])) {
+                scaled_data[i].features[j] = (scaled_data[i].features[j] - means[j]) / stds[j];
+            } else {
+                scaled_data[i].features[j] = 0.0;
+            }
+        }
+    }
+}
+
+void shuffle_data(DataPoint data[], int n_samples) {
+    std::mt19937 gen(42);  // Match random_state=42
+    for (int i = n_samples - 1; i > 0; --i) {
+        std::uniform_int_distribution<> dis(0, i);
+        int j = dis(gen);
+        DataPoint temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
+    }
+}
+
+int read_csv(const std::string& filename, DataPoint data[], int& n_samples) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open " << filename << std::endl;
-        return data;
+        return 1;
     }
     std::string line;
-    if (!getline(file, line)) return data;
+    if (!getline(file, line)) return 1;
     std::cout << "Header: " << line << std::endl;
     
+    n_samples = 0;
     int line_num = 1;
-    while (getline(file, line)) {
+    while (getline(file, line) && n_samples < MAX_SAMPLES) {
         std::stringstream ss(line);
         std::string value;
-        std::vector<double> features;
+        double features[13];  // Temporary for 13 features
         double target = 0.0;
         int column = 0;
         
-        while (getline(ss, value, ',')) {
-            if (column == 0) {  // Skip index
-                column++;
-                continue;
-            }
+        while (getline(ss, value, ',') && column < 14) {
             try {
-                if (column < 11) {  // Features (age to s6)
-                    features.push_back(std::stod(value));
-                } else if (column == 11) {  // Target (label)
-                    target = std::stod(value);
+                if (value == "NA") {
+                    features[column] = std::numeric_limits<double>::quiet_NaN();
+                } else if (column < 13) {
+                    features[column] = std::stod(value);
+                } else {
+                    target = std::stod(value);  // MEDV
                 }
             } catch (const std::exception& e) {
                 std::cerr << "Error parsing '" << value << "' at line " << line_num 
                           << ", column " << column << std::endl;
-                return {};
+                return 1;
             }
             column++;
         }
         
-        if (features.size() != 10) {
-            std::cerr << "Error: Expected 10 features, got " << features.size() 
-                      << " at line " << line_num << std::endl;
-            return {};
+        if (column != 14) {
+            std::cerr << "Error: Expected 13 features + 1 target, got " 
+                      << column << " at line " << line_num << std::endl;
+            return 1;
         }
-        data.push_back({features, target});
+        
+        int dest_idx = 0; // Skip RAD (index 8)
+        for (int i = 0; i < 13; ++i) {
+            if (i != 8) {  // Exclude RAD
+                data[n_samples].features[dest_idx++] = features[i];
+            }
+        }
+        data[n_samples].target = target;
+        n_samples++;
         line_num++;
     }
-    std::cout << "Loaded " << data.size() << " data points with " 
-              << (data.empty() ? 0 : data[0].features.size()) << " features each" << std::endl;
-    return data;
+    
+    // Impute missing values with feature means
+    double means[N_FEATURES];
+    int counts[N_FEATURES];
+    for (int j = 0; j < N_FEATURES; ++j) {
+        means[j] = 0.0;
+        counts[j] = 0;
+    }
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (!std::isnan(data[i].features[j])) {
+                means[j] += data[i].features[j];
+                counts[j]++;
+            }
+        }
+    }
+    for (int j = 0; j < N_FEATURES; ++j) {
+        means[j] = counts[j] > 0 ? means[j] / counts[j] : 0.0;
+    }
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            if (std::isnan(data[i].features[j])) {
+                data[i].features[j] = means[j];
+            }
+        }
+    }
+    
+    std::cout << "Loaded " << n_samples << " data points with " 
+              << N_FEATURES << " features each" << std::endl;
+    return 0;
 }
 
-void write_predictions(const std::vector<DataPoint>& data, 
-                      const std::vector<double>& predictions, 
-                      const std::string& filename) {
+void write_predictions(const DataPoint data[], const double predictions[], 
+                     int n_samples, const std::string& filename) {
     std::ofstream file(filename);
     if (!file.is_open()) return;
-    file << "age,sex,bmi,bp,s1,s2,s3,s4,s5,s6,target,prediction\n";
+    file << "CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,TAX,PTRATIO,B,LSTAT,MEDV,prediction\n";
     
-    for (size_t i = 0; i < data.size(); ++i) {
-        for (size_t j = 0; j < data[i].features.size(); ++j) {
-            file << data[i].features[j] << (j < data[i].features.size() - 1 ? "," : "");
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            file << data[i].features[j] << (j < N_FEATURES - 1 ? "," : "");
         }
         file << "," << data[i].target << "," << predictions[i] << "\n";
     }
 }
 
+double compute_r2_score(const DataPoint data[], const double predictions[], int n_samples) {
+    double mean_y = 0.0;
+    for (int i = 0; i < n_samples; ++i) {
+        mean_y += data[i].target;
+    }
+    mean_y /= n_samples;
+    
+    double ss_tot = 0.0, ss_res = 0.0;
+    for (int i = 0; i < n_samples; ++i) {
+        double diff = data[i].target - mean_y;
+        ss_tot += diff * diff;
+        diff = data[i].target - predictions[i];
+        ss_res += diff * diff;
+    }
+    return 1.0 - (ss_res / (ss_tot + 1e-10));
+}
+
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/regression/diabetes.csv");
-    if (raw_data.empty()) return 1;
+    DataPoint raw_data[MAX_SAMPLES];
+    int n_samples = 0;
     
-    std::vector<DataPoint> data = scale_features(raw_data);
-    if (data.empty()) return 1;
+    if (read_csv("../data/regression/boston_housing.csv", raw_data, n_samples)) return 1;
+    if (n_samples == 0) return 1;
     
-    size_t train_size = static_cast<size_t>(0.8 * data.size());
-    std::vector<DataPoint> train_data(data.begin(), data.begin() + train_size);
-    std::vector<DataPoint> test_data(data.begin() + train_size, data.end());
+    // Apply log-transformation
+    transform_features(raw_data, n_samples);
     
-    AdaBoostRegressor ada(50);
+    // Remove outliers
+    int new_n_samples = 0;
+    if (remove_outliers(raw_data, n_samples, new_n_samples)) return 1;
+    n_samples = new_n_samples;
+    std::cout << "After outlier removal: " << n_samples << " data points" << std::endl;
+    
+    
+    shuffle_data(raw_data, n_samples); // Shuffle data
+    
+   
+    DataPoint scaled_data[MAX_SAMPLES];  // Scale features
+    scale_features(raw_data, scaled_data, n_samples);
+    
+    int train_size = static_cast<int>(0.7 * n_samples); // 70-30 split
+    int test_size = n_samples - train_size;
+    std::cout << "start:" << std::endl;
+    AdaBoostRegressor ada(MAX_ESTIMATORS);
     auto start = std::chrono::high_resolution_clock::now();
-    ada.fit(train_data);
+    ada.fit(scaled_data, train_size);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    std::vector<double> predictions;
+    double predictions[MAX_SAMPLES];
     double mse = 0.0;
-    for (const auto& point : test_data) {
-        double pred = ada.predict(point.features);
-        predictions.push_back(pred);
-        double diff = pred - point.target;
+    for (int i = 0; i < test_size; ++i) {
+        predictions[i] = ada.predict(scaled_data[train_size + i].features);
+        double diff = predictions[i] - scaled_data[train_size + i].target;
         mse += diff * diff;
     }
-    mse /= test_data.size();
+    mse /= test_size;
     std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
     
-    write_predictions(test_data, predictions, "results/adaboost/preds_reg.csv");
+    double r2 = compute_r2_score(&scaled_data[train_size], predictions, test_size);
+    std::cout << "R^2 Score: " << r2 << std::endl;
+    
+    write_predictions(&scaled_data[train_size], predictions, test_size, "results/adaboost/preds_boston.csv");
     
     return 0;
 }

@@ -1,207 +1,259 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <random>
 #include <chrono>
-#include <cmath>
 #include <algorithm>
-#include <numeric>
+#include <cmath>
+#include <memory>
+
+const int MAX_SAMPLES = 1000;  // Maximum number of samples
+const int N_FEATURES = 13;     // Number of features in Boston Housing dataset
 
 struct DataPoint {
-    std::vector<double> features;
-    int label;  // -1 or 1 for AdaBoost
+    double features[N_FEATURES];
+    double target;
 };
 
 struct DecisionStump {
     int feature_index;
-    double threshold;
-    double polarity;
-    double alpha;
-    
-    int predict(const std::vector<double>& features) const {
-        double value = features[feature_index];
-        return (polarity * (value < threshold ? -1 : 1));
+    double split_value;
+    double left_value;
+    double right_value;
+
+    double predict(const double features[]) {
+        return features[feature_index] < split_value ? left_value : right_value;
     }
-};
 
-class AdaBoostClassifier {
-private:
-    std::vector<DecisionStump> stumps;
-    int n_estimators;
-    unsigned int seed;
-
-    DecisionStump train_stump(const std::vector<DataPoint>& data, 
-                            const std::vector<double>& weights) {
-        int n_features = data[0].features.size();
-        DecisionStump best_stump{-1, 0.0, 1.0, 0.0};
-        double min_error = std::numeric_limits<double>::infinity();
+    void fit(const DataPoint data[], const double weights[], int n_samples) {
+        double best_error = std::numeric_limits<double>::infinity();
         
-        for (int f = 0; f < n_features; ++f) {
-            std::vector<double> values;
-            for (const auto& point : data) {
-                values.push_back(point.features[f]);
-            }
-            std::sort(values.begin(), values.end());
+        for (int f = 0; f < N_FEATURES; ++f) {
+            double values[MAX_SAMPLES];
+            for (int i = 0; i < n_samples; ++i) values[i] = data[i].features[f];
+            std::sort(values, values + n_samples);
             
-            for (size_t i = 0; i < values.size() - 1; ++i) {
-                double threshold = (values[i] + values[i + 1]) / 2;
-                for (double polarity : {1.0, -1.0}) {
-                    double error = 0.0;
-                    for (size_t j = 0; j < data.size(); ++j) {
-                        int pred = polarity * (data[j].features[f] < threshold ? -1 : 1);
-                        if (pred != data[j].label) error += weights[j];
+            for (int i = 0; i < n_samples - 1; ++i) {
+                double split = (values[i] + values[i + 1]) / 2;
+                double left_sum = 0.0, right_sum = 0.0;
+                double left_weight = 0.0, right_weight = 0.0;
+                
+                for (int j = 0; j < n_samples; ++j) {
+                    if (data[j].features[f] < split) {
+                        left_sum += weights[j] * data[j].target;
+                        left_weight += weights[j];
+                    } else {
+                        right_sum += weights[j] * data[j].target;
+                        right_weight += weights[j];
                     }
-                    if (error < min_error) {
-                        min_error = error;
-                        best_stump = {f, threshold, polarity, 0.0};
-                    }
+                }
+                
+                double left_val = left_weight > 0 ? left_sum / left_weight : 0.0;
+                double right_val = right_weight > 0 ? right_sum / right_weight : 0.0;
+                double error = 0.0;
+                
+                for (int j = 0; j < n_samples; ++j) {
+                    double pred = data[j].features[f] < split ? left_val : right_val;
+                    error += weights[j] * std::abs(data[j].target - pred);
+                }
+                
+                if (error < best_error) {
+                    best_error = error;
+                    feature_index = f;
+                    split_value = split;
+                    left_value = left_val;
+                    right_value = right_val;
                 }
             }
         }
-        
-        best_stump.alpha = 0.5 * log((1.0 - min_error) / (min_error + 1e-10));
-        return best_stump;
-    }
-
-public:
-    AdaBoostClassifier(int n_est = 50, unsigned int s = 42) 
-        : n_estimators(n_est), seed(s) {}
-    
-    void fit(const std::vector<DataPoint>& data) {
-        int n_samples = data.size();
-        std::vector<double> weights(n_samples, 1.0 / n_samples);
-        stumps.clear();
-        
-        for (int t = 0; t < n_estimators; ++t) {
-            DecisionStump stump = train_stump(data, weights);
-            stumps.push_back(stump);
-            
-            double total_weight = 0.0;
-            for (int i = 0; i < n_samples; ++i) {
-                int pred = stump.predict(data[i].features);
-                weights[i] *= exp(-stump.alpha * data[i].label * pred);
-                total_weight += weights[i];
-            }
-            
-            for (auto& w : weights) {
-                w /= total_weight;
-            }
-            
-            if (stump.alpha < 0.01) break;
-        }
-    }
-    
-    int predict(const std::vector<double>& features) {
-        double sum = 0.0;
-        for (const auto& stump : stumps) {
-            sum += stump.alpha * stump.predict(features);
-        }
-        return sum > 0 ? 1 : -1;
     }
 };
 
-std::vector<DataPoint> scale_features(const std::vector<DataPoint>& data) {
-    std::vector<DataPoint> scaled_data = data;
-    int n_features = data[0].features.size();
-    std::vector<double> means(n_features, 0.0);
-    std::vector<double> stds(n_features, 0.0);
+class AdaBoostRegressor {
+private:
+    DecisionStump stumps[50];  // Fixed number of estimators
+    double stump_weights[50];
+    int n_estimators;
+    int n_stumps;
+
+public:
+    AdaBoostRegressor(int n_est = 50) : n_estimators(n_est), n_stumps(0) {}
     
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            means[i] += point.features[i];
+    void fit(const DataPoint data[], int n_samples) {
+        if (n_samples == 0) return;
+        double weights[MAX_SAMPLES];
+        for (int i = 0; i < n_samples; ++i) weights[i] = 1.0 / n_samples;
+        double total_weight = 1.0;
+
+        for (int t = 0; t < n_estimators && n_stumps < 50; ++t) {
+            DecisionStump stump;
+            stump.fit(data, weights, n_samples);
+            double error = 0.0;
+            double residuals[MAX_SAMPLES];
+            
+            for (int i = 0; i < n_samples; ++i) {
+                residuals[i] = std::abs(data[i].target - stump.predict(data[i].features));
+                error += weights[i] * residuals[i];
+            }
+            error /= total_weight;
+            if (error >= 0.5) break;
+            
+            double alpha = 0.5 * std::log((1.0 - error) / (error + 1e-10));
+            stumps[n_stumps] = stump;
+            stump_weights[n_stumps] = alpha;
+            n_stumps++;
+            
+            total_weight = 0.0;
+            for (int i = 0; i < n_samples; ++i) {
+                weights[i] *= std::exp(alpha * residuals[i]);
+                total_weight += weights[i];
+            }
+            for (int i = 0; i < n_samples; ++i) {
+                weights[i] /= total_weight;
+            }
         }
     }
-    for (int i = 0; i < n_features; ++i) {
-        means[i] /= data.size();
-    }
     
-    for (const auto& point : data) {
-        for (int i = 0; i < n_features; ++i) {
-            double diff = point.features[i] - means[i];
-            stds[i] += diff * diff;
+    double predict(const double features[]) {
+        double sum = 0.0;
+        double weight_sum = 0.0;
+        for (int i = 0; i < n_stumps; ++i) {
+            sum += stump_weights[i] * stumps[i].predict(features);
+            weight_sum += stump_weights[i];
+        }
+        return sum / (weight_sum + 1e-10);
+    }
+};
+
+void scale_features(const DataPoint data[], DataPoint scaled_data[], int n_samples) {
+    if (n_samples == 0) return;
+    double means[N_FEATURES] = {0.0};
+    double stds[N_FEATURES] = {0.0};
+    
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            means[j] += data[i].features[j];
         }
     }
-    for (int i = 0; i < n_features; ++i) {
-        stds[i] = sqrt(stds[i] / data.size());
-        if (stds[i] < 1e-9) stds[i] = 1e-9;
+    for (int j = 0; j < N_FEATURES; ++j) {
+        means[j] /= n_samples;
     }
     
-    for (auto& point : scaled_data) {
-        for (int i = 0; i < n_features; ++i) {
-            point.features[i] = (point.features[i] - means[i]) / stds[i];
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            double diff = data[i].features[j] - means[j];
+            stds[j] += diff * diff;
         }
     }
-    return scaled_data;
+    for (int j = 0; j < N_FEATURES; ++j) {
+        stds[j] = sqrt(stds[j] / n_samples);
+        if (stds[j] < 1e-9) stds[j] = 1e-9;
+    }
+    
+    for (int i = 0; i < n_samples; ++i) {
+        scaled_data[i] = data[i];
+        for (int j = 0; j < N_FEATURES; ++j) {
+            scaled_data[i].features[j] = (data[i].features[j] - means[j]) / stds[j];
+        }
+    }
 }
 
-std::vector<DataPoint> read_csv(const std::string& filename) {
-    std::vector<DataPoint> data;
+int read_csv(const std::string& filename, DataPoint data[], int& n_samples) {
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open " << filename << std::endl;
+        return 1;
+    }
     std::string line;
-    getline(file, line); 
+    if (!getline(file, line)) return 1;
+    std::cout << "Header: " << line << std::endl;
     
-    while (getline(file, line)) {
+    n_samples = 0;
+    int line_num = 1;
+    while (getline(file, line) && n_samples < MAX_SAMPLES) {
         std::stringstream ss(line);
         std::string value;
-        std::vector<double> features;
+        double features[N_FEATURES];
+        double target = 0.0;
+        int column = 0;
         
-        while (getline(ss, value, ',')) {
-            features.push_back(std::stod(value));
+        while (getline(ss, value, ',') && column < N_FEATURES + 1) {
+            try {
+                if (value == "NA") value = "0"; // Handle NA values
+                if (column < N_FEATURES) {
+                    features[column] = std::stod(value);
+                } else {
+                    target = std::stod(value);
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "Error parsing '" << value << "' at line " << line_num 
+                          << ", column " << column << std::endl;
+                return 1;
+            }
+            column++;
         }
         
-        int label = features.back();
-        features.pop_back();
-        data.push_back({features, label == 0 ? -1 : 1});
+        if (column != N_FEATURES + 1) {
+            std::cerr << "Error: Expected " << N_FEATURES << " features + 1 target, got " 
+                      << column << " at line " << line_num << std::endl;
+            return 1;
+        }
+        for (int i = 0; i < N_FEATURES; ++i) {
+            data[n_samples].features[i] = features[i];
+        }
+        data[n_samples].target = target;
+        n_samples++;
+        line_num++;
     }
-    return data;
+    std::cout << "Loaded " << n_samples << " data points with " 
+              << N_FEATURES << " features each" << std::endl;
+    return 0;
 }
 
-void write_predictions(const std::vector<DataPoint>& data, 
-                      const std::vector<int>& predictions, 
-                      const std::string& filename) {
+void write_predictions(const DataPoint data[], const double predictions[], 
+                     int n_samples, const std::string& filename) {
     std::ofstream file(filename);
-    file << "feature1,feature2,...,label,prediction\n";
+    if (!file.is_open()) return;
+    file << "CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,RAD,TAX,PTRATIO,B,LSTAT,MEDV,prediction\n";
     
-    for (size_t i = 0; i < data.size(); ++i) {
-        for (size_t j = 0; j < data[i].features.size(); ++j) {
-            file << data[i].features[j];
-            if (j < data[i].features.size() - 1) file << ",";
+    for (int i = 0; i < n_samples; ++i) {
+        for (int j = 0; j < N_FEATURES; ++j) {
+            file << data[i].features[j] << (j < N_FEATURES - 1 ? "," : "");
         }
-        file << "," << (data[i].label == 1 ? 1 : 0) << "," 
-             << (predictions[i] == 1 ? 1 : 0) << "\n";
+        file << "," << data[i].target << "," << predictions[i] << "\n";
     }
 }
 
 int main() {
-    std::vector<DataPoint> raw_data = read_csv("../data/classification/iris.csv");
-    std::vector<DataPoint> data = scale_features(raw_data);
+    DataPoint raw_data[MAX_SAMPLES];
+    int n_samples = 0;
     
-    size_t train_size = static_cast<size_t>(0.8 * data.size());
-    std::vector<DataPoint> train_data(data.begin(), data.begin() + train_size);
-    std::vector<DataPoint> test_data(data.begin() + train_size, data.end());
+    if (read_csv("boston_housing.csv", raw_data, n_samples)) return 1;
+    if (n_samples == 0) return 1;
     
-    unsigned int random_seed = 12345;
-    AdaBoostClassifier classifier(50, random_seed);
+    DataPoint scaled_data[MAX_SAMPLES];
+    scale_features(raw_data, scaled_data, n_samples);
+    
+    int train_size = static_cast<int>(0.8 * n_samples);
+    AdaBoostRegressor ada(50);
     auto start = std::chrono::high_resolution_clock::now();
-    classifier.fit(train_data);
+    ada.fit(scaled_data, train_size);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     
     std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
-    std::vector<int> predictions;
-    int correct = 0;
-    for (const auto& point : test_data) {
-        int pred = classifier.predict(point.features);
-        predictions.push_back(pred);
-        if (pred == point.label) correct++;
+    double predictions[MAX_SAMPLES];
+    double mse = 0.0;
+    for (int i = train_size; i < n_samples; ++i) {
+        predictions[i - train_size] = ada.predict(scaled_data[i].features);
+        double diff = predictions[i - train_size] - scaled_data[i].target;
+        mse += diff * diff;
     }
+    mse /= (n_samples - train_size);
+    std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
     
-    double accuracy = static_cast<double>(correct) / test_data.size() * 100;
-    std::cout << "Accuracy: " << accuracy << "%" << std::endl;
-    
-    write_predictions(test_data, predictions, "../results/adaboost/pred.csv");
+    write_predictions(&scaled_data[train_size], predictions, 
+                     n_samples - train_size, "results/adaboost/preds_boston.csv");
     
     return 0;
 }
