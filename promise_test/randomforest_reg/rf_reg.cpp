@@ -59,7 +59,7 @@ struct DecisionTreeRegressor {
     std::pair<int, __PROMISE__> find_best_split(const DataPoint* data, int size, const int* feature_indices, int num_indices) {
         if (size == 0 || num_indices == 0) return {-1, 0.0};
 
-        __PROMISE__ best_reduction = -9999.0;//-std::numeric_limits<__PROMISE__>::infinity();
+        __PROMISE__ best_reduction = -9999.0;
         int best_feature = -1;
         __PROMISE__ best_value = 0.0;
 
@@ -243,7 +243,7 @@ public:
             sum += pred;
             valid_trees++;
         }
-        __PROMISE__ temp = 0.0;
+        double temp = 0.0;
         return valid_trees > 0 ? sum / valid_trees : temp;
     }
 };
@@ -380,7 +380,7 @@ int read_csv(const std::string& filename, DataPoint* data) {
     // Compute means for missing values
     __PROMISE__ feature_means[NUM_FEATURES];
     for (int i = 0; i < NUM_FEATURES; ++i) {
-        __PROMISE__ temp = 0.0;
+        double temp = 0.0;
         feature_means[i] = feature_counts[i] > 0 ? feature_sums[i] / feature_counts[i] : temp;
     }
 

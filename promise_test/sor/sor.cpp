@@ -174,7 +174,7 @@ SORResult sor(const CSRMatrix& A, const __PROMISE__* b, __PROMISE__ omega, int m
     __PROMISE__ initial_norm = norm(r, n);
     __PROMISE__ tol_abs = tol * initial_norm;
     if (initial_norm < 1e-10) tol_abs = tol;
-    const __PROMISE__ eps = std::numeric_limits<__PROMISE__>::epsilon();
+    const __PROMISE__ eps = 2.2204460492503131e-16;
 
     __PROMISE__* diag = get_diagonal(A);
     __PROMISE__* b_scaled = new __PROMISE__[n];
@@ -284,7 +284,6 @@ int main() {
         for (int i=0; i<A.n; i++){
             check_x[i] = result.x[i];
         }
-
 
 
         PROMISE_CHECK_ARRAY(check_x, A.n);

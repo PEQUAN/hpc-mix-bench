@@ -182,7 +182,7 @@ SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 
     for (int i = 0; i < n; ++i) {
         b_scaled[i] = (std::abs(diag[i]) > eps ? b[i] / diag[i] : b[i]);
     }
-    double* values_scaled = new double[A.nnz];
+    pow* values_scaled = new double[A.nnz];
     for (int i = 0; i < A.n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
             values_scaled[j] = (std::abs(diag[i]) > eps ? A.values[j] / diag[i] : A.values[j]);

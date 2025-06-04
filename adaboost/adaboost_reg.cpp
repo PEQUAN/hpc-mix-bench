@@ -492,7 +492,7 @@ int main() {
     DataPoint scaled_data[MAX_SAMPLES];  // Scale features
     scale_features(raw_data, scaled_data, n_samples);
     
-    int train_size = static_cast<int>(0.7 * n_samples); // 70-30 split
+    int train_size = static_cast<int>(0.8 * n_samples); // 70-30 split
     int test_size = n_samples - train_size;
     std::cout << "start:" << std::endl;
     AdaBoostRegressor ada(MAX_ESTIMATORS);

@@ -97,7 +97,7 @@ Matrix pseudo_inverse(const Matrix& A) { // Pseudo-inverse using diagonal regula
         return result;
     }
 
-    __PROMISE__ lambda = 1e-6;
+    double lambda = 1e-6;
     for (int i = 0; i < m; ++i) {
         __PROMISE__ diag = matrix_at(AtA, i, i) + lambda;
         set_matrix_at(AtA, i, i, diag);

@@ -10,7 +10,7 @@
  #include <stdint.h>
  #include <omp.h>
  #include "backprop.h"
- 
+ #include <random>
  #define ABS(x) ((x) >= 0.0f ? (x) : -(x))
  
  /* Function prototypes to avoid implicit declarations */
@@ -170,14 +170,24 @@ static void init_rng(unsigned int seed) {
      free(net);
  }
  
- static void bpnn_randomize_weights(double** w, int m, int n) {
-     #pragma omp parallel for collapse(2) num_threads(NUM_THREAD)
-     for (int i = 0; i <= m; i++) {
-         for (int j = 0; j <= n; j++) {
-             w[i][j] = drnd();
-         }
-     }
- }
+static void bpnn_randomize_weights(double** w, int m, int n) {
+    // Seed for reproducibility (use a fixed seed or pass as parameter)
+    unsigned int seed = 42; // Fixed seed for reproducibility; can be dynamic (e.g., time-based)
+
+    #pragma omp parallel num_threads(NUM_THREAD)
+    {
+        // Each thread gets its own random number generator
+        std::mt19937 rng(seed + omp_get_thread_num()); // Thread-specific seed
+        std::uniform_real_distribution<double> dist(-1.0, 1.0); // Adjust range as needed
+
+        #pragma omp for collapse(2)
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                w[i][j] = dist(rng); // Generate random weight
+            }
+        }
+    }
+}
  
  static void bpnn_randomize_row(double* w, int m) {
      for (int i = 0; i <= m; i++) {
