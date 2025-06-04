@@ -19,10 +19,12 @@
         ],
         "flx::floatx<8, 7>": [
             1,
-            17,
-            18,
             13,
             14,
+            17
+        ],
+        "flx::floatx<5, 2>": [
+            18,
             15
         ]
     },
@@ -50,7 +52,7 @@
         "half_float::half": [
             17
         ],
-        "flx::floatx<8, 7>": [
+        "flx::floatx<5, 2>": [
             18,
             15
         ]
@@ -79,7 +81,7 @@
         "half_float::half": [
             17
         ],
-        "flx::floatx<8, 7>": [
+        "flx::floatx<5, 2>": [
             18,
             15
         ]
@@ -106,7 +108,7 @@
         "half_float::half": [
             17
         ],
-        "flx::floatx<8, 7>": [
+        "flx::floatx<5, 2>": [
             18,
             15
         ]

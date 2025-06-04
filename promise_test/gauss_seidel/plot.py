@@ -162,10 +162,9 @@ def plot_precision_settings(precision_settings, digits):
               fontsize=14, frameon=True, edgecolor='black')
 
     plt.tight_layout()
-    plt.savefig('precision_rf.png', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision_rf.png")
+    plt.savefig('precision_gs.png', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision_gs.png")
     plt.show()
-    
 
 if __name__ == "__main__":
     method = 'cwbhsd'

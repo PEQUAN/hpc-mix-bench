@@ -42,11 +42,12 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     int n, m, nz;
     ss >> n >> m >> nz;
     if (n != m) {
-        std::cerr << "Error: Matrix must be square" << std::endl;
+    //    std::cerr << "Error: Matrix must be square" << std::endl;
         return A;
     }
+
     if (n > MAX_N || nz > MAX_NZ) {
-        std::cerr << "Error: Matrix size or non-zeros exceed maximum limits" << std::endl;
+    //    std::cerr << "Error: Matrix size or non-zeros exceed maximum limits" << std::endl;
         return A;
     }
     A.n = n;
@@ -61,7 +62,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
 
     for (int k = 0; k < nz; ++k) {
         if (!getline(file, line)) {
-            std::cerr << "Error: Unexpected end of file" << std::endl;
+            // std::cerr << "Error: Unexpected end of file" << std::endl;
             delete[] A.values;
             delete[] A.col_indices;
             delete[] A.row_ptr;
@@ -125,7 +126,7 @@ void free_csr_matrix(CSRMatrix& A) {
 }
 
 __PROMISE__* csr_to_dense(const CSRMatrix& A) {
-    double* dense = new double[A.n * A.n]();
+    __PROMISE__* dense = new __PROMISE__[A.n * A.n]();
     for (int i = 0; i < A.n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
             dense[i * A.n + A.col_indices[j]] = A.values[j];
@@ -219,7 +220,7 @@ __PROMISE__* axpy(__PROMISE__ alpha, const __PROMISE__* x, const __PROMISE__* y,
 
 __PR_9__ norm(const __PROMISE__* v, int n) {
     __PROMISE__ d = dot(v, v, n);
-    if (isnan(d) || isinf(d)) return -1.0;
+    // if (isnan(d) || isinf(d)) return -1.0;
     return sqrt(d);
 }
 
@@ -230,7 +231,7 @@ struct IRResult {
 };
 
 IRResult iterative_refinement(const CSRMatrix& A, const __PROMISE__* b, __PROMISE__* LU, const int* pivot, 
-                              int max_iter = 1000, __PROMISE__ tol = 1e-6) {
+                              int max_iter = 1000, __PROMISE__ tol = 1e-12) {
     int n = A.n;
     __PR_7__* x = new __PR_7__[n]();
     __PR_8__* r = new __PR_8__[n];
@@ -238,7 +239,7 @@ IRResult iterative_refinement(const CSRMatrix& A, const __PROMISE__* b, __PROMIS
     
     __PR_9__ initial_norm = norm(b, n);
     if (initial_norm < 0) {
-        std::cerr << "Error: Initial b has invalid norm" << std::endl;
+        //std::cerr << "Error: Initial b has invalid norm" << std::endl;
         IRResult result = {x, -1.0, 0};
         delete[] r;
         return result;
@@ -304,7 +305,6 @@ int main() {
     __PROMISE__* resid = axpy(-1.0, Ax, b, A.n);
     __PROMISE__ verify_residual = norm(resid, A.n);
     std::cout << "Verification residual: " << verify_residual << std::endl;
-
 
     double solution[A.n];
     for (int i=0; i<A.n; i++){

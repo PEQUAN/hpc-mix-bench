@@ -227,7 +227,7 @@ int main() {
     DataPoint raw_data[MAX_SAMPLES];
     int n_samples = 0;
     
-    if (read_csv("boston_housing.csv", raw_data, n_samples)) return 1;
+    if (read_csv("../data/regression/boston_housing.csv", raw_data, n_samples)) return 1;
     if (n_samples == 0) return 1;
     
     DataPoint scaled_data[MAX_SAMPLES];

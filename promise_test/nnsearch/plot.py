@@ -167,7 +167,7 @@ def plot_precision_settings(precision_settings, digits):
     plt.show()
 
 if __name__ == "__main__":
-    method = 'bhsd'
+    method = 'cwbhsd'
     digits = [2, 4, 6, 8]
 
     precision_settings = run_experiments(method, digits)

@@ -162,13 +162,13 @@ def plot_precision_settings(precision_settings, digits):
               fontsize=14, frameon=True, edgecolor='black')
 
     plt.tight_layout()
-    plt.savefig('precision_mg.png', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision_mg.png")
+    plt.savefig('precision_nn.png', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision_nn.png")
     plt.show()
 
 if __name__ == "__main__":
     method = 'bhsd'
-    digits = [2, 4, 6, 8]
+    digits = [1, 4, 7, 10]
 
     precision_settings = run_experiments(method, digits)
     save_precision_settings(precision_settings)
