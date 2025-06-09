@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < k; i++) {
             cout << "Neighbor " << i + 1 << ": Index = " << k_nearest[i].index
                  << ", Distance = " << k_nearest[i].distance << endl;
-            all_results[q * k * 2 + i * 2] = static_cast<__PROMISE__>(k_nearest[i].index);
+            all_results[q * k * 2 + i * 2] = static_cast<double>(k_nearest[i].index);
             all_results[q * k * 2 + i * 2 + 1] = k_nearest[i].distance;
         }
 
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-        accuracies[q] = static_cast<__PROMISE__>(correct) / k;
+        accuracies[q] = static_cast<double>(correct) / k;
 
         delete[] k_nearest;
     }

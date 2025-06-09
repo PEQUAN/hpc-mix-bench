@@ -239,50 +239,18 @@ void read_input(__PROMISE__ *vect, int grid_rows, int grid_cols, char *file) {
 
     for (i = 0; i < grid_rows * grid_cols; i++) {
         fgets(str, STR_SIZE, fp);
-        if (feof(fp))
-            fatal("not enough lines in file");
-        if ((sscanf(str, "%f", &val) != 1))
-            fatal("invalid file format");
         vect[i] = val;
     }
 
     fclose(fp);
 }
 
-void usage(int argc, char **argv) {
-    fprintf(stderr, "Usage: %s <grid_rows> <grid_cols> <sim_time> <no. of "
-                    "threads><temp_file> <power_file>\n",
-            argv[0]);
-    fprintf(stderr,
-            "\t<grid_rows>  - number of rows in the grid (positive integer)\n");
-    fprintf(
-        stderr,
-        "\t<grid_cols>  - number of columns in the grid (positive integer)\n");
-    fprintf(stderr, "\t<sim_time>   - number of iterations\n");
-    fprintf(stderr, "\t<no. of threads>   - number of threads\n");
-    fprintf(stderr, "\t<temp_file>  - name of the file containing the initial "
-                    "temperature values of each cell\n");
-    fprintf(stderr, "\t<power_file> - name of the file containing the "
-                    "dissipated power values of each cell\n");
-    fprintf(stderr, "\t<output_file> - name of the output file\n");
-    exit(1);
-}
 
 int main(int argc, char **argv) {
     int grid_rows, grid_cols, sim_time, i;
     __PROMISE__ *temp, *power, *result;
     char *tfile, *pfile, *ofile;
 
-    /* check validity of inputs */
-    if (argc != 7) {
-        printf("first check:%d\n", argc);
-        usage(argc, argv);
-    }
-
-    if ((grid_rows = atoi(argv[1])) <= 0 || (grid_cols = atoi(argv[2])) <= 0 || (sim_time = atoi(argv[3])) <= 0 || (num_omp_threads = atoi(argv[4])) <= 0) {
-        printf("second check:%d\n", argc);
-        usage(argc, argv);
-    }
 
     /* allocate memory for the temperature and power arrays */
     temp = (__PR_1__ *)calloc(grid_rows * grid_cols, sizeof(__PR_1__));

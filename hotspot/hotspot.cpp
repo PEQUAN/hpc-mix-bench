@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <sys/time.h>
 
 // Returns the current system time in microseconds
@@ -29,12 +30,12 @@ using namespace std;
 //#define NUM_THREAD 4
 
 /* chip parameters  */
-const __PROMISE__ t_chip = 0.0005;
-const __PROMISE__ chip_height = 0.016;
-const __PROMISE__ chip_width = 0.016;
+const float t_chip = 0.0005;
+const float chip_height = 0.016;
+const float chip_width = 0.016;
 
 /* ambient temperature, assuming no package at all  */
-const __PROMISE__ amb_temp = 80.0;
+const float amb_temp = 80.0;
 
 int num_omp_threads;
 
@@ -42,10 +43,10 @@ int num_omp_threads;
  * advances the solution of the discretized difference equations
  * by one time step
  */
-void single_iteration(__PROMISE__ *result, __PROMISE__ *temp, __PROMISE__ *power, int row,
-                      int col, __PROMISE__ Cap_1, __PROMISE__ Rx_1, __PROMISE__ Ry_1, __PROMISE__ Rz_1,
-                      __PROMISE__ step) {
-    __PROMISE__ delta;
+void single_iteration(float *result, float *temp, float *power, int row,
+                      int col, float Cap_1, float Rx_1, float Ry_1, float Rz_1,
+                      float step) {
+    float delta;
     int r, c;
     int chunk;
     int num_chunk = row * col / (BLOCK_SIZE_R * BLOCK_SIZE_C);
@@ -158,27 +159,27 @@ void single_iteration(__PROMISE__ *result, __PROMISE__ *temp, __PROMISE__ *power
  * transfer differential equations to difference equations
  * and solves the difference equations by iterating
  */
-void compute_tran_temp(__PROMISE__ *result, int num_iterations, __PROMISE__ *temp,
-                       __PROMISE__ *power, int row, int col) {
+void compute_tran_temp(float *result, int num_iterations, float *temp,
+                       float *power, int row, int col) {
 #ifdef VERBOSE
     int i = 0;
 #endif
 
-    __PROMISE__ grid_height = chip_height / row;
-    __PROMISE__ grid_width = chip_width / col;
+    float grid_height = chip_height / row;
+    float grid_width = chip_width / col;
 
-    __PROMISE__ Cap = FACTOR_CHIP * SPEC_HEAT_SI * t_chip * grid_width * grid_height;
-    __PROMISE__ Rx = grid_width / (2.0 * K_SI * t_chip * grid_height);
-    __PROMISE__ Ry = grid_height / (2.0 * K_SI * t_chip * grid_width);
-    __PROMISE__ Rz = t_chip / (K_SI * grid_height * grid_width);
+    float Cap = FACTOR_CHIP * SPEC_HEAT_SI * t_chip * grid_width * grid_height;
+    float Rx = grid_width / (2.0 * K_SI * t_chip * grid_height);
+    float Ry = grid_height / (2.0 * K_SI * t_chip * grid_width);
+    float Rz = t_chip / (K_SI * grid_height * grid_width);
 
-    __PROMISE__ max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
-    __PROMISE__ step = PRECISION / max_slope / 1000.0;
+    float max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
+    float step = PRECISION / max_slope / 1000.0;
 
-    __PROMISE__ Rx_1 = 1.f / Rx;
-    __PROMISE__ Ry_1 = 1.f / Ry;
-    __PROMISE__ Rz_1 = 1.f / Rz;
-    __PROMISE__ Cap_1 = step / Cap;
+    float Rx_1 = 1.f / Rx;
+    float Ry_1 = 1.f / Ry;
+    float Rz_1 = 1.f / Rz;
+    float Cap_1 = step / Cap;
 #ifdef VERBOSE
     fprintf(stdout, "total iterations: %d s\tstep size: %g s\n", num_iterations,
             step);
@@ -186,15 +187,15 @@ void compute_tran_temp(__PROMISE__ *result, int num_iterations, __PROMISE__ *tem
 #endif
 
     {
-        __PROMISE__ *r = result;
-        __PROMISE__ *t = temp;
+        float *r = result;
+        float *t = temp;
         for (int i = 0; i < num_iterations; i++) {
 #ifdef VERBOSE
             fprintf(stdout, "iteration %d\n", i++);
 #endif
             single_iteration(r, t, power, row, col, Cap_1, Rx_1, Ry_1, Rz_1,
                              step);
-            __PROMISE__ *tmp = t;
+            float *tmp = t;
             t = r;
             r = tmp;
         }
@@ -209,7 +210,7 @@ void fatal(const char *s) {
     exit(1);
 }
 
-void writeoutput(__PROMISE__ *vect, int grid_rows, int grid_cols, char *file) {
+void writeoutput(float *vect, int grid_rows, int grid_cols, char *file) {
     int i, j, index = 0;
     FILE *fp;
     char str[STR_SIZE];
@@ -227,11 +228,11 @@ void writeoutput(__PROMISE__ *vect, int grid_rows, int grid_cols, char *file) {
     fclose(fp);
 }
 
-void read_input(__PROMISE__ *vect, int grid_rows, int grid_cols, char *file) {
+void read_input(float *vect, int grid_rows, int grid_cols, char *file) {
     int i, index;
     FILE *fp;
     char str[STR_SIZE];
-    __PROMISE__ val;
+    float val;
 
     fp = fopen(file, "r");
     if (!fp)
@@ -270,7 +271,7 @@ void usage(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     int grid_rows, grid_cols, sim_time, i;
-    __PROMISE__ *temp, *power, *result;
+    float *temp, *power, *result;
     char *tfile, *pfile, *ofile;
 
     /* check validity of inputs */
@@ -285,9 +286,9 @@ int main(int argc, char **argv) {
     }
 
     /* allocate memory for the temperature and power arrays */
-    temp = (__PROMISE__ *)calloc(grid_rows * grid_cols, sizeof(__PROMISE__));
-    power = (__PROMISE__ *)calloc(grid_rows * grid_cols, sizeof(__PROMISE__));
-    result = (__PROMISE__ *)calloc(grid_rows * grid_cols, sizeof(__PROMISE__));
+    temp = (float *)calloc(grid_rows * grid_cols, sizeof(float));
+    power = (float *)calloc(grid_rows * grid_cols, sizeof(float));
+    result = (float *)calloc(grid_rows * grid_cols, sizeof(float));
     if (!temp || !power)
         fatal("unable to allocate memory");
 
@@ -305,17 +306,15 @@ int main(int argc, char **argv) {
 
     long long end_time = get_time();
 
-    printf("Ending simulation\n");
-
     /* output results   */
     if (getenv("OUTPUT")) {
         FILE *file = fopen("output.txt", "w+");
-        for (i = 0; i < grid_rows * grid_cols; i++)
+        for (i = 0; i < grid_rows * grid_cols; i++){
             fprintf(file, "%d\t%g\n", i, temp[i]);
+        }
         fclose(file);
     }
 
-    PROMISE_CHECK_ARRAY(temp, grid_rows * grid_cols);
     /* cleanup  */
     free(temp);
     free(power);

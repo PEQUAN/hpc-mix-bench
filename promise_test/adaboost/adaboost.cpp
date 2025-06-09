@@ -67,7 +67,7 @@ struct DecisionTree {
                         right_count++;
                     }
                 }
-                double temp = 0.0;
+                __PROMISE__ temp = 0.0;
                 __PROMISE__ left_val = left_weight > 1e-10 ? left_sum / left_weight : temp;
                 __PROMISE__ right_val = right_weight > 1e-10 ? right_sum / right_weight : temp;
                 
@@ -93,7 +93,7 @@ struct DecisionTree {
                                 }
                             }
                             
-                            double temp = 0.0;
+                            __PROMISE__ temp = 0.0;
                             __PROMISE__ ll_val = ll_weight > 1e-10 ? ll_sum / ll_weight : temp;
                             __PROMISE__ lr_val = lr_weight > 1e-10 ? lr_sum / lr_weight : temp;
                             __PROMISE__ error = 0.0;
@@ -138,7 +138,7 @@ struct DecisionTree {
                                     rr_weight += weights[j];
                                 }
                             }
-                            double temp = 0.0;
+                            __PROMISE__ temp = 0.0;
                             __PROMISE__ rl_val = rl_weight > 1e-10 ? rl_sum / rl_weight : temp;
                             __PROMISE__ rr_val = rr_weight > 1e-10 ? rr_sum / rr_weight : temp;
                             __PROMISE__ error = 0.0;
@@ -262,9 +262,8 @@ void compute_feature_stats(const DataPoint data[], int n_samples, __PROMISE__ me
     }
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (!isnan(data[i].features[j])) {
-                means[j] += data[i].features[j];
-            }
+            means[j] += data[i].features[j];
+            
         }
     }
     for (int j = 0; j < N_FEATURES; ++j) {
@@ -272,10 +271,9 @@ void compute_feature_stats(const DataPoint data[], int n_samples, __PROMISE__ me
     }
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (!isnan(data[i].features[j])) {
-                __PROMISE__ diff = data[i].features[j] - means[j];
-                stds[j] += diff * diff;
-            }
+            __PROMISE__ diff = data[i].features[j] - means[j];
+            stds[j] += diff * diff;
+        
         }
     }
     for (int j = 0; j < N_FEATURES; ++j) {
@@ -289,9 +287,7 @@ void transform_features(DataPoint data[], int n_samples) {
     int indices[] = {0, 1, 11};
     for (int i = 0; i < n_samples; ++i) {
         for (int j : indices) {
-            if (!isnan(data[i].features[j]) && data[i].features[j] > 0) {
-                data[i].features[j] = log(data[i].features[j] + 1e-10);
-            }
+            data[i].features[j] = log(data[i].features[j] + 1e-10);
         }
     }
 }
@@ -306,12 +302,10 @@ int remove_outliers(DataPoint data[], int n_samples, int& new_n_samples) {
     for (int i = 0; i < n_samples; ++i) {
         bool is_outlier = false;
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (!isnan(data[i].features[j])) {
-                __PROMISE__ z = abs((data[i].features[j] - means[j]) / stds[j]);
-                if (z > 3.0) {
-                    is_outlier = true;
-                    break;
-                }
+            __PROMISE__ z = abs((data[i].features[j] - means[j]) / stds[j]);
+            if (z > 3.0) {
+                is_outlier = true;
+                break;
             }
         }
         if (!is_outlier) {
@@ -335,11 +329,7 @@ void scale_features(const DataPoint data[], DataPoint scaled_data[], int n_sampl
     for (int i = 0; i < n_samples; ++i) {
         scaled_data[i] = data[i];
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (!isnan(scaled_data[i].features[j])) {
-                scaled_data[i].features[j] = (scaled_data[i].features[j] - means[j]) / stds[j];
-            } else {
-                scaled_data[i].features[j] = 0.0;
-            }
+            scaled_data[i].features[j] = (scaled_data[i].features[j] - means[j]) / stds[j];
         }
     }
 }
@@ -417,41 +407,24 @@ int read_csv(const std::string& filename, DataPoint data[], int& n_samples) {
     }
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (!isnan(data[i].features[j])) {
-                means[j] += data[i].features[j];
-                counts[j]++;
-            }
+            means[j] += data[i].features[j];
+            counts[j]++;
+    
         }
     }
     for (int j = 0; j < N_FEATURES; ++j) {
-        double temp = 0.0;
+        __PROMISE__ temp = 0.0;
         means[j] = counts[j] > 0 ? means[j] / counts[j] : temp;
     }
     for (int i = 0; i < n_samples; ++i) {
         for (int j = 0; j < N_FEATURES; ++j) {
-            if (isnan(data[i].features[j])) {
-                data[i].features[j] = means[j];
-            }
+            data[i].features[j] = means[j];
         }
     }
     
     std::cout << "Loaded " << n_samples << " data points with " 
               << N_FEATURES << " features each" << std::endl;
     return 0;
-}
-
-void write_predictions(const DataPoint data[], const __PROMISE__ predictions[], 
-                     int n_samples, const std::string& filename) {
-    std::ofstream file(filename);
-    if (!file.is_open()) return;
-    file << "CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,TAX,PTRATIO,B,LSTAT,MEDV,prediction\n";
-    
-    for (int i = 0; i < n_samples; ++i) {
-        for (int j = 0; j < N_FEATURES; ++j) {
-            file << data[i].features[j] << (j < N_FEATURES - 1 ? "," : "");
-        }
-        file << "," << data[i].target << "," << predictions[i] << "\n";
-    }
 }
 
 __PROMISE__ compute_r2_score(const DataPoint data[], const __PROMISE__ predictions[], int n_samples) {
@@ -498,12 +471,7 @@ int main() {
     int test_size = n_samples - train_size;
     std::cout << "start:" << std::endl;
     AdaBoostRegressor ada(MAX_ESTIMATORS);
-    auto start = std::chrono::high_resolution_clock::now();
     ada.fit(scaled_data, train_size);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    
-    std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     
     __PROMISE__ predictions[MAX_SAMPLES];
     __PROMISE__ check_predictions[test_size];
@@ -515,14 +483,12 @@ int main() {
         mse += diff * diff;
     }
 
-    PROMISE_CHECK_ARRAY(check_predictions, test_size);
     mse /= test_size;
     std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
-    
+    PROMISE_CHECK_ARRAY(check_predictions, test_size);
     __PROMISE__ r2 = compute_r2_score(&scaled_data[train_size], predictions, test_size);
     std::cout << "R^2 Score: " << r2 << std::endl;
     
-    write_predictions(&scaled_data[train_size], predictions, test_size, "results/adaboost/preds_boston.csv");
     
     return 0;
 }

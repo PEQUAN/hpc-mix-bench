@@ -363,17 +363,17 @@ public:
 };
 
 // Compute reconstruction error (Frobenius norm)
-__PROMISE__ compute_reconstruction_error(const Matrix& original, const Matrix& reconstructed) {
+double compute_reconstruction_error(const Matrix& original, const Matrix& reconstructed) {
     if (original.rows != reconstructed.rows || original.cols != reconstructed.cols || !original.data || !reconstructed.data) {
         std::cerr << "Dimension mismatch or invalid data in reconstruction error calculation: original ("
                   << original.rows << "x" << original.cols << "), reconstructed ("
                   << reconstructed.rows << "x" << reconstructed.cols << ")" << std::endl;
         return -1.0;
     }
-    __PROMISE__ error = 0.0;
+    double error = 0.0;
     for (int i = 0; i < original.rows; ++i) {
         for (int j = 0; j < original.cols; ++j) {
-            __PROMISE__ diff = matrix_at(original, i, j) - matrix_at(reconstructed, i, j);
+            double diff = matrix_at(original, i, j) - matrix_at(reconstructed, i, j);
             error += diff * diff;
         }
     }
@@ -387,7 +387,7 @@ int main() {
         int n_samples = 9999;
         int n_features = 20;
         int n_components = std::min(10, n_features);
-        __PROMISE__ sparsity = 1;
+        double sparsity = 1;
 
         DataPoint* raw_data = generate_random_data(n_samples, n_features, sparsity);
         if (!raw_data) {
@@ -430,7 +430,7 @@ int main() {
             return 1;
         }
 
-        __PROMISE__ recon_error = compute_reconstruction_error(X, X_reconstructed);
+        double recon_error = compute_reconstruction_error(X, X_reconstructed);
         std::cout << "Reconstruction Error (Frobenius norm): " << recon_error << std::endl;
 
         int check_len = X_reduced.rows * X_reduced.cols;

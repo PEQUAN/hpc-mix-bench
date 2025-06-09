@@ -162,13 +162,13 @@ def plot_precision_settings(precision_settings, digits):
               fontsize=14, frameon=True, edgecolor='black')
 
     plt.tight_layout()
-    plt.savefig('precision_svm.png', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision_svmpng")
+    plt.savefig('precision_nys_b.png', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision_nys_b.png")
     plt.show()
 
 if __name__ == "__main__":
-    method = 'cwbhsd'
-    digits = [2, 4, 6, 8]
+    method = 'cwbsd'
+    digits = [2, 4, 6, 8, 10]
 
     precision_settings = run_experiments(method, digits)
     save_precision_settings(precision_settings)

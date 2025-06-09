@@ -20,7 +20,7 @@ def run_experiments(method, digits):
         testargs = [
             f'--precs={method}',
             f'--nbDigits={digit}',
-            '--conf=promise.yml',
+            f'--conf=promise_{digit}.yml',
             '--noParsing',
             '--fp=fp.json'
         ]
@@ -162,13 +162,13 @@ def plot_precision_settings(precision_settings, digits):
               fontsize=14, frameon=True, edgecolor='black')
 
     plt.tight_layout()
-    plt.savefig('precision_nys.png', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision_nysn.png")
+    plt.savefig('precision_nn_h.png', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision_nn_h.png")
     plt.show()
 
 if __name__ == "__main__":
-    method = 'cwbhsd'
-    digits = [2, 4, 6, 8]
+    method = 'cwhsd'
+    digits = [2, 4, 6, 8, 10]
 
     precision_settings = run_experiments(method, digits)
     save_precision_settings(precision_settings)

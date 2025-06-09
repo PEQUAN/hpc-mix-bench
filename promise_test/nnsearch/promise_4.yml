@@ -4,4 +4,4 @@ compile:
 run: nn.out
 files: nn.cpp
 log: nn.log
-output: debug/
+output: debug2/
