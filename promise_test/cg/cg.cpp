@@ -302,21 +302,17 @@ int main() {
 
     __PROMISE__* b = generate_rhs(A.n);
 
-    auto start = std::chrono::high_resolution_clock::now();
     Solution result = conjugate_gradient(A, b, 2 * A.n, 1e-12);
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<__PROMISE__, std::milli> duration = end - start;
 
     std::cout << "Matrix size: " << A.n << " x " << A.n << std::endl;
-    std::cout << "Training time: " << duration.count() << " ms" << std::endl;
     std::cout << "Final residual: " << result.residual << std::endl;
     std::cout << "Iterations to converge: " << result.iterations << std::endl;
 
     // Verify the solution
-    __PROMISE__* Ax = matvec(A, result.x);
-    __PROMISE__* temp = new __PROMISE__[A.n];
+    double* Ax = matvec(A, result.x);
+    double* temp = new __PROMISE__[A.n];
     axpy(-1.0, Ax, b, A.n, temp);
-    __PROMISE__ verify_residual = norm(temp, A.n);
+    double verify_residual = norm(temp, A.n);
 
     double check_result[A.n];
     for (int i = 0; i < A.n; i++) {

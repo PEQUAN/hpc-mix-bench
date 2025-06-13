@@ -6,7 +6,6 @@
 #include <random>
 #include <algorithm>
 
-// Define maximum sizes (adjust these based on your needs)
 #define MAX_N 10000      // Maximum matrix dimension
 #define MAX_NZ 1000000   // Maximum number of non-zeros
 #define MAX_NZ_PER_ROW 1000 // Maximum non-zeros per row
@@ -16,7 +15,7 @@ struct CSRMatrix {
     float* values;
     int* col_indices;
     int* row_ptr;
-    int nnz; // Store number of non-zeros
+    int nnz; // number of non-zeros
 };
 
 struct Pair {
@@ -43,28 +42,27 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     int n, m, nz;
     ss >> n >> m >> nz;
     if (n != m) {
-        std::cerr << "Error: Matrix must be square" << std::endl;
+    //    std::cerr << "Error: Matrix must be square" << std::endl;
         return A;
     }
+
     if (n > MAX_N || nz > MAX_NZ) {
-        std::cerr << "Error: Matrix size or non-zeros exceed maximum limits" << std::endl;
+    //    std::cerr << "Error: Matrix size or non-zeros exceed maximum limits" << std::endl;
         return A;
     }
     A.n = n;
     A.nnz = 0;
 
-    // Allocate arrays
     A.values = new float[MAX_NZ];
     A.col_indices = new int[MAX_NZ];
     A.row_ptr = new int[n + 1];
 
-    // Temporary storage for entries
     Pair* temp = new Pair[MAX_N * MAX_NZ_PER_ROW];
-    int* temp_sizes = new int[n](); // Initialize to zero
+    int* temp_sizes = new int[n](); 
 
     for (int k = 0; k < nz; ++k) {
         if (!getline(file, line)) {
-            std::cerr << "Error: Unexpected end of file" << std::endl;
+            // std::cerr << "Error: Unexpected end of file" << std::endl;
             delete[] A.values;
             delete[] A.col_indices;
             delete[] A.row_ptr;
@@ -222,7 +220,7 @@ double* axpy(float alpha, const double* x, const double* y, int n) {
 
 float norm(const double* v, int n) {
     float d = dot(v, v, n);
-    if (isnan(d) || isinf(d)) return -1.0;
+    // if (isnan(d) || isinf(d)) return -1.0;
     return sqrt(d);
 }
 
@@ -233,7 +231,7 @@ struct IRResult {
 };
 
 IRResult iterative_refinement(const CSRMatrix& A, const double* b, double* LU, const int* pivot, 
-                              int max_iter = 1000, float tol = 1e-6) {
+                              int max_iter = 1000, float tol = 1e-12) {
     int n = A.n;
     double* x = new double[n]();
     double* r = new double[n];
@@ -241,7 +239,7 @@ IRResult iterative_refinement(const CSRMatrix& A, const double* b, double* LU, c
     
     float initial_norm = norm(b, n);
     if (initial_norm < 0) {
-        std::cerr << "Error: Initial b has invalid norm" << std::endl;
+        //std::cerr << "Error: Initial b has invalid norm" << std::endl;
         IRResult result = {x, -1.0, 0};
         delete[] r;
         return result;
@@ -308,14 +306,13 @@ int main() {
     float verify_residual = norm(resid, A.n);
     std::cout << "Verification residual: " << verify_residual << std::endl;
 
-
     double solution[A.n];
     for (int i=0; i<A.n; i++){
         solution[i] = result.x[i];
     }
 
     PROMISE_CHECK_ARRAY(solution, A.n);
-    // Clean up
+
     delete[] LU;
     delete[] pivot;
     delete[] b;

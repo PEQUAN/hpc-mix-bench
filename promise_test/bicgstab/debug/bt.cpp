@@ -249,11 +249,13 @@ int main() {
     std::cout << "Final residual: " << result.residual << std::endl;
     std::cout << "Iterations to converge: " << result.iterations << std::endl;
 
+    // fail for checking PROMISE_CHECK_ARRAY(result.x, A.n);
+
     double check_result[A.n];
     for (int i=0; i<A.n; i++){
         check_result[i] = result.x[i];
     }
-    
+
     PROMISE_CHECK_ARRAY(check_result, A.n);
 
     double* Ax = matvec(A, result.x);

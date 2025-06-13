@@ -328,9 +328,9 @@ int main() {
     }
 
     __PROMISE__ ami = adjusted_mutual_information(true_labels, pred_labels, data_size);
-    __PROMISE__ ari = adjusted_rand_index(true_labels, pred_labels, data_size);
+    
     std::cout << "Adjusted Mutual Information (AMI): " << ami << std::endl;
-    std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
+    // std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
 
     PROMISE_CHECK_VAR(ami);
     delete[] true_labels;

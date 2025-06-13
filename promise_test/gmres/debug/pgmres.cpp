@@ -39,15 +39,15 @@ public:
     }
 };
 
-double dot(const double* a, const double* b, int n) {
-    double result = 0.0;
+float dot(const double* a, const double* b, int n) {
+    float result = 0.0;
     for (int i = 0; i < n; ++i) {
         result += a[i] * b[i];
     }
     return result;
 }
 
-double norm(const double* v, int n) {
+float norm(const double* v, int n) {
     return sqrt(dot(v, v, n));
 }
 
@@ -61,12 +61,12 @@ double* axpy(float alpha, const double* x, const double* y, int n) {
 
 class DiagonalPreconditioner {
 private:
-    float* diag_inv;
+    half_float::half* diag_inv;
     int n;
 
 public:
     DiagonalPreconditioner(const Matrix& A) : n(A.size()) {
-        diag_inv = new float[n];
+        diag_inv = new half_float::half[n];
         for (int i = 0; i < n; ++i) {
             if (A.get(i, i) != 0.0) {
                 diag_inv[i] = 1.0 / A.get(i, i);
@@ -102,7 +102,7 @@ GMRESResult gmres(const Matrix& A, const double* b,
     double* Ax = A.matvec(x);
     double* r = axpy(-1.0, Ax, b, n); 
     delete[] Ax;
-    double beta = norm(r, n);
+    float beta = norm(r, n);
     if (beta < tol) {
         delete[] r;
         return {x, beta, 0};
@@ -147,13 +147,13 @@ GMRESResult gmres(const Matrix& A, const double* b,
         delete[] w;
 
         for (int j = 0; j < k; ++j) {
-            double temp = c[j] * H[j][k] + s[j] * H[j + 1][k];
+            float temp = c[j] * H[j][k] + s[j] * H[j + 1][k];
             H[j + 1][k] = -s[j] * H[j][k] + c[j] * H[j + 1][k];
             H[j][k] = temp;
         }
 
         // Compute new Givens rotation
-        double rho = sqrt(H[k][k] * H[k][k] + H[k + 1][k] * H[k + 1][k]);
+        float rho = sqrt(H[k][k] * H[k][k] + H[k + 1][k] * H[k + 1][k]);
         if (rho < 1e-10) break;
         c[k] = H[k][k] / rho;
         s[k] = H[k + 1][k] / rho;
@@ -161,13 +161,13 @@ GMRESResult gmres(const Matrix& A, const double* b,
         H[k + 1][k] = 0.0;
 
         // Update residual vector
-        double g_temp = g[k];
+        float g_temp = g[k];
         g[k] = c[k] * g[k] + s[k] * g[k + 1];
         g[k + 1] = -s[k] * g_temp + c[k] * g[k + 1];
         beta = abs(g[k + 1]);
     }
 
-    double* y = new double[k]();
+    float* y = new float[k]();
     for (int i = k - 1; i >= 0; --i) {
         y[i] = g[i];
         for (int j = i + 1; j < k; ++j) {

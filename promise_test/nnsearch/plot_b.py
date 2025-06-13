@@ -20,7 +20,7 @@ def run_experiments(method, digits):
         testargs = [
             f'--precs={method}',
             f'--nbDigits={digit}',
-            f'--conf=promise_{digit}.yml',
+            f'--conf=promise.yml',
             '--noParsing',
             '--fp=fp.json'
         ]
@@ -39,7 +39,7 @@ def run_experiments(method, digits):
             precision_settings.append({})
     return precision_settings
 
-def save_precision_settings(precision_settings, filename='precision_settings.json'):
+def save_precision_settings(precision_settings, filename='precision_settings_b.json'):
     """Save precision settings to a JSON file."""
     try:
         for setting in precision_settings:
@@ -57,7 +57,7 @@ def save_precision_settings(precision_settings, filename='precision_settings.jso
         with open(filename, 'w') as f:
             json.dump([], f)
 
-def load_precision_settings(filename='precision_settings.json'):
+def load_precision_settings(filename='precision_settings_b.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
@@ -153,14 +153,15 @@ def plot_precision_settings(precision_settings, digits):
 
     ax.set_xlim(-0.5, len(digits) - 0.5)
 
-    ax.set_xlabel('Number of Digits', fontsize=12, weight='bold')
-    ax.set_ylabel('Count of Values', fontsize=12, weight='bold')
-    ax.set_title('Precision Settings Distribution', fontsize=14, weight='bold', pad=20)
+    ax.set_xlabel('Number of Digits', fontsize=16, weight='bold')
+    ax.set_ylabel('Count of Values', fontsize=16, weight='bold')
+    ax.set_title('Precision Settings Distribution', fontsize=16, weight='bold', pad=20)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
     
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2), ncol=min(len(active_categories), 6),
-              fontsize=14, frameon=True, edgecolor='black')
+              fontsize=16, frameon=True, edgecolor='black')
 
+    plt.tick_params(axis='both', which='major', labelsize=16)
     plt.tight_layout()
     plt.savefig('precision_nn_b.png', bbox_inches='tight', dpi=300, transparent=False)
     print("Plot saved as precision_nn_b.png")

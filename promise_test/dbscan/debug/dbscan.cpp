@@ -15,7 +15,7 @@ struct DataPoint {
 
 class DBSCAN {
 private:
-    half_float::half eps;
+    flx::floatx<5, 2> eps;
     int min_pts;
     DataPoint* data;
     size_t data_size;
@@ -150,14 +150,14 @@ float adjusted_mutual_information(const int* true_labels, const int* pred_labels
 
     float h_true = 0.0;
     for (const auto& a : a_sums) {
-        float p = a.second / (half_float::half)n;
+        float p = a.second / (flx::floatx<8, 7>)n;
         if (p > 0) h_true -= p * log(p);
     }
     h_true /= log(2.0);
 
     float h_pred = 0.0;
     for (const auto& b : b_sums) {
-        float p = b.second / (half_float::half)n;
+        float p = b.second / (flx::floatx<8, 7>)n;
         if (p > 0) h_pred -= p * log(p);
     }
     h_pred /= log(2.0);
@@ -176,7 +176,7 @@ float adjusted_rand_index(const int* true_labels, const int* pred_labels, size_t
     }
 
     float sum_nij2 = 0.0;
-    std::unordered_map<int, half_float::half> a_sums, b_sums;
+    std::unordered_map<int, flx::floatx<5, 2>> a_sums, b_sums;
     for (const auto& row : contingency) {
         for (const auto& cell : row.second) {
             sum_nij2 += (cell.second * (cell.second - 1)) / 2.0;
@@ -200,8 +200,8 @@ float adjusted_rand_index(const int* true_labels, const int* pred_labels, size_t
 DataPoint* scale_features(DataPoint* data, size_t data_size, size_t n_features) {
     if (data_size == 0) return data;
 
-    float* means = new float[n_features]();
-    float* stds = new float[n_features]();
+    flx::floatx<5, 2>* means = new flx::floatx<5, 2>[n_features]();
+    half_float::half* stds = new half_float::half[n_features]();
 
     for (size_t i = 0; i < data_size; ++i) {
         for (size_t j = 0; j < n_features; ++j) {
@@ -328,9 +328,9 @@ int main() {
     }
 
     float ami = adjusted_mutual_information(true_labels, pred_labels, data_size);
-    float ari = adjusted_rand_index(true_labels, pred_labels, data_size);
+    
     std::cout << "Adjusted Mutual Information (AMI): " << ami << std::endl;
-    std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
+    // std::cout << "Adjusted Rand Index (ARI): " << ari << std::endl;
 
     
     delete[] true_labels;
