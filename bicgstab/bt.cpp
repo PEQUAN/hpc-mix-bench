@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <vector>
 
 struct CSRMatrix {
     int n;
@@ -18,6 +17,8 @@ struct CSRMatrix {
 bool compare_by_column(const std::pair<int, double>& a, const std::pair<int, double>& b) {
     return a.first < b.first;
 }
+
+struct Entry { int row, col; double val; };
 
 CSRMatrix read_mtx_file(const std::string& filename) {
     CSRMatrix A = {0, nullptr, nullptr, nullptr, 0};
@@ -39,13 +40,13 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
     A.n = n;
 
-    struct Entry { int row, col; double val; };
-    std::vector<Entry> entries(2 * nz);
+    Entry* entries = new Entry[2 * nz];
     int entry_count = 0;
 
     for (int k = 0; k < nz; ++k) {
         if (!getline(file, line)) {
             std::cerr << "Error: Unexpected end of file" << std::endl;
+            delete[] entries;
             return A;
         }
         ss.clear();
@@ -55,15 +56,15 @@ CSRMatrix read_mtx_file(const std::string& filename) {
         ss >> i >> j >> val;
         if (i < 1 || j < 1 || i > n || j > n) {
             std::cerr << "Error: Invalid indices in Matrix Market file" << std::endl;
+            delete[] entries;
             return A;
         }
         i--; j--;
         entries[entry_count++] = {i, j, val};
         if (i != j) entries[entry_count++] = {j, i, val};
     }
-    entries.resize(entry_count);
 
-    std::vector<int> nnz_per_row(n, 0);
+    int* nnz_per_row = new int[n]();
     for (int k = 0; k < entry_count; ++k) {
         nnz_per_row[entries[k].row]++;
     }
@@ -77,7 +78,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
         A.row_ptr[i + 1] = A.row_ptr[i] + nnz_per_row[i];
     }
 
-    std::sort(entries.begin(), entries.end(),
+    std::sort(entries, entries + entry_count,
         [](const Entry& a, const Entry& b) {
             return a.row == b.row ? a.col < b.col : a.row < b.row;
         });
@@ -89,6 +90,8 @@ CSRMatrix read_mtx_file(const std::string& filename) {
 
     std::cout << "Loaded matrix: " << n << " x " << n << " with " << entry_count << " non-zeros" << std::endl;
 
+    delete[] entries;
+    delete[] nnz_per_row;
     return A;
 }
 
@@ -172,23 +175,25 @@ struct Result {
     double* x;
     double residual;
     int iterations;
-    std::vector<double> residual_history;
+    double* residual_history;
+    size_t residual_history_size;
 };
 
 Result bicgstab(const CSRMatrix& A, const double* b, int max_iter = 1000, double tol = 1e-12) {
     int n = A.n;
-    std::vector<double> x(n, 0.0);
-    std::vector<double> r(n);
+    double* x = new double[n]();
+    double* r = new double[n];
     for (int i = 0; i < n; ++i) r[i] = b[i]; // r = b - Ax (x = 0)
-    std::vector<double> r_hat(n);
-    std::vector<double> p(n);
-    std::vector<double> z(n);
-    std::vector<double> M(n);
-    compute_diagonal_preconditioner(A, M.data());
-    apply_preconditioner(M.data(), r.data(), n, r_hat.data()); // r_hat = M^{-1} r_0
+    double* r_hat = new double[n];
+    double* p = new double[n];
+    double* z = new double[n];
+    double* M = new double[n];
+    compute_diagonal_preconditioner(A, M);
+    apply_preconditioner(M, r, n, r_hat); // r_hat = M^{-1} r_0
     for (int i = 0; i < n; ++i) p[i] = r_hat[i]; // p_0 = M^{-1} r_0
-    std::vector<double> v(n, 0.0);
-    std::vector<double> residual_history;
+    double* v = new double[n]();
+    double* residual_history = new double[max_iter]; // Allocate max possible size
+    size_t residual_history_size = 0;
 
     double rho = 1.0, alpha = 1.0, omega = 1.0;
     double initial_norm = norm(b, n);
@@ -196,7 +201,8 @@ Result bicgstab(const CSRMatrix& A, const double* b, int max_iter = 1000, double
         std::cerr << "Error: Initial b has invalid norm" << std::endl;
         double* x_out = new double[n];
         for (int i = 0; i < n; ++i) x_out[i] = x[i];
-        return {x_out, -1.0, 0, {}};
+        delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+        return {x_out, -1.0, 0, residual_history, 0};
     }
     std::cout << "Initial norm of b: " << initial_norm << std::endl;
     double tol_abs = tol * initial_norm;
@@ -204,91 +210,99 @@ Result bicgstab(const CSRMatrix& A, const double* b, int max_iter = 1000, double
     int k;
     for (k = 0; k < max_iter; ++k) {
         // Compute preconditioned residual: r_tilde = M^{-1} r
-        std::vector<double> r_tilde(n);
-        apply_preconditioner(M.data(), r.data(), n, r_tilde.data());
-        double rho_new = dot(r_hat.data(), r_tilde.data(), n);
+        double* r_tilde = new double[n];
+        apply_preconditioner(M, r, n, r_tilde);
+        double rho_new = dot(r_hat, r_tilde, n);
         if (std::abs(rho_new) < 1e-10) {
             std::cerr << "Breakdown: rho = " << rho_new << " at iteration " << k << std::endl;
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            double* r_temp = axpy(-1.0, matvec(A, x.data()), b, n);
+            double* r_temp = axpy(-1.0, matvec(A, x), b, n);
             double* r_tilde_temp = new double[n];
-            apply_preconditioner(M.data(), r_temp, n, r_tilde_temp);
+            apply_preconditioner(M, r_temp, n, r_tilde_temp);
             double r_norm = norm(r_tilde_temp, n);
-            delete[] r_temp; delete[] r_tilde_temp;
-            return {x_out, r_norm, k, residual_history};
+            delete[] r_temp; delete[] r_tilde_temp; delete[] r_tilde;
+            delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            return {x_out, r_norm, k, residual_history, residual_history_size};
         }
         double beta = (rho_new / rho) * (alpha / omega);
         // p = r_tilde + beta (p - omega v)
-        std::vector<double> temp(n);
+        double* temp = new double[n];
         for (int i = 0; i < n; ++i) temp[i] = p[i] - omega * v[i];
         for (int i = 0; i < n; ++i) p[i] = r_tilde[i] + beta * temp[i];
+        delete[] temp;
         // v = M^{-1} A p
-        double* Ap = matvec(A, p.data());
-        v.assign(n, 0.0);
-        apply_preconditioner(M.data(), Ap, n, v.data());
+        double* Ap = matvec(A, p);
+        for (int i = 0; i < n; ++i) v[i] = 0.0;
+        apply_preconditioner(M, Ap, n, v);
         delete[] Ap;
-        double rhat_v = dot(r_hat.data(), v.data(), n);
+        double rhat_v = dot(r_hat, v, n);
         if (std::abs(rhat_v) < 1e-10) {
             std::cerr << "Breakdown: r_hat^T v = " << rhat_v << " at iteration " << k << std::endl;
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            double* r_temp = axpy(-1.0, matvec(A, x.data()), b, n);
+            double* r_temp = axpy(-1.0, matvec(A, x), b, n);
             double* r_tilde_temp = new double[n];
-            apply_preconditioner(M.data(), r_temp, n, r_tilde_temp);
+            apply_preconditioner(M, r_temp, n, r_tilde_temp);
             double r_norm = norm(r_tilde_temp, n);
-            delete[] r_temp; delete[] r_tilde_temp;
-            return {x_out, r_norm, k, residual_history};
+            delete[] r_temp; delete[] r_tilde_temp; delete[] r_tilde;
+            delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            return {x_out, r_norm, k, residual_history, residual_history_size};
         }
         alpha = rho_new / rhat_v;
         // s = r - alpha A p
-        std::vector<double> s(n);
-        double* Ap_temp = matvec(A, p.data());
+        double* s = new double[n];
+        double* Ap_temp = matvec(A, p);
         for (int i = 0; i < n; ++i) s[i] = r[i] - alpha * Ap_temp[i];
         delete[] Ap_temp;
         // Check preconditioned residual: s_tilde = M^{-1} s
-        std::vector<double> s_tilde(n);
-        apply_preconditioner(M.data(), s.data(), n, s_tilde.data());
-        double s_norm = norm(s_tilde.data(), n);
-        residual_history.push_back(s_norm);
+        double* s_tilde = new double[n];
+        apply_preconditioner(M, s, n, s_tilde);
+        double s_norm = norm(s_tilde, n);
+        residual_history[residual_history_size++] = s_norm;
         if (s_norm < tol_abs) {
             for (int i = 0; i < n; ++i) x[i] += alpha * p[i];
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            return {x_out, s_norm, k + 1, residual_history};
+            delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            delete[] r_tilde; delete[] s; delete[] s_tilde; delete[] x;
+            return {x_out, s_norm, k + 1, residual_history, residual_history_size};
         }
         // t = M^{-1} A s_tilde
-        double* As_tilde = matvec(A, s_tilde.data());
-        std::vector<double> t(n);
-        apply_preconditioner(M.data(), As_tilde, n, t.data());
+        double* As_tilde = matvec(A, s_tilde);
+        double* t = new double[n];
+        apply_preconditioner(M, As_tilde, n, t);
         delete[] As_tilde;
-        double t_t = dot(t.data(), t.data(), n);
+        double t_t = dot(t, t, n);
         if (std::abs(t_t) < 1e-10) {
             std::cerr << "Breakdown: t^T t = " << t_t << " at iteration " << k << std::endl;
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            double* r_temp = axpy(-1.0, matvec(A, x.data()), b, n);
+            double* r_temp = axpy(-1.0, matvec(A, x), b, n);
             double* r_tilde_temp = new double[n];
-            apply_preconditioner(M.data(), r_temp, n, r_tilde_temp);
+            apply_preconditioner(M, r_temp, n, r_tilde_temp);
             double r_norm = norm(r_tilde_temp, n);
-            delete[] r_temp; delete[] r_tilde_temp;
-            return {x_out, r_norm, k, residual_history};
+            delete[] r_temp; delete[] r_tilde_temp; delete[] r_tilde; delete[] s; delete[] s_tilde; delete[] t;
+            delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            return {x_out, r_norm, k, residual_history, residual_history_size};
         }
-        omega = dot(t.data(), s_tilde.data(), n) / t_t;
+        omega = dot(t, s_tilde, n) / t_t;
         // x = x + alpha p + omega s_tilde
         for (int i = 0; i < n; ++i) x[i] += alpha * p[i] + omega * s_tilde[i];
         // r = s - omega A s_tilde
-        double* As_tilde_temp = matvec(A, s_tilde.data());
+        double* As_tilde_temp = matvec(A, s_tilde);
         for (int i = 0; i < n; ++i) r[i] = s[i] - omega * As_tilde_temp[i];
         delete[] As_tilde_temp;
         // Check preconditioned residual: r_tilde = M^{-1} r
-        apply_preconditioner(M.data(), r.data(), n, r_tilde.data());
-        double r_norm = norm(r_tilde.data(), n);
+        apply_preconditioner(M, r, n, r_tilde);
+        double r_norm = norm(r_tilde, n);
+        delete[] r_tilde; delete[] s; delete[] s_tilde; delete[] t;
         if (r_norm < 0) {
             std::cerr << "Error: Residual became NaN or Inf at iteration " << k + 1 << std::endl;
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            return {x_out, r_norm, k + 1, residual_history};
+            delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            return {x_out, r_norm, k + 1, residual_history, residual_history_size};
         }
         if (k % 100 == 0) {
             std::cout << "Iteration " << k << ": Preconditioned Residual = " << r_norm << std::endl;
@@ -296,29 +310,33 @@ Result bicgstab(const CSRMatrix& A, const double* b, int max_iter = 1000, double
         if (r_norm < tol_abs) {
             double* x_out = new double[n];
             for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            return {x_out, r_norm, k + 1, residual_history};
+            delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+            return {x_out, r_norm, k + 1, residual_history, residual_history_size};
         }
         rho = rho_new;
     }
 
-    double* r_temp = axpy(-1.0, matvec(A, x.data()), b, n);
+    double* r_temp = axpy(-1.0, matvec(A, x), b, n);
     double* r_tilde_temp = new double[n];
-    apply_preconditioner(M.data(), r_temp, n, r_tilde_temp);
+    apply_preconditioner(M, r_temp, n, r_tilde_temp);
     double r_norm = norm(r_tilde_temp, n);
     delete[] r_temp; delete[] r_tilde_temp;
     double* x_out = new double[n];
     for (int i = 0; i < n; ++i) x_out[i] = x[i];
-    return {x_out, r_norm, k + 1, residual_history};
+    delete[] x; delete[] r; delete[] r_hat; delete[] p; delete[] z; delete[] M; delete[] v;
+    return {x_out, r_norm, k + 1, residual_history, residual_history_size};
 }
 
 double* generate_rhs(const CSRMatrix& A) {
-    std::vector<double> x_true(A.n, 1.0); // x_true = [1, 1, ..., 1]
-    double* b = matvec(A, x_true.data());
+    double* x_true = new double[A.n];
+    for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
+    double* b = matvec(A, x_true);
     std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
+    delete[] x_true;
     return b;
 }
 
-void write_solution(const double* x, int n, const std::string& filename, const std::vector<double>& residual_history) {
+void write_solution(const double* x, int n, const std::string& filename, const double* residual_history, size_t residual_history_size) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error opening output file: " << filename << ". Check permissions or path." << std::endl;
@@ -329,7 +347,7 @@ void write_solution(const double* x, int n, const std::string& filename, const s
         file << x[i] << "\n";
     }
     file << "\nResidual History\n";
-    for (size_t i = 0; i < residual_history.size(); ++i) {
+    for (size_t i = 0; i < residual_history_size; ++i) {
         file << i << "," << residual_history[i] << "\n";
     }
     file.close();
@@ -344,7 +362,8 @@ int main() {
     }
 
     double* b = generate_rhs(A);
-    std::vector<double> x_true(A.n, 1.0); // x_true = [1, 1, ..., 1]
+    double* x_true = new double[A.n];
+    for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
 
     auto start = std::chrono::high_resolution_clock::now();
     Result result = bicgstab(A, b, 2 * A.n, 1e-8);
@@ -365,13 +384,15 @@ int main() {
     double verify_residual = norm(r_tilde, A.n);
     std::cout << "Verification preconditioned residual: " << verify_residual << std::endl;
     delete[] Ax; delete[] r_temp; delete[] M; delete[] r_tilde;
-    double* error = axpy(-1.0, x_true.data(), result.x, A.n);
+    double* error = axpy(-1.0, x_true, result.x, A.n);
     double error_norm = norm(error, A.n);
     std::cout << "Error norm vs x_true: " << error_norm << std::endl;
-    write_solution(result.x, A.n, "bicgstab_solution.csv", result.residual_history);
+    write_solution(result.x, A.n, "bicgstab_solution.csv", result.residual_history, result.residual_history_size);
 
     delete[] b;
+    delete[] x_true;
     delete[] result.x;
+    delete[] result.residual_history;
     free_csr_matrix(A);
     return 0;
 }

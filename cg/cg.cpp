@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <vector>
 #include <omp.h>
 
 struct CSRMatrix {
@@ -16,9 +15,7 @@ struct CSRMatrix {
     int nnz; // number of non-zeros
 };
 
-bool compare_by_column(const std::pair<int, double>& a, const std::pair<int, double>& b) {
-    return a.first < b.first;
-}
+struct Entry { int row, col; double val; };
 
 CSRMatrix read_mtx_file(const std::string& filename) {
     CSRMatrix A = {0, nullptr, nullptr, nullptr, 0};
@@ -40,13 +37,13 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
     A.n = n;
 
-    struct Entry { int row, col; double val; };
-    std::vector<Entry> entries(2 * nz);
+    Entry* entries = new Entry[2 * nz];
     int entry_count = 0;
 
     for (int k = 0; k < nz; ++k) {
         if (!getline(file, line)) {
             std::cerr << "Error: Unexpected end of file" << std::endl;
+            delete[] entries;
             return A;
         }
         ss.clear();
@@ -56,15 +53,15 @@ CSRMatrix read_mtx_file(const std::string& filename) {
         ss >> i >> j >> val;
         if (i < 1 || j < 1 || i > n || j > n) {
             std::cerr << "Error: Invalid indices in Matrix Market file" << std::endl;
+            delete[] entries;
             return A;
         }
         i--; j--;
         entries[entry_count++] = {i, j, val};
         if (i != j) entries[entry_count++] = {j, i, val};
     }
-    entries.resize(entry_count);
 
-    std::vector<int> nnz_per_row(n, 0);
+    int* nnz_per_row = new int[n]();
     for (int k = 0; k < entry_count; ++k) {
         nnz_per_row[entries[k].row]++;
     }
@@ -78,7 +75,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
         A.row_ptr[i + 1] = A.row_ptr[i] + nnz_per_row[i];
     }
 
-    std::sort(entries.begin(), entries.end(),
+    std::sort(entries, entries + entry_count,
         [](const Entry& a, const Entry& b) {
             return a.row == b.row ? a.col < b.col : a.row < b.row;
         });
@@ -90,6 +87,8 @@ CSRMatrix read_mtx_file(const std::string& filename) {
 
     std::cout << "Loaded matrix: " << n << " x " << n << " with " << entry_count << " non-zeros" << std::endl;
 
+    delete[] entries;
+    delete[] nnz_per_row;
     return A;
 }
 
@@ -174,105 +173,104 @@ struct Result {
     double* x;
     double residual;
     int iterations;
-    std::vector<double> residual_history;
+    double* residual_history;
+    int residual_history_size;
 };
 
 Result pcg(const CSRMatrix& A, const double* b, int max_iter = 1000, double tol = 1e-12) {
     int n = A.n;
-    std::vector<double> x(n, 0.0);
-    std::vector<double> r(n);
+    double* x = new double[n]();
+    double* r = new double[n];
     for (int i = 0; i < n; ++i) r[i] = b[i]; // r = b - Ax (x = 0)
-    std::vector<double> z(n);
-    std::vector<double> M(n);
-    compute_diagonal_preconditioner(A, M.data());
-    apply_preconditioner(M.data(), r.data(), n, z.data()); // z = M^{-1} r
-    std::vector<double> p(n);
+    double* z = new double[n];
+    double* M = new double[n];
+    compute_diagonal_preconditioner(A, M);
+    apply_preconditioner(M, r, n, z); // z = M^{-1} r
+    double* p = new double[n];
     for (int i = 0; i < n; ++i) p[i] = z[i]; // p_0 = M^{-1} r_0
-    std::vector<double> residual_history;
+    double* residual_history = new double[max_iter];
 
-    double r_z = dot(r.data(), z.data(), n);
+    double r_z = dot(r, z, n);
     double initial_norm = norm(b, n);
     if (initial_norm < 0) {
         std::cerr << "Error: Initial b has invalid norm" << std::endl;
-        double* x_out = new double[n];
-        for (int i = 0; i < n; ++i) x_out[i] = x[i];
-        return {x_out, -1.0, 0, {}};
+        delete[] r; delete[] z; delete[] M; delete[] p; delete[] residual_history;
+        return {x, -1.0, 0, nullptr, 0};
     }
     std::cout << "Initial norm of b: " << initial_norm << std::endl;
     double tol_abs = tol * initial_norm;
 
     int k;
     for (k = 0; k < max_iter; ++k) {
-        std::vector<double> Ap(n);
-        matvec(A, p.data(), Ap.data());
-        double p_Ap = dot(p.data(), Ap.data(), n);
+        double* Ap = new double[n];
+        matvec(A, p, Ap);
+        double p_Ap = dot(p, Ap, n);
         if (std::abs(p_Ap) < 1e-10) {
             std::cerr << "Breakdown: p^T Ap = " << p_Ap << " at iteration " << k << std::endl;
-            double* x_out = new double[n];
-            for (int i = 0; i < n; ++i) x_out[i] = x[i];
             double* r_temp = new double[n];
-            matvec(A, x.data(), r_temp);
+            matvec(A, x, r_temp);
             axpy(-1.0, r_temp, b, n, r_temp);
             double* z_temp = new double[n];
-            apply_preconditioner(M.data(), r_temp, n, z_temp);
+            apply_preconditioner(M, r_temp, n, z_temp);
             double r_norm = norm(z_temp, n);
-            delete[] r_temp; delete[] z_temp;
-            return {x_out, r_norm, k, residual_history};
+            delete[] r_temp; delete[] z_temp; delete[] Ap;
+            delete[] r; delete[] z; delete[] M; delete[] p;
+            return {x, r_norm, k, residual_history, k};
         }
         double alpha = r_z / p_Ap;
-        axpy(alpha, p.data(), x.data(), n, x.data());
-        axpy(-alpha, Ap.data(), r.data(), n, r.data());
-        apply_preconditioner(M.data(), r.data(), n, z.data());
-        double r_norm = norm(z.data(), n);
-        residual_history.push_back(r_norm);
+        axpy(alpha, p, x, n, x);
+        axpy(-alpha, Ap, r, n, r);
+        apply_preconditioner(M, r, n, z);
+        double r_norm = norm(z, n);
+        residual_history[k] = r_norm;
         if (r_norm < tol_abs) {
-            double* x_out = new double[n];
-            for (int i = 0; i < n; ++i) x_out[i] = x[i];
-            return {x_out, r_norm, k + 1, residual_history};
+            delete[] Ap; delete[] r; delete[] z; delete[] M; delete[] p;
+            return {x, r_norm, k + 1, residual_history, k + 1};
         }
-        double r_z_new = dot(r.data(), z.data(), n);
+        double r_z_new = dot(r, z, n);
         if (std::abs(r_z_new) < 1e-10) {
             std::cerr << "Breakdown: r^T z = " << r_z_new << " at iteration " << k << std::endl;
-            double* x_out = new double[n];
-            for (int i = 0; i < n; ++i) x_out[i] = x[i];
             double* r_temp = new double[n];
-            matvec(A, x.data(), r_temp);
+            matvec(A, x, r_temp);
             axpy(-1.0, r_temp, b, n, r_temp);
             double* z_temp = new double[n];
-            apply_preconditioner(M.data(), r_temp, n, z_temp);
+            apply_preconditioner(M, r_temp, n, z_temp);
             double r_norm = norm(z_temp, n);
-            delete[] r_temp; delete[] z_temp;
-            return {x_out, r_norm, k, residual_history};
+            delete[] r_temp; delete[] z_temp; delete[] Ap;
+            delete[] r; delete[] z; delete[] M; delete[] p;
+            return {x, r_norm, k, residual_history, k};
         }
         double beta = r_z_new / r_z;
-        axpy(beta, p.data(), z.data(), n, p.data());
+        axpy(beta, p, z, n, p);
         r_z = r_z_new;
+        delete[] Ap;
         if (k % 100 == 0) {
             std::cout << "Iteration " << k << ": Preconditioned Residual = " << r_norm << std::endl;
         }
     }
 
     double* r_temp = new double[n];
-    matvec(A, x.data(), r_temp);
+    matvec(A, x, r_temp);
     axpy(-1.0, r_temp, b, n, r_temp);
     double* z_temp = new double[n];
-    apply_preconditioner(M.data(), r_temp, n, z_temp);
+    apply_preconditioner(M, r_temp, n, z_temp);
     double r_norm = norm(z_temp, n);
     delete[] r_temp; delete[] z_temp;
-    double* x_out = new double[n];
-    for (int i = 0; i < n; ++i) x_out[i] = x[i];
-    return {x_out, r_norm, k + 1, residual_history};
+    delete[] r; delete[] z; delete[] M; delete[] p;
+    return {x, r_norm, k, residual_history, k};
 }
 
 double* generate_rhs(const CSRMatrix& A) {
-    std::vector<double> x_true(A.n, 1.0); // x_true = [1, 1, ..., 1]
+    double* x_true = new double[A.n];
+    for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
     double* b = new double[A.n];
-    matvec(A, x_true.data(), b);
+    matvec(A, x_true, b);
     std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
+    delete[] x_true;
     return b;
 }
 
-void write_solution(const double* x, int n, const std::string& filename, const std::vector<double>& residual_history) {
+void write_solution(const double* x, int n, const std::string& filename, const double* residual_history, int residual_history_size) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error opening output file: " << filename << ". Check permissions or path." << std::endl;
@@ -283,7 +281,7 @@ void write_solution(const double* x, int n, const std::string& filename, const s
         file << x[i] << "\n";
     }
     file << "\nResidual History\n";
-    for (size_t i = 0; i < residual_history.size(); ++i) {
+    for (int i = 0; i < residual_history_size; ++i) {
         file << i << "," << residual_history[i] << "\n";
     }
     file.close();
@@ -320,10 +318,11 @@ int main() {
     std::cout << "Verification preconditioned residual: " << verify_residual << std::endl;
     delete[] r_temp; delete[] M; delete[] z_temp;
 
-    write_solution(result.x, A.n, "pcg_solution.csv", result.residual_history);
+    write_solution(result.x, A.n, "pcg_solution.csv", result.residual_history, result.residual_history_size);
 
     delete[] b;
     delete[] result.x;
+    delete[] result.residual_history;
     free_csr_matrix(A);
     return 0;
 }
