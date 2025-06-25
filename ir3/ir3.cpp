@@ -3,20 +3,63 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <random>
 #include <string>
 
+template<typename T> struct Matrix {
+    T** data;
+    int rows, cols;
+};
+
+struct Vector {
+    double* data;
+    int size;
+};
+
 struct CSRMatrix {
-    int n = 0;          // Matrix dimension
-    double* values = nullptr;    // Non-zero values
-    int* col_indices = nullptr;  // Column indices of non-zeros
-    int* row_ptr = nullptr;      // Row pointers
-    int nnz = 0;        // Number of non-zeros
+    int n = 0;
+    double* values = nullptr;
+    int* col_indices = nullptr;
+    int* row_ptr = nullptr;
+    int nnz = 0;
 };
 
 struct Entry {
     int row, col;
     double val;
 };
+
+template<typename T> void create_matrix(Matrix<T>& mat, int rows, int cols) {
+    mat.rows = rows;
+    mat.cols = cols;
+    mat.data = new T*[rows];
+    for (int i = 0; i < rows; ++i) {
+        mat.data[i] = new T[cols]();
+    }
+}
+
+template<class T> void free_matrix(Matrix<T>& mat) {
+    for (int i = 0; i < mat.rows; ++i) {
+        delete[] mat.data[i];
+    }
+    delete[] mat.data;
+    mat.data = nullptr;
+    mat.rows = 0;
+    mat.cols = 0;
+}
+
+Vector create_vector(int size) {
+    Vector vec;
+    vec.size = size;
+    vec.data = new double[size]();
+    return vec;
+}
+
+void free_vector(Vector& vec) {
+    delete[] vec.data;
+    vec.data = nullptr;
+    vec.size = 0;
+}
 
 CSRMatrix read_mtx_file(const std::string& filename) {
     CSRMatrix A;
@@ -93,7 +136,6 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     return A;
 }
 
-// Free CSRMatrix memory
 void free_csr_matrix(CSRMatrix& A) {
     delete[] A.values;
     delete[] A.col_indices;
@@ -105,20 +147,13 @@ void free_csr_matrix(CSRMatrix& A) {
     A.nnz = 0;
 }
 
-// Generate right-hand side b
-double* generate_rhs(const CSRMatrix& A) {
-    double* x_true = new double[A.n];
-    double* b = new double[A.n]();
-    for (int i = 0; i < A.n; ++i) {
-        x_true[i] = 1.0;
+double* generate_rhs(int n) {
+    double* b = new double[n];
+    std::mt19937 gen(42);
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    for (int i = 0; i < n; ++i) {
+        b[i] = dis(gen);
     }
-    for (int i = 0; i < A.n; ++i) {
-        for (int k = A.row_ptr[i]; k < A.row_ptr[i + 1]; ++k) {
-            b[i] += A.values[k] * x_true[A.col_indices[k]];
-        }
-    }
-    std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
-    delete[] x_true;
     return b;
 }
 
@@ -131,42 +166,9 @@ void matvec(const CSRMatrix& A, const double* x, double* y) {
     }
 }
 
-// Dense matrix and vector types
-struct Matrix {
-    double** data;
-    int rows, cols;
-};
-
-struct Vector {
-    double* data;
-    int size;
-};
-
-Matrix create_matrix(int rows, int cols) {
-    Matrix mat;
-    mat.rows = rows;
-    mat.cols = cols;
-    mat.data = new double*[rows];
-    for (int i = 0; i < rows; ++i) {
-        mat.data[i] = new double[cols]();
-    }
-    return mat;
-}
-
-// Free dense matrix
-void free_matrix(Matrix& mat) {
-    for (int i = 0; i < mat.rows; ++i) {
-        delete[] mat.data[i];
-    }
-    delete[] mat.data;
-    mat.data = nullptr;
-    mat.rows = 0;
-    mat.cols = 0;
-}
-
-// Convert CSRMatrix to dense Matrix
-Matrix csr_to_dense(const CSRMatrix& A) {
-    Matrix dense = create_matrix(A.n, A.n);
+template<class T> Matrix<T> csr_to_dense(const CSRMatrix& A) {
+    Matrix<T> dense;
+    create_matrix(dense, A.n, A.n);
     for (int i = 0; i < A.n; ++i) {
         for (int k = A.row_ptr[i]; k < A.row_ptr[i + 1]; ++k) {
             dense.data[i][A.col_indices[k]] = A.values[k];
@@ -175,29 +177,14 @@ Matrix csr_to_dense(const CSRMatrix& A) {
     return dense;
 }
 
-// Create vector
-Vector create_vector(int size) {
-    Vector vec;
-    vec.size = size;
-    vec.data = new double[size]();
-    return vec;
-}
-
-// Free vector
-void free_vector(Vector& vec) {
-    delete[] vec.data;
-    vec.data = nullptr;
-    vec.size = 0;
-}
-
-
-void lu_factorization(const Matrix& A, Matrix& L, Matrix& U, int* P) {
-    int n = A.rows;// Perform LU decomposition with partial pivoting: PA = LU
-    L = create_matrix(n, n);
-    U = create_matrix(n, n);
+template<class T1, class T2>
+void lu_factorization(const Matrix<double>& A, Matrix<T1>& L, Matrix<T2>& U, int* P) {
+    int n = A.rows;
+    create_matrix(L, n, n);
+    create_matrix(U, n, n);
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            U.data[i][j] = A.data[i][j];
+            U.data[i][j] = static_cast<T2>(A.data[i][j]);
         }
         P[i] = i;
         L.data[i][i] = 1.0;
@@ -231,9 +218,8 @@ void lu_factorization(const Matrix& A, Matrix& L, Matrix& U, int* P) {
     }
 }
 
-Vector forward_substitution(const Matrix& L, const Vector& b, const int* P) {
+template<typename T> Vector forward_substitution(const Matrix<T>& L, const Vector& b, const int* P) {
     int n = L.rows;
-// Solve Ly = Pb (forward substitution)
     Vector y = create_vector(n);
     for (int i = 0; i < n; ++i) {
         double sum = 0.0;
@@ -245,9 +231,8 @@ Vector forward_substitution(const Matrix& L, const Vector& b, const int* P) {
     return y;
 }
 
-Vector backward_substitution(const Matrix& U, const Vector& y) {
+template<typename T> Vector backward_substitution(const Matrix<T>& U, const Vector& y) {
     int n = U.rows;
-// Solve Ux = y (backward substitution)
     Vector x = create_vector(n);
     for (int i = n - 1; i >= 0; --i) {
         double sum = 0.0;
@@ -267,7 +252,6 @@ Vector vec_sub(const Vector& a, const Vector& b) {
     return result;
 }
 
-
 Vector vec_add(const Vector& a, const Vector& b) {
     Vector result = create_vector(a.size);
     for (int i = 0; i < a.size; ++i) {
@@ -279,8 +263,7 @@ Vector vec_add(const Vector& a, const Vector& b) {
 Vector round_to_low_prec(const Vector& x) {
     Vector result = create_vector(x.size);
     for (int i = 0; i < x.size; ++i) {
-// Round vector to single precision, following nick higham
-        result.data[i] = static_cast<float>(x.data[i]);
+        result.data[i] = static_cast<double>(x.data[i]);
     }
     return result;
 }
@@ -302,7 +285,6 @@ void write_solution(const Vector& x, const std::string& filename, const double* 
     file.close();
 }
 
-// Solve Ax = b using iterative refinement
 Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_iter, double tol, double*& residual_history, int& history_size) {
     if (A_csr.n > 10000) {
         std::cerr << "Error: Matrix too large for dense conversion\n";
@@ -312,8 +294,10 @@ Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_ite
     history_size = 0;
     residual_history = new double[max_iter];
 
-    Matrix A = csr_to_dense(A_csr);
-    Matrix L, U;
+    Matrix<double> A = csr_to_dense<double>(A_csr);
+    Matrix<double> L;
+    Matrix<double> U;
+    
     int* P = new int[A_csr.n];
     try {
         lu_factorization(A, L, U, P);
@@ -324,8 +308,8 @@ Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_ite
         return create_vector(0);
     }
 
-    Vector y = forward_substitution(L, b, P);
-    Vector x = backward_substitution(U, y);
+    Vector y = forward_substitution<double>(L, b, P);
+    Vector x = backward_substitution<double>(U, y);
     free_vector(y);
 
     Vector Ax = create_vector(A_csr.n);
@@ -344,8 +328,8 @@ Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_ite
         residual_history[history_size++] = norm_r;
 
         Vector r_low = round_to_low_prec(r);
-        Vector y_d = forward_substitution(L, r_low, P);
-        d = backward_substitution(U, y_d);
+        Vector y_d = forward_substitution<double>(L, r_low, P);
+        d = backward_substitution<double>(U, y_d);
         free_vector(y_d);
         free_vector(r_low);
 
@@ -380,7 +364,7 @@ int main() {
         }
 
         Vector b = create_vector(A.n);
-        double* b_raw = generate_rhs(A);
+        double* b_raw = generate_rhs(A.n);
         for (int i = 0; i < A.n; ++i) {
             b.data[i] = b_raw[i];
         }
@@ -388,7 +372,7 @@ int main() {
 
         double* residual_history = nullptr;
         int history_size = 0;
-        Vector x = iterative_refinement(A, b, 10, 1e-6, residual_history, history_size);
+        Vector x = iterative_refinement(A, b, 1000, 1e-8, residual_history, history_size);
 
         if (x.size == 0) {
             std::cerr << "Failed to solve system\n";
@@ -397,7 +381,7 @@ int main() {
             delete[] residual_history;
             return 1;
         }
-
+        
         std::string output_file = "solution.txt";
         write_solution(x, output_file, residual_history, history_size);
 
@@ -410,6 +394,7 @@ int main() {
         free_vector(b);
         free_vector(x);
         delete[] residual_history;
+
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
         return 1;

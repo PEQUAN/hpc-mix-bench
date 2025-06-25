@@ -280,9 +280,10 @@ IRResult iterative_refinement(const CSRMatrix& A, const double* b, double* LU, c
 
 double* generate_rhs(int n) {
     double* b = new double[n];
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(1.0, 10.0);
+    //std::random_device rd;
+    // std::mt19937 gen(rd());
+    std::mt19937 gen(42);
+    std::uniform_real_distribution<> dis(0.0, 1.0);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);
     }
