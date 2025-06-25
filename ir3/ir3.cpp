@@ -6,27 +6,27 @@
 #include <random>
 #include <string>
 
-template<typename T> struct Matrix {
+template<class T> struct Matrix {
     T** data;
     int rows, cols;
 };
 
-struct Vector {
-    double* data;
+template<class T> struct Vector {
+    T* data;
     int size;
 };
 
-struct CSRMatrix {
+template<class T> struct CSRMatrix {
     int n = 0;
-    double* values = nullptr;
+    T* values = nullptr;
     int* col_indices = nullptr;
     int* row_ptr = nullptr;
     int nnz = 0;
 };
 
-struct Entry {
+template<class T> struct Entry {
     int row, col;
-    double val;
+    T val;
 };
 
 template<typename T> void create_matrix(Matrix<T>& mat, int rows, int cols) {
@@ -48,21 +48,21 @@ template<class T> void free_matrix(Matrix<T>& mat) {
     mat.cols = 0;
 }
 
-Vector create_vector(int size) {
-    Vector vec;
+template<class T> Vector<T> create_vector(int size) {
+    Vector<T> vec;
     vec.size = size;
-    vec.data = new double[size]();
+    vec.data = new T[size]();
     return vec;
 }
 
-void free_vector(Vector& vec) {
+template<class T> void free_vector(Vector<T>& vec) {
     delete[] vec.data;
     vec.data = nullptr;
     vec.size = 0;
 }
 
-CSRMatrix read_mtx_file(const std::string& filename) {
-    CSRMatrix A;
+template<class T> CSRMatrix<T> read_mtx_file(const std::string& filename) {
+    CSRMatrix<T> A;
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open " << filename << std::endl;
@@ -81,7 +81,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
     A.n = n;
 
-    Entry* entries = new Entry[2 * nz];
+    Entry<T>* entries = new Entry<T>[2 * nz];
     int entry_count = 0;
 
     for (int k = 0; k < nz; ++k) {
@@ -101,8 +101,8 @@ CSRMatrix read_mtx_file(const std::string& filename) {
             return A;
         }
         i--; j--;
-        entries[entry_count++] = {i, j, val};
-        if (i != j) entries[entry_count++] = {j, i, val};
+        entries[entry_count++] = {i, j, static_cast<T>(val)};
+        if (i != j) entries[entry_count++] = {j, i, static_cast<T>(val)};
     }
 
     int* nnz_per_row = new int[n]();
@@ -111,7 +111,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
 
     A.nnz = entry_count;
-    A.values = new double[A.nnz];
+    A.values = new T[A.nnz];
     A.col_indices = new int[A.nnz];
     A.row_ptr = new int[n + 1];
     A.row_ptr[0] = 0;
@@ -120,7 +120,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     }
 
     std::sort(entries, entries + entry_count,
-        [](const Entry& a, const Entry& b) {
+        [](const Entry<T>& a, const Entry<T>& b) {
             return a.row == b.row ? a.col < b.col : a.row < b.row;
         });
 
@@ -136,7 +136,7 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     return A;
 }
 
-void free_csr_matrix(CSRMatrix& A) {
+template<class T> void free_csr_matrix(CSRMatrix<T>& A) {
     delete[] A.values;
     delete[] A.col_indices;
     delete[] A.row_ptr;
@@ -147,17 +147,17 @@ void free_csr_matrix(CSRMatrix& A) {
     A.nnz = 0;
 }
 
-double* generate_rhs(int n) {
-    double* b = new double[n];
+template<class T> T* generate_rhs(int n) {
+    T* b = new T[n];
     std::mt19937 gen(42);
-    std::uniform_real_distribution<> dis(0.0, 1.0);
+    std::uniform_real_distribution<T> dis(0.0, 1.0);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);
     }
     return b;
 }
 
-void matvec(const CSRMatrix& A, const double* x, double* y) {
+template<class T> void matvec(const CSRMatrix<T>& A, const T* x, T* y) {
     for (int i = 0; i < A.n; ++i) {
         y[i] = 0.0;
         for (int k = A.row_ptr[i]; k < A.row_ptr[i + 1]; ++k) {
@@ -166,7 +166,7 @@ void matvec(const CSRMatrix& A, const double* x, double* y) {
     }
 }
 
-template<class T> Matrix<T> csr_to_dense(const CSRMatrix& A) {
+template<class T> Matrix<T> csr_to_dense(const CSRMatrix<T>& A) {
     Matrix<T> dense;
     create_matrix(dense, A.n, A.n);
     for (int i = 0; i < A.n; ++i) {
@@ -177,8 +177,7 @@ template<class T> Matrix<T> csr_to_dense(const CSRMatrix& A) {
     return dense;
 }
 
-template<class T1, class T2>
-void lu_factorization(const Matrix<double>& A, Matrix<T1>& L, Matrix<T2>& U, int* P) {
+template<class T1, class T2> void lu_factorization(const Matrix<double>& A, Matrix<T1>& L, Matrix<T2>& U, int* P) {
     int n = A.rows;
     create_matrix(L, n, n);
     create_matrix(U, n, n);
@@ -218,11 +217,11 @@ void lu_factorization(const Matrix<double>& A, Matrix<T1>& L, Matrix<T2>& U, int
     }
 }
 
-template<typename T> Vector forward_substitution(const Matrix<T>& L, const Vector& b, const int* P) {
+template<typename T1, typename T2> Vector<T2> forward_substitution(const Matrix<T1>& L, const Vector<T2>& b, const int* P) {
     int n = L.rows;
-    Vector y = create_vector(n);
+    Vector<T2> y = create_vector<T2>(n);
     for (int i = 0; i < n; ++i) {
-        double sum = 0.0;
+        T2 sum = 0.0;
         for (int j = 0; j < i; ++j) {
             sum += L.data[i][j] * y.data[j];
         }
@@ -231,11 +230,11 @@ template<typename T> Vector forward_substitution(const Matrix<T>& L, const Vecto
     return y;
 }
 
-template<typename T> Vector backward_substitution(const Matrix<T>& U, const Vector& y) {
+template<typename T1, typename T2> Vector<T2> backward_substitution(const Matrix<T1>& U, const Vector<T2>& y) {
     int n = U.rows;
-    Vector x = create_vector(n);
+    Vector<T2> x = create_vector<T2>(n);
     for (int i = n - 1; i >= 0; --i) {
-        double sum = 0.0;
+        T2 sum = 0.0;
         for (int j = i + 1; j < n; ++j) {
             sum += U.data[i][j] * x.data[j];
         }
@@ -244,31 +243,31 @@ template<typename T> Vector backward_substitution(const Matrix<T>& U, const Vect
     return x;
 }
 
-Vector vec_sub(const Vector& a, const Vector& b) {
-    Vector result = create_vector(a.size);
+template<class T> Vector<T> vec_sub(const Vector<T>& a, const Vector<T>& b) {
+    Vector<T> result = create_vector<T>(a.size);
     for (int i = 0; i < a.size; ++i) {
         result.data[i] = a.data[i] - b.data[i];
     }
     return result;
 }
 
-Vector vec_add(const Vector& a, const Vector& b) {
-    Vector result = create_vector(a.size);
+template<class T> Vector<T> vec_add(const Vector<T>& a, const Vector<T>& b) {
+    Vector<T> result = create_vector<T>(a.size);
     for (int i = 0; i < a.size; ++i) {
         result.data[i] = a.data[i] + b.data[i];
     }
     return result;
 }
 
-Vector round_to_low_prec(const Vector& x) {
-    Vector result = create_vector(x.size);
+template<class T> Vector<T> round_to_low_prec(const Vector<T>& x) {
+    Vector<T> result = create_vector<T>(x.size);
     for (int i = 0; i < x.size; ++i) {
-        result.data[i] = static_cast<double>(x.data[i]);
+        result.data[i] = static_cast<float>(x.data[i]);
     }
     return result;
 }
 
-void write_solution(const Vector& x, const std::string& filename, const double* residual_history, int history_size) {
+template<class T> void write_solution(const Vector<T>& x, const std::string& filename, const double* residual_history, int history_size) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error opening output file: " << filename << std::endl;
@@ -285,18 +284,18 @@ void write_solution(const Vector& x, const std::string& filename, const double* 
     file.close();
 }
 
-Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_iter, double tol, double*& residual_history, int& history_size) {
+template<class T> Vector<T> iterative_refinement(const CSRMatrix<T>& A_csr, const Vector<T>& b, int max_iter, double tol, double*& residual_history, int& history_size) {
     if (A_csr.n > 10000) {
         std::cerr << "Error: Matrix too large for dense conversion\n";
-        return create_vector(0);
+        return create_vector<T>(0);
     }
 
     history_size = 0;
     residual_history = new double[max_iter];
 
     Matrix<double> A = csr_to_dense<double>(A_csr);
-    Matrix<double> L;
-    Matrix<double> U;
+    Matrix<float> L;
+    Matrix<float> U;
     
     int* P = new int[A_csr.n];
     try {
@@ -305,16 +304,16 @@ Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_ite
         std::cerr << "LU factorization failed: " << e.what() << "\n";
         delete[] P;
         free_matrix(A);
-        return create_vector(0);
+        return create_vector<T>(0);
     }
 
-    Vector y = forward_substitution<double>(L, b, P);
-    Vector x = backward_substitution<double>(U, y);
+    Vector<T> y = forward_substitution<float, T>(L, b, P);
+    Vector<T> x = backward_substitution<float, T>(U, y);
     free_vector(y);
 
-    Vector Ax = create_vector(A_csr.n);
-    Vector r = create_vector(A_csr.n);
-    Vector d = create_vector(A_csr.n);
+    Vector<T> Ax = create_vector<T>(A_csr.n);
+    Vector<T> r = create_vector<T>(A_csr.n);
+    Vector<T> d = create_vector<T>(A_csr.n);
 
     for (int iter = 0; iter < max_iter; ++iter) {
         matvec(A_csr, x.data, Ax.data);
@@ -327,13 +326,13 @@ Vector iterative_refinement(const CSRMatrix& A_csr, const Vector& b, int max_ite
         norm_r = std::sqrt(norm_r);
         residual_history[history_size++] = norm_r;
 
-        Vector r_low = round_to_low_prec(r);
-        Vector y_d = forward_substitution<double>(L, r_low, P);
-        d = backward_substitution<double>(U, y_d);
+        Vector<T> r_low = round_to_low_prec(r);
+        Vector<T> y_d = forward_substitution<float, T>(L, r_low, P);
+        d = backward_substitution<float, T>(U, y_d);
         free_vector(y_d);
         free_vector(r_low);
 
-        Vector x_new = vec_add(x, d);
+        Vector<T> x_new = vec_add(x, d);
         free_vector(x);
         x = x_new;
 
@@ -357,14 +356,14 @@ int main() {
     std::string filename = "../data/suitesparse/1138_bus.mtx";
 
     try {
-        CSRMatrix A = read_mtx_file(filename);
+        CSRMatrix<double> A = read_mtx_file<double>(filename);
         if (A.n == 0) {
             std::cerr << "Failed to load matrix\n";
             return 1;
         }
 
-        Vector b = create_vector(A.n);
-        double* b_raw = generate_rhs(A.n);
+        Vector<double> b = create_vector<double>(A.n);
+        double* b_raw = generate_rhs<double>(A.n);
         for (int i = 0; i < A.n; ++i) {
             b.data[i] = b_raw[i];
         }
@@ -372,7 +371,7 @@ int main() {
 
         double* residual_history = nullptr;
         int history_size = 0;
-        Vector x = iterative_refinement(A, b, 1000, 1e-8, residual_history, history_size);
+        Vector<double> x = iterative_refinement<double>(A, b, 1000, 1e-8, residual_history, history_size);
 
         if (x.size == 0) {
             std::cerr << "Failed to solve system\n";
