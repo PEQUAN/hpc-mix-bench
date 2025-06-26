@@ -140,14 +140,6 @@ __PROMISE__* readCSV(const string& filename, int& rows, int& cols) {
 int main(int argc, char *argv[]) {
     int n_samples, n_features, n_queries, n_features_q, k_gt, n_features_gt;
     int k = 3; 
-
-    if (argc > 1) k = atoi(argv[1]);
-    if (k <= 0 || k > MAX_K) {
-        cerr << "Error: k must be positive and <= " << MAX_K << endl;
-        return 1;
-    }
-
-
     // Read dataset
     cout << "Reading dataset..." << endl;
     __PROMISE__* data = readCSV("dataset.csv", n_samples, n_features);

@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 import os
+import time
+import csv
 from cadnaPromise.run import runPromise
 
 CATEGORY_DISPLAY_NAMES = {
@@ -14,8 +16,9 @@ CATEGORY_DISPLAY_NAMES = {
 }
 
 def run_experiments(method, digits):
-    """Run experiments and collect precision settings."""
+    """Run experiments, collect precision settings, and measure runtime."""
     precision_settings = []
+    runtimes = []
     for digit in digits:
         testargs = [
             f'--precs={method}',
@@ -24,20 +27,26 @@ def run_experiments(method, digits):
             '--noParsing',
             '--fp=fp.json'
         ]
+        start_time = time.time()
         try:
             result = runPromise(testargs)
+            elapsed_time = time.time() - start_time
             if result and isinstance(result, dict):
                 cleaned_result = {key: list(value) if isinstance(value, set) else value 
                                 for key, value in result.items()}
                 precision_settings.append(cleaned_result)
-                print(f"Results for {digit} digits: {cleaned_result}")
+                runtimes.append(elapsed_time)
+                print(f"Results for {digit} digits: {cleaned_result}, Runtime: {elapsed_time:.4f} seconds")
             else:
                 print(f"Warning: No valid result for {digit} digits")
                 precision_settings.append({})
+                runtimes.append(elapsed_time)
         except Exception as e:
-            print(f"Error running experiment for {digit} digits: {e}")
+            elapsed_time = time.time() - start_time
+            print(f"Error running experiment for {digit} digits: {e}, Runtime: {elapsed_time:.4f} seconds")
             precision_settings.append({})
-    return precision_settings
+            runtimes.append(elapsed_time)
+    return precision_settings, runtimes
 
 def save_precision_settings(precision_settings, filename='precision_settings_4.json'):
     """Save precision settings to a JSON file."""
@@ -53,21 +62,33 @@ def save_precision_settings(precision_settings, filename='precision_settings_4.j
         print(f"Precision settings saved to {filename}")
     except Exception as e:
         print(f"Error saving precision settings: {e}")
-        # Create an empty file to prevent loading corrupted data
         with open(filename, 'w') as f:
             json.dump([], f)
+
+def save_runtimes_to_csv(digits, runtimes, filename='runtimes4.csv'):
+    """Save runtimes and their average to a CSV file."""
+    try:
+        average_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
+        with open(filename, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Digit', 'Runtime (seconds)'])
+            for digit, runtime in zip(digits, runtimes):
+                writer.writerow([digit, f"{runtime:.4f}"])
+            writer.writerow(['Average', f"{average_runtime:.4f}"])
+        print(f"Runtimes saved to {filename}")
+    except Exception as e:
+        print(f"Error saving runtimes to CSV: {e}")
 
 def load_precision_settings(filename='precision_settings_4.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
-        precision_settings = run_experiments('bhsd', [2, 3, 4, 5])
+        precision_settings, _ = run_experiments('bhsd', [2, 3, 4, 5])
         save_precision_settings(precision_settings, filename)
         return precision_settings
     try:
         with open(filename, 'r') as f:
             data = json.load(f)
-        # Validate loaded data
         if not isinstance(data, list):
             raise ValueError(f"Invalid JSON data: Expected list, got {type(data)}")
         for setting in data:
@@ -80,7 +101,7 @@ def load_precision_settings(filename='precision_settings_4.json'):
     except Exception as e:
         print(f"Error loading precision settings: {e}")
         print("Regenerating data due to loading error...")
-        precision_settings = run_experiments('bhsd', [2, 3, 4, 5])
+        precision_settings, _ = run_experiments('bhsd', [2, 3, 4, 5])
         save_precision_settings(precision_settings, filename)
         return precision_settings
 
@@ -101,12 +122,12 @@ def plot_precision_settings(precision_settings, digits):
     categories = get_categories(precision_settings)
     
     desired_order = [
-        'flx::floatx<4, 3>',  # q43
-        'flx::floatx<5, 2>',  # q52
-        'flx::floatx<8, 7>',  # bf16
-        'half_float::half',   # fp16
-        'float',              # single
-        'double'              # double
+        'flx::floatx<4, 3>',
+        'flx::floatx<5, 2>',
+        'flx::floatx<8, 7>',
+        'half_float::half',
+        'float',
+        'double'
     ]
     
     heights = {cat: [] for cat in categories}
@@ -144,14 +165,14 @@ def plot_precision_settings(precision_settings, digits):
                       color=colors[i], width=1.86/len(active_categories), edgecolor='white')
         
         for j, (bar_height, bottom_height) in enumerate(zip(heights[category], bottom)):
-            if bar_height > 0:  
+            if bar_height > 0:
                 ax.text(
-                    x_indices[j], 
-                    bottom_height + bar_height / 2,  
-                    f'{int(bar_height)}', 
-                    ha='center', 
-                    va='center', 
-                    fontsize=14, 
+                    x_indices[j],
+                    bottom_height + bar_height / 2,
+                    f'{int(bar_height)}',
+                    ha='center',
+                    va='center',
+                    fontsize=14,
                     weight='bold',
                     color='black'
                 )
@@ -177,13 +198,12 @@ def plot_precision_settings(precision_settings, digits):
     plt.show()
 
 if __name__ == "__main__":
-    method = 'whsd'
+    method = 'cbsd'
     digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    precision_settings = run_experiments(method, digits)
+    precision_settings, runtimes = run_experiments(method, digits)
     save_precision_settings(precision_settings)
-
+    save_runtimes_to_csv(digits, runtimes)
 
     loaded_settings = load_precision_settings()
     plot_precision_settings(loaded_settings, digits)
-    

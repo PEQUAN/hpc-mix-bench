@@ -134,7 +134,7 @@ __PROMISE__ norm(const __PROMISE__* v, int n) {
 
 void compute_diagonal_preconditioner(const CSRMatrix& A, __PROMISE__* M) {
     bool has_zero_diagonal = false;
-    __PROMISE__ min_diag = std::numeric_limits<__PROMISE__>::max();
+    __PROMISE__ min_diag = 9999.9;
     __PROMISE__ max_diag = 0.0;
     for (int i = 0; i < A.n; ++i) {
         M[i] = 0.0;
@@ -259,10 +259,11 @@ Result pcg(const CSRMatrix& A, const __PROMISE__* b, int max_iter = 1000, __PROM
     return {x, r_norm, k, residual_history, k};
 }
 
-__PROMISE__* generate_rhs(const CSRMatrix& A) {
-    __PROMISE__* x_true = new __PROMISE__[A.n];
+
+double* generate_rhs(const CSRMatrix& A) {
+    double* x_true = new double[A.n];
     for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
-    __PROMISE__* b = new __PROMISE__[A.n];
+    double* b = new double[A.n];
     matvec(A, x_true, b);
     std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
     delete[] x_true;

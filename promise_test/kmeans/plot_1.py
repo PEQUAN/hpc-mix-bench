@@ -94,15 +94,13 @@ def get_categories(precision_settings):
     return list(categories) if categories else list(CATEGORY_DISPLAY_NAMES.keys())
 
 def plot_precision_settings(precision_settings, digits):
-    """Visualize precision settings as a stacked bar chart."""
+    """Visualize precision settings as a stacked bar chart with observation counts."""
     if not precision_settings:
         print("Error: No precision settings to plot")
         return
     
-    # Get categories dynamically
     categories = get_categories(precision_settings)
     
-    # Define desired legend order (right to left: q43, q52, bf16, fp16, single, double)
     desired_order = [
         'flx::floatx<4, 3>',  # q43
         'flx::floatx<5, 2>',  # q52
@@ -112,10 +110,9 @@ def plot_precision_settings(precision_settings, digits):
         'double'              # double
     ]
     
-    
     heights = {cat: [] for cat in categories}
     for setting in precision_settings:
-        for cat in categories:# Filter active categories (non-zero counts) and sort by desired order
+        for cat in categories:
             count = len(setting[cat]) if isinstance(setting, dict) and cat in setting else 0
             heights[cat].append(count)
     
@@ -126,8 +123,7 @@ def plot_precision_settings(precision_settings, digits):
     
     active_categories = sorted(active_categories, key=lambda x: desired_order.index(x) if x in desired_order else len(desired_order))
     
-   
-    available_styles = plt.style.available # Set up plot style with fallback
+    available_styles = plt.style.available
     preferred_style = 'seaborn' if 'seaborn' in available_styles else 'seaborn-v0_8' if 'seaborn-v0_8' in available_styles else 'ggplot'
     try:
         plt.style.use(preferred_style)
@@ -140,13 +136,26 @@ def plot_precision_settings(precision_settings, digits):
 
     colors = plt.cm.Set2(np.linspace(0, 1, len(categories)))
 
-    x_indices = np.arange(len(digits)) 
+    x_indices = np.arange(len(digits))
 
     bottom = np.zeros(len(digits))
     for i, category in enumerate(active_categories):
         display_name = CATEGORY_DISPLAY_NAMES.get(category, category)
-        ax.bar(x_indices, heights[category], bottom=bottom, label=display_name,
-               color=colors[i], width=0.8/len(active_categories), edgecolor='white')
+        bars = ax.bar(x_indices, heights[category], bottom=bottom, label=display_name,
+                      color=colors[i], width=1.86/len(active_categories), edgecolor='white')
+        
+        for j, (bar_height, bottom_height) in enumerate(zip(heights[category], bottom)):
+            if bar_height > 0:  
+                ax.text(
+                    x_indices[j], 
+                    bottom_height + bar_height / 2,  
+                    f'{int(bar_height)}', 
+                    ha='center', 
+                    va='center', 
+                    fontsize=14, 
+                    weight='bold',
+                    color='black'
+                )
         bottom += np.array(heights[category])
 
     ax.set_xticks(x_indices)
@@ -172,8 +181,6 @@ if __name__ == "__main__":
     method = 'cbsd'
     digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    precision_settings = run_experiments(method, digits)
-    save_precision_settings(precision_settings)
 
     loaded_settings = load_precision_settings()
     plot_precision_settings(loaded_settings, digits)

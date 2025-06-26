@@ -6,22 +6,30 @@
 #include <cmath>
 #include <memory>
 #include <numeric>
+#include <vector>
+#include <string>
 
 const int MAX_FEATURES = 100;
 const int MAX_DATA_POINTS = 10000;
 const int MAX_FEATURE_INDICES = 100;
 
+const std::vector<std::string> FEATURE_NAMES = {
+    // Boston Housing Dataset feature names
+    "CRIM", "ZN", "INDUS", "CHAS", "NOX", "RM", "AGE",
+    "DIS", "RAD", "TAX", "PTRATIO", "B", "LSTAT"
+};
+
 struct DataPoint {
-    double* features; 
-    int num_features; 
-    double target;
+    __PROMISE__* features;
+    int num_features;
+    __PROMISE__ target;
 
     DataPoint() : features(nullptr), num_features(0), target(0.0) {}
 
     ~DataPoint() { delete[] features; }
 
     DataPoint(const DataPoint& other) : num_features(other.num_features), target(other.target) {
-        features = new double[num_features];
+        features = new __PROMISE__[num_features];
         for (int i = 0; i < num_features; ++i) {
             features[i] = other.features[i];
         }
@@ -221,6 +229,7 @@ public:
     }
 };
 
+// Modified to handle missing values during scaling
 DataPoint* scale_features(const DataPoint* data, int data_size, int& out_size) {
     if (data_size == 0) {
         std::cerr << "Error: Empty data in scale_features" << std::endl;
@@ -234,45 +243,62 @@ DataPoint* scale_features(const DataPoint* data, int data_size, int& out_size) {
         scaled_data[i] = data[i];
     }
 
-    __PR_2__* means = new __PR_2__[n_features]();
-    __PR_3__* stds = new __PR_3__[n_features]();
+    __PROMISE__* means = new __PROMISE__[n_features]();
+    __PROMISE__* stds = new __PROMISE__[n_features]();
+    int* counts = new int[n_features](); // Track non-missing values
 
+    // Compute means
     for (int i = 0; i < data_size; ++i) {
         if (data[i].num_features != n_features) {
             std::cerr << "Error: Inconsistent feature count" << std::endl;
             delete[] scaled_data;
             delete[] means;
             delete[] stds;
+            delete[] counts;
             out_size = 0;
             return nullptr;
         }
         for (int j = 0; j < n_features; ++j) {
-            means[j] += data[i].features[j];
+            if (!isnan(data[i].features[j])) {
+                means[j] += data[i].features[j];
+                counts[j]++;
+            }
         }
     }
     for (int j = 0; j < n_features; ++j) {
-        means[j] /= data_size;
+        double temp_u2 = 1e-9;
+        means[j] = (counts[j] > 0) ? means[j] / counts[j] : temp_u2;
     }
 
+    // Compute standard deviations
     for (int i = 0; i < data_size; ++i) {
         for (int j = 0; j < n_features; ++j) {
-            __PROMISE__ diff = data[i].features[j] - means[j];
-            stds[j] += diff * diff;
+            if (!isnan(data[i].features[j])) {
+                __PROMISE__ diff = data[i].features[j] - means[j];
+                stds[j] += diff * diff;
+            }
         }
     }
     for (int j = 0; j < n_features; ++j) {
-        stds[j] = sqrt(stds[j] / data_size);
+        double temp_u1 = 1e-9;
+        stds[j] = (counts[j] > 0) ? sqrt(stds[j] / counts[j]) : temp_u1;
         if (stds[j] < 1e-9) stds[j] = 1e-9;
     }
 
+    // Scale features and impute missing values with mean
     for (int i = 0; i < data_size; ++i) {
         for (int j = 0; j < n_features; ++j) {
-            scaled_data[i].features[j] = (scaled_data[i].features[j] - means[j]) / stds[j];
+            if (isnan(scaled_data[i].features[j])) {
+                scaled_data[i].features[j] = 0.0; // Mean after scaling
+            } else {
+                scaled_data[i].features[j] = (scaled_data[i].features[j] - means[j]) / stds[j];
+            }
         }
     }
 
     delete[] means;
     delete[] stds;
+    delete[] counts;
     out_size = data_size;
     return scaled_data;
 }
@@ -290,68 +316,128 @@ DataPoint* read_csv(const std::string& filename, int& out_size) {
     }
 
     std::string line;
-    getline(file, line); 
+    // Read header
+    if (!getline(file, line)) {
+        std::cerr << "Error: Empty file or failed to read header" << std::endl;
+        delete[] data;
+        out_size = 0;
+        return nullptr;
+    }
+
+    std::stringstream header_ss(line);
+    std::string header_value;
+    std::vector<std::string> headers;
+    while (getline(header_ss, header_value, ',')) {
+        headers.push_back(header_value);
+    }
+    if (headers.size() != 14) {
+        std::cerr << "Error: Expected 14 columns, got " << headers.size() << std::endl;
+        delete[] data;
+        out_size = 0;
+        return nullptr;
+    }
 
     while (getline(file, line) && data_size < MAX_DATA_POINTS) {
         std::stringstream ss(line);
         std::string value;
-        __PROMISE__* features = new __PROMISE__[MAX_FEATURES];
-        int num_features = 0;
+        std::vector<__PROMISE__> features;
+        __PROMISE__ target = 0.0;
 
-        getline(ss, value, ',');
-
-        // Read features
+        std::vector<std::string> values; // Read all values
         while (getline(ss, value, ',')) {
-            if (num_features >= MAX_FEATURES) {
-                std::cerr << "Error: Too many features in CSV" << std::endl;
-                delete[] features;
-                delete[] data;
-                out_size = 0;
-                return nullptr;
-            }
-            features[num_features++] = std::stod(value);
+            values.push_back(value);
         }
 
-        if (num_features < 1) {
-            delete[] features;
+        
+        if (values.size() != 14) { // Check for correct number of columns
+            std::cerr << "Warning: Skipping row with " << values.size()
+                      << " columns (expected 14)" << std::endl;
             continue;
         }
 
-        __PROMISE__ true_label = features[num_features - 1];
-        --num_features; 
-
-        DataPoint point;
-        point.features = new __PROMISE__[num_features];
-        point.num_features = num_features;
-        point.target = true_label;
-        for (int i = 0; i < num_features; ++i) {
-            point.features[i] = features[i];
+        
+        bool valid_row = true; // Parse features (first 13 columns)
+        for (int i = 0; i < 13; ++i) {
+            if (values[i] == "NA") {
+                features.push_back(std::nan("")); // Use NaN for missing values
+            } else {
+                try {
+                    features.push_back(std::stod(values[i]));
+                } catch (...) {
+                    std::cerr << "Warning: Invalid feature value in row " << data_size + 1
+                              << ", column " << i + 1 << std::endl;
+                    valid_row = false;
+                    break;
+                }
+            }
         }
 
+        
+        if (valid_row) { // Parse target (MEDV, last column)
+            if (values[13] == "NA") {
+                std::cerr << "Warning: Missing target value in row " << data_size + 1 << std::endl;
+                valid_row = false;
+            } else {
+                try {
+                    target = std::stod(values[13]);
+                } catch (...) {
+                    std::cerr << "Warning: Invalid target value in row " << data_size + 1 << std::endl;
+                    valid_row = false;
+                }
+            }
+        }
+
+        if (!valid_row) {
+            continue;
+        }
+
+        DataPoint point;
+        point.num_features = features.size();
+        point.features = new __PROMISE__[point.num_features];
+        for (int i = 0; i < point.num_features; ++i) {
+            point.features[i] = features[i];
+        }
+        point.target = target;
+
         data[data_size++] = point;
-        delete[] features;
     }
 
     file.close();
-    std::cout << "Loaded " << data_size << " data points with "
-              << (data_size > 0 ? data[0].num_features : 0) << " features each" << std::endl;
+    if (data_size == 0) {
+        std::cerr << "Error: No valid data points loaded" << std::endl;
+        delete[] data;
+        out_size = 0;
+        return nullptr;
+    }
 
     out_size = data_size;
     return data;
 }
 
-
 int main() {
     int raw_data_size;
-    DataPoint* raw_data = read_csv("diabetes.csv", raw_data_size);
-
+    DataPoint* raw_data = read_csv("boston_housing.csv", raw_data_size);
+    if (raw_data_size == 0) {
+        std::cerr << "Error: No valid data loaded from CSV" << std::endl;
+        delete[] raw_data;
+        return 1;
+    }
 
     int data_size;
     DataPoint* data = scale_features(raw_data, raw_data_size, data_size);
     delete[] raw_data;
+    if (data_size == 0) {
+        std::cerr << "Error: Feature scaling failed" << std::endl;
+        delete[] data;
+        return 1;
+    }
 
-    int train_size = static_cast<int>(0.7 * data_size);
-
+    int train_size = static_cast<int>(0.8 * data_size);
+    if (train_size == 0) {
+        std::cerr << "Error: Dataset too small for train-test split" << std::endl;
+        delete[] data;
+        return 1;
+    }
 
     DataPoint* train_data = new DataPoint[train_size];
     DataPoint* test_data = new DataPoint[data_size - train_size];
@@ -372,20 +458,24 @@ int main() {
     }
 
     DecisionTreeRegressor dt(5);
+    auto start = std::chrono::high_resolution_clock::now();
     dt.fit(train_data, train_size, all_features, num_features);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    __PR_1__* predictions = new __PR_1__[test_size];
+    std::cout << "Training time: " << duration.count() << " ms" << std::endl;
+
+    __PROMISE__* predictions = new __PROMISE__[test_size];
     __PROMISE__ mse = 0.0;
     for (int i = 0; i < test_size; ++i) {
         predictions[i] = dt.predict(test_data[i].features, test_data[i].num_features);
         __PROMISE__ diff = predictions[i] - test_data[i].target;
         mse += diff * diff;
     }
-
     PROMISE_CHECK_ARRAY(predictions, test_size);
+
     mse /= test_size;
     std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
-
 
     delete[] train_data;
     delete[] test_data;

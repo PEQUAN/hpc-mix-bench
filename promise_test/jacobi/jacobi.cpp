@@ -248,10 +248,10 @@ JacobiResult jacobi(const CSRMatrix& A, const __PROMISE__* b, int max_iter = 500
     return {x, norm(r, n), iter, false};
 }
 
-__PROMISE__* generate_rhs(int n) {
-    __PROMISE__* b = new __PROMISE__[n];
+double* generate_rhs(int n) {
+    double* b = new double[n];
     std::mt19937 gen(42);
-    std::uniform_real_distribution<> dis(1.0, 10.0);
+    std::uniform_real_distribution<double> dis(0.0, 1.0);
     for (int i = 0; i < n; ++i) {
         b[i] = dis(gen);
     }
