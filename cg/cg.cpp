@@ -92,16 +92,6 @@ CSRMatrix read_mtx_file(const std::string& filename) {
     return A;
 }
 
-double* generate_rhs(const CSRMatrix& A) {
-    double* x_true = new double[A.n];
-    for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
-    double* b = new double[A.n];
-    matvec(A, x_true, b);
-    std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
-    delete[] x_true;
-    return b;
-}
-
 
 void free_csr_matrix(CSRMatrix& A) {
     delete[] A.values;
@@ -121,6 +111,18 @@ void matvec(const CSRMatrix& A, const double* x, double* y) {
         }
     }
 }
+
+double* generate_rhs(const CSRMatrix& A) {
+    double* x_true = new double[A.n];
+    for (int i = 0; i < A.n; ++i) x_true[i] = 1.0; // x_true = [1, 1, ..., 1]
+    double* b = new double[A.n];
+    matvec(A, x_true, b);
+    std::cout << "Generated b = A * x_true, where x_true = [1, 1, ..., 1]" << std::endl;
+    delete[] x_true;
+    return b;
+}
+
+
 
 double dot(const double* a, const double* b, int n) {
     double sum = 0.0;

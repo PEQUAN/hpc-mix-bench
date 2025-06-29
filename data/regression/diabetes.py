@@ -15,6 +15,7 @@ if __name__ == "__main__":
     X_new = pd.DataFrame(X_new, columns=list(diabetes.feature_names)+['label'])
     X_new.to_csv("diabetes.csv")
 
+
     from sklearn.ensemble import RandomForestRegressor
 
     regressor = RandomForestRegressor(n_estimators=10, random_state=0, oob_score=True)
@@ -27,3 +28,6 @@ if __name__ == "__main__":
 
     r2 = r2_score(y[300:], predictions)
     print(f'R-squared: {r2}')
+
+    X = pd.DataFrame(X, columns=diabetes.feature_names)
+    X.to_csv("diabetes_features.csv")
