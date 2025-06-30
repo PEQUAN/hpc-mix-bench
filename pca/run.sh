@@ -1,2 +1,2 @@
-g++ pca_jacobi.cpp -o pca
+g++ pca_jacobi3.cpp -o pca
 ./pca
