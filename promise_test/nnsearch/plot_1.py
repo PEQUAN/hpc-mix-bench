@@ -15,6 +15,16 @@ CATEGORY_DISPLAY_NAMES = {
     'flx::floatx<5, 2>': 'E5M2'
 }
 
+# Fixed color mapping for consistent category colors
+CATEGORY_COLORS = {
+    'double': '#1b9e77',  # Green
+    'float': '#d95f02',   # Orange
+    'half_float::half': '#7570b3',  # Purple
+    'flx::floatx<8, 7>': '#e7298a',  # Pink
+    'flx::floatx<4, 3>': '#66a61e',  # Lime
+    'flx::floatx<5, 2>': '#e6ab02'   # Yellow
+}
+
 def run_experiments(method, digits):
     """Run experiments, collect precision settings, and measure runtime."""
     precision_settings = []
@@ -82,7 +92,7 @@ def load_precision_settings(filename='precision_settings_1.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
-        precision_settings, _ = run_experiments('bhsd', [2, 3, 4, 5])
+        precision_settings, _ = run_experiments('chsd', [2, 3, 4, 5])
         save_precision_settings(precision_settings, filename)
         return precision_settings
     try:
@@ -100,7 +110,7 @@ def load_precision_settings(filename='precision_settings_1.json'):
     except Exception as e:
         print(f"Error loading precision settings: {e}")
         print("Regenerating data due to loading error...")
-        precision_settings, _ = run_experiments('bhsd', [2, 3, 4, 5])
+        precision_settings, _ = run_experiments('chsd', [2, 3, 4, 5])
         save_precision_settings(precision_settings, filename)
         return precision_settings
 
@@ -109,7 +119,7 @@ def load_runtimes(filename='runtimes1.csv'):
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        precision_settings, runtimes = run_experiments('bhsd', digits)
+        precision_settings, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
     try:
@@ -130,7 +140,7 @@ def load_runtimes(filename='runtimes1.csv'):
         print(f"Error loading runtimes: {e}")
         print("Regenerating data due to loading error...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        precision_settings, runtimes = run_experiments('bhsd', digits)
+        precision_settings, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
 
@@ -157,8 +167,8 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     categories = get_categories(precision_settings)
     
     desired_order = [
-        'flx::floatx<4, 3>',
         'flx::floatx<5, 2>',
+        'flx::floatx<4, 3>',
         'flx::floatx<8, 7>',
         'half_float::half',
         'float',
@@ -195,15 +205,15 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     
     ax2 = ax.twinx()
     
-    colors = plt.cm.Set2(np.linspace(0, 1, len(categories)))
-
     x_indices = np.arange(len(digits))
 
     bottom = np.zeros(len(digits))
-    for i, category in enumerate(active_categories):
+    for category in active_categories:
         display_name = CATEGORY_DISPLAY_NAMES.get(category, category)
+        # Use fixed color from CATEGORY_COLORS, fallback to gray if category not in mapping
+        color = CATEGORY_COLORS.get(category, '#808080')
         bars = ax.bar(x_indices, heights[category], bottom=bottom, label=display_name,
-                      color=colors[i], width=0.6, edgecolor='white')
+                      color=color, width=0.6, edgecolor='white')
         
         for j, (bar_height, bottom_height) in enumerate(zip(heights[category], bottom)):
             if bar_height > 0:
@@ -252,7 +262,7 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     plt.show()
 
 if __name__ == "__main__":
-    method = 'cbsd'
+    method = 'chsd'
     digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     precision_settings, runtimes = run_experiments(method, digits)
