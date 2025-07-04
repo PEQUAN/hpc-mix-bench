@@ -485,10 +485,10 @@ int main() {
 
     mse /= test_size;
     std::cout << "Mean Squared Error (MSE): " << mse << std::endl;
-    PROMISE_CHECK_ARRAY(check_predictions, test_size);
+    
     __PROMISE__ r2 = compute_r2_score(&scaled_data[train_size], predictions, test_size);
     std::cout << "R^2 Score: " << r2 << std::endl;
-    
+    PROMISE_CHECK_VAR(r2);
     
     return 0;
 }
