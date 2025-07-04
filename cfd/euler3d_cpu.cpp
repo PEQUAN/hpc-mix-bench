@@ -3,11 +3,26 @@
 
 #include <iostream>
 #include <fstream>
+
+#ifdef OMP_OFFLOAD
+#pragma omp declare target
+#endif
 #include <cmath>
+#ifdef OMP_OFFLOAD
+#pragma omp end declare target
+#endif
+
+#include <omp.h>
 
 struct float3 { float x, y, z; };
 
-#define block_length 1
+#ifndef block_length
+	#ifdef _OPENMP
+	#error "you need to define block_length"
+	#else
+	#define block_length 1
+	#endif
+#endif
 
 /*
  * Options
@@ -31,28 +46,55 @@ struct float3 { float x, y, z; };
 #define VAR_DENSITY_ENERGY (VAR_MOMENTUM+NDIM)
 #define NVAR (VAR_DENSITY_ENERGY+1)
 
+
 #ifdef restrict
 #define __restrict restrict
 #else
 #define __restrict 
 #endif
 
+/*
+ * Generic functions
+ */
+template <typename T>
+T* alloc(int N)
+{
+	return new T[N];
+}
+
+template <typename T>
+void dealloc(T* array)
+{
+	delete[] array;
+}
+
+#ifdef OMP_OFFLOAD
+#pragma omp declare target
+#endif
 template <typename T>
 void copy(T* dst, T* src, int N)
 {
+	#pragma omp parallel for default(shared) schedule(static)
 	for(int i = 0; i < N; i++)
 	{
 		dst[i] = src[i];
 	}
 }
+#ifdef OMP_OFFLOAD
+#pragma omp end declare target
+#endif
+
 
 void dump(float* variables, int nel, int nelr)
 {
+
+
 	{
 		std::ofstream file("density");
 		file << nel << " " << nelr << std::endl;
 		for(int i = 0; i < nel; i++) file << variables[i + VAR_DENSITY*nelr] << std::endl;
 	}
+
 
 	{
 		std::ofstream file("momentum");
@@ -69,16 +111,21 @@ void dump(float* variables, int nel, int nelr)
 		file << nel << " " << nelr << std::endl;
 		for(int i = 0; i < nel; i++) file << variables[i + VAR_DENSITY_ENERGY*nelr] << std::endl;
 	}
+
 }
 
 void initialize_variables(int nelr, float* variables, float* ff_variable)
 {
+	#pragma omp parallel for default(shared) schedule(static)
 	for(int i = 0; i < nelr; i++)
 	{
 		for(int j = 0; j < NVAR; j++) variables[i + j*nelr] = ff_variable[j];
 	}
 }
 
+#ifdef OMP_OFFLOAD
+#pragma omp declare target
+#endif
 inline void compute_flux_contribution(float& density, float3& momentum, float& density_energy, float& pressure, float3& velocity, float3& fc_momentum_x, float3& fc_momentum_y, float3& fc_momentum_z, float3& fc_density_energy)
 {
 	fc_momentum_x.x = velocity.x*momentum.x + pressure;
@@ -121,9 +168,16 @@ inline float compute_speed_of_sound(float& density, float& pressure)
 	return std::sqrt(float(GAMMA)*pressure/density);
 }
 
+
 void compute_step_factor(int nelr, float* __restrict variables, float* areas, float* __restrict step_factors)
 {
-	for(int i = 0; i < nelr; i++)
+	#pragma omp parallel for default(shared) schedule(auto)
+        for(int blk = 0; blk < nelr/block_length; ++blk)
+        {
+            int b_start = blk*block_length;
+            int b_end = (blk+1)*block_length > nelr ? nelr : (blk+1)*block_length;
+#pragma omp simd
+	for(int i = b_start; i < b_end; i++)
 	{
 		float density = variables[i + VAR_DENSITY*nelr];
 
@@ -138,17 +192,31 @@ void compute_step_factor(int nelr, float* __restrict variables, float* areas, fl
 		float pressure       = compute_pressure(density, density_energy, speed_sqd);
 		float speed_of_sound = compute_speed_of_sound(density, pressure);
 
+		// dt = float(0.5f) * std::sqrt(areas[i]) /  (||v|| + c).... but when we do time stepping, this later would need to be divided by the area, so we just do it all at once
 		step_factors[i] = float(0.5f) / (std::sqrt(areas[i]) * (std::sqrt(speed_sqd) + speed_of_sound));
 	}
+        }
 }
+
+
+/*
+ *
+ *
+*/
 
 void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, float* variables, float* fluxes, float* ff_variable, float3 ff_flux_contribution_momentum_x, float3 ff_flux_contribution_momentum_y, float3 ff_flux_contribution_momentum_z, float3 ff_flux_contribution_density_energy)
 {
 	const float smoothing_coefficient = float(0.2f);
 
-	for(int i = 0; i < nelr; i++)
+	#pragma omp parallel for default(shared) schedule(auto)
+        for(int blk = 0; blk < nelr/block_length; ++blk)
+        {
+            int b_start = blk*block_length;
+            int b_end = (blk+1)*block_length > nelr ? nelr : (blk+1)*block_length;
+#pragma omp simd
+	for(int i = b_start; i < b_end; ++i)
 	{
-		float density_i = variables[i + VAR_DENSITY*nelr];
+                float density_i = variables[i + VAR_DENSITY*nelr];
 		float3 momentum_i;
 		momentum_i.x = variables[i + (VAR_MOMENTUM+0)*nelr];
 		momentum_i.y = variables[i + (VAR_MOMENTUM+1)*nelr];
@@ -161,7 +229,7 @@ void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, 
 		float speed_i                              = std::sqrt(speed_sqd_i);
 		float pressure_i                           = compute_pressure(density_i, density_energy_i, speed_sqd_i);
 		float speed_of_sound_i                     = compute_speed_of_sound(density_i, pressure_i);
-		float3 flux_contribution_i_momentum_x, flux_contribution_i_momentum_y, float3 flux_contribution_i_momentum_z;
+		float3 flux_contribution_i_momentum_x, flux_contribution_i_momentum_y, flux_contribution_i_momentum_z;
 		float3 flux_contribution_i_density_energy;
 		compute_flux_contribution(density_i, momentum_i, density_energy_i, pressure_i, velocity_i, flux_contribution_i_momentum_x, flux_contribution_i_momentum_y, flux_contribution_i_momentum_z, flux_contribution_i_density_energy);
 
@@ -175,14 +243,14 @@ void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, 
 		float3 velocity_nb;
 		float density_nb, density_energy_nb;
 		float3 momentum_nb;
-		float3 flux_contribution_nb_momentum_x, flux_contribution_nb_momentum_y, float3 flux_contribution_nb_momentum_z;
+		float3 flux_contribution_nb_momentum_x, flux_contribution_nb_momentum_y, flux_contribution_nb_momentum_z;
 		float3 flux_contribution_nb_density_energy;
 		float speed_sqd_nb, speed_of_sound_nb, pressure_nb;
-
+#pragma unroll
 		for(int j = 0; j < NNB; j++)
 		{
-			float3 normal; float normal_len;
-			float factor;
+                        float3 normal; float normal_len;
+		        float factor;
 
 			int nb = elements_surrounding_elements[i + j*nelr];
 			normal.x = normals[i + (j + 0*NNB)*nelr];
@@ -197,16 +265,16 @@ void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, 
 				momentum_nb.y =     variables[nb + (VAR_MOMENTUM+1)*nelr];
 				momentum_nb.z =     variables[nb + (VAR_MOMENTUM+2)*nelr];
 				density_energy_nb = variables[nb + VAR_DENSITY_ENERGY*nelr];
-				compute_velocity(density_nb, momentum_nb, velocity_nb);
+													compute_velocity(density_nb, momentum_nb, velocity_nb);
 				speed_sqd_nb                      = compute_speed_sqd(velocity_nb);
 				pressure_nb                       = compute_pressure(density_nb, density_energy_nb, speed_sqd_nb);
 				speed_of_sound_nb                 = compute_speed_of_sound(density_nb, pressure_nb);
-				compute_flux_contribution(density_nb, momentum_nb, density_energy_nb, pressure_nb, velocity_nb, flux_contribution_nb_momentum_x, flux_contribution_nb_momentum_y, flux_contribution_nb_momentum_z, flux_contribution_nb_density_energy);
+													compute_flux_contribution(density_nb, momentum_nb, density_energy_nb, pressure_nb, velocity_nb, flux_contribution_nb_momentum_x, flux_contribution_nb_momentum_y, flux_contribution_nb_momentum_z, flux_contribution_nb_density_energy);
 
 				// artificial viscosity
 				factor = -normal_len*smoothing_coefficient*float(0.5f)*(speed_i + std::sqrt(speed_sqd_nb) + speed_of_sound_i + speed_of_sound_nb);
 				flux_i_density += factor*(density_i-density_nb);
-				flux_i_density_energy += factor*(density_energy_i-density_nb);
+				flux_i_density_energy += factor*(density_energy_i-density_energy_nb);
 				flux_i_momentum.x += factor*(momentum_i.x-momentum_nb.x);
 				flux_i_momentum.y += factor*(momentum_i.y-momentum_nb.y);
 				flux_i_momentum.z += factor*(momentum_i.z-momentum_nb.z);
@@ -261,30 +329,43 @@ void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, 
 				flux_i_momentum.x += factor*(ff_flux_contribution_momentum_x.z + flux_contribution_i_momentum_x.z);
 				flux_i_momentum.y += factor*(ff_flux_contribution_momentum_y.z + flux_contribution_i_momentum_y.z);
 				flux_i_momentum.z += factor*(ff_flux_contribution_momentum_z.z + flux_contribution_i_momentum_z.z);
+
 			}
-		}
+                }
 		fluxes[i + VAR_DENSITY*nelr] = flux_i_density;
 		fluxes[i + (VAR_MOMENTUM+0)*nelr] = flux_i_momentum.x;
 		fluxes[i + (VAR_MOMENTUM+1)*nelr] = flux_i_momentum.y;
 		fluxes[i + (VAR_MOMENTUM+2)*nelr] = flux_i_momentum.z;
 		fluxes[i + VAR_DENSITY_ENERGY*nelr] = flux_i_density_energy;
+                
 	}
+        }
 }
 
 void time_step(int j, int nelr, float* old_variables, float* variables, float* step_factors, float* fluxes)
 {
-	for(int i = 0; i < nelr; i++)
-	{
-		float factor = step_factors[i]/float(RK+1-j);
+    #pragma omp parallel for  default(shared) schedule(auto)
+    for(int blk = 0; blk < nelr/block_length; ++blk)
+    {
+        int b_start = blk*block_length;
+        int b_end = (blk+1)*block_length > nelr ? nelr : (blk+1)*block_length;
+        #pragma omp simd
+        for(int i = b_start; i < b_end; ++i)
+        {
+            float factor = step_factors[i]/float(RK+1-j);
 
-		variables[i + VAR_DENSITY*nelr] = old_variables[i + VAR_DENSITY*nelr] + factor*fluxes[i + VAR_DENSITY*nelr];
-		variables[i + (VAR_MOMENTUM+0)*nelr] = old_variables[i + (VAR_MOMENTUM+0)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+0)*nelr];
-		variables[i + (VAR_MOMENTUM+1)*nelr] = old_variables[i + (VAR_MOMENTUM+1)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+1)*nelr];
-		variables[i + (VAR_MOMENTUM+2)*nelr] = old_variables[i + (VAR_MOMENTUM+2)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+2)*nelr];
-		variables[i + VAR_DENSITY_ENERGY*nelr] = old_variables[i + VAR_DENSITY_ENERGY*nelr] + factor*fluxes[i + VAR_DENSITY_ENERGY*nelr];
-	}
+            variables[i + VAR_DENSITY*nelr] = old_variables[i + VAR_DENSITY*nelr] + factor*fluxes[i + VAR_DENSITY*nelr];
+            variables[i + (VAR_MOMENTUM+0)*nelr] = old_variables[i + (VAR_MOMENTUM+0)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+0)*nelr];
+            variables[i + (VAR_MOMENTUM+1)*nelr] = old_variables[i + (VAR_MOMENTUM+1)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+1)*nelr];
+            variables[i + (VAR_MOMENTUM+2)*nelr] = old_variables[i + (VAR_MOMENTUM+2)*nelr] + factor*fluxes[i + (VAR_MOMENTUM+2)*nelr];
+            variables[i + VAR_DENSITY_ENERGY*nelr] = old_variables[i + VAR_DENSITY_ENERGY*nelr] + factor*fluxes[i + VAR_DENSITY_ENERGY*nelr];
+
+        }
+    }
 }
-
+#ifdef OMP_OFFLOAD
+#pragma omp end declare target
+#endif
 /*
  * Main function
  */
@@ -297,8 +378,8 @@ int main(int argc, char** argv)
 	}
 	const char* data_file_name = argv[1];
 
-	float ff_variable[NVAR];
-	float3 ff_flux_contribution_momentum_x, ff_flux_contribution_momentum_y, float3 ff_flux_contribution_momentum_z, ff_flux_contribution_density_energy;
+        float ff_variable[NVAR];
+        float3 ff_flux_contribution_momentum_x, ff_flux_contribution_momentum_y, ff_flux_contribution_momentum_z, ff_flux_contribution_density_energy;
 
 	// set far field conditions
 	{
@@ -329,6 +410,7 @@ int main(int argc, char** argv)
 	}
 	int nel;
 	int nelr;
+
 
 	// read in domain geometry
 	float* areas;
@@ -377,20 +459,25 @@ int main(int argc, char** argv)
 	}
 
 	// Create arrays and set initial conditions
-	float* variables = new float[nelr*NVAR];
+	float* variables = alloc<float>(nelr*NVAR);
 	initialize_variables(nelr, variables, ff_variable);
 
-	float* old_variables = new float[nelr*NVAR];
-	float* fluxes = new float[nelr*NVAR];
-	float* step_factors = new float[nelr];
+	float* old_variables = alloc<float>(nelr*NVAR);
+	float* fluxes = alloc<float>(nelr*NVAR);
+	float* step_factors = alloc<float>(nelr);
 
 	// these need to be computed the first time in order to compute time step
 	std::cout << "Starting..." << std::endl;
-
+#ifdef _OPENMP
+	double start = omp_get_wtime();
+    #ifdef OMP_OFFLOAD
+        #pragma omp target map(alloc: old_variables[0:(nelr*NVAR)]) map(to: nelr, areas[0:nelr], step_factors[0:nelr], elements_surrounding_elements[0:(nelr*NNB)], normals[0:(NDIM*NNB*nelr)], fluxes[0:(nelr*NVAR)], ff_variable[0:NVAR], ff_flux_contribution_momentum_x, ff_flux_contribution_momentum_y, ff_flux_contribution_momentum_z, ff_flux_contribution_density_energy) map(variables[0:(nelr*NVAR)])
+    #endif
+#endif
 	// Begin iterations
 	for(int i = 0; i < iterations; i++)
 	{
-		copy<float>(old_variables, variables, nelr*NVAR);
+                copy<float>(old_variables, variables, nelr*NVAR);
 
 		// for the first iteration we compute the time step
 		compute_step_factor(nelr, variables, areas, step_factors);
@@ -402,19 +489,26 @@ int main(int argc, char** argv)
 		}
 	}
 
+#ifdef _OPENMP
+	double end = omp_get_wtime();
+	std::cout  << "Compute time: " << (end-start) << std::endl;
+#endif
+
+
 	std::cout << "Saving solution..." << std::endl;
 	dump(variables, nel, nelr);
 	std::cout << "Saved solution..." << std::endl;
 
-	std::cout << "Cleaning up..." << std::endl;
-	delete[] areas;
-	delete[] elements_surrounding_elements;
-	delete[] normals;
 
-	delete[] variables;
-	delete[] old_variables;
-	delete[] fluxes;
-	delete[] step_factors;
+	std::cout << "Cleaning up..." << std::endl;
+	dealloc<float>(areas);
+	dealloc<int>(elements_surrounding_elements);
+	dealloc<float>(normals);
+
+	dealloc<float>(variables);
+	dealloc<float>(old_variables);
+	dealloc<float>(fluxes);
+	dealloc<float>(step_factors);
 
 	std::cout << "Done..." << std::endl;
 
