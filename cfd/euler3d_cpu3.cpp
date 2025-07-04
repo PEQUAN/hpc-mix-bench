@@ -37,21 +37,6 @@ struct float3 { float x, y, z; };
 #define __restrict 
 #endif
 
-/*
- * Generic functions
- */
-template <typename T>
-T* alloc(int N)
-{
-	return new T[N];
-}
-
-template <typename T>
-void dealloc(T* array)
-{
-	delete[] array;
-}
-
 template <typename T>
 void copy(T* dst, T* src, int N)
 {
@@ -221,7 +206,7 @@ void compute_flux(int nelr, int* elements_surrounding_elements, float* normals, 
 				// artificial viscosity
 				factor = -normal_len*smoothing_coefficient*float(0.5f)*(speed_i + std::sqrt(speed_sqd_nb) + speed_of_sound_i + speed_of_sound_nb);
 				flux_i_density += factor*(density_i-density_nb);
-				flux_i_density_energy += factor*(density_energy_i-density_nb);
+				flux_i_density_energy += factor*(density_energy_i-density_energy_nb);
 				flux_i_momentum.x += factor*(momentum_i.x-momentum_nb.x);
 				flux_i_momentum.y += factor*(momentum_i.y-momentum_nb.y);
 				flux_i_momentum.z += factor*(momentum_i.z-momentum_nb.z);
