@@ -25,7 +25,7 @@ struct Neighbor {
 
 struct NeighborResult { 
     int index;
-    flx::floatx<8, 7> distance;
+    float distance;
 };
 
 NeighborResult* kNearestNeighborSearch(const double* data, int n_samples, int n_features,
@@ -140,14 +140,6 @@ double* readCSV(const string& filename, int& rows, int& cols) {
 int main(int argc, char *argv[]) {
     int n_samples, n_features, n_queries, n_features_q, k_gt, n_features_gt;
     int k = 3; 
-
-    if (argc > 1) k = atoi(argv[1]);
-    if (k <= 0 || k > MAX_K) {
-        cerr << "Error: k must be positive and <= " << MAX_K << endl;
-        return 1;
-    }
-
-
     // Read dataset
     cout << "Reading dataset..." << endl;
     double* data = readCSV("dataset.csv", n_samples, n_features);
@@ -190,8 +182,8 @@ int main(int argc, char *argv[]) {
     delete[] gt_data;
 
     // Process queries
-    flx::floatx<8, 7>* all_results = new flx::floatx<8, 7>[n_queries * k * 2];
-    flx::floatx<5, 2>  accuracies[MAX_QUERIES];
+    double* all_results = new double[n_queries * k * 2];
+    half_float::half  accuracies[MAX_QUERIES];
     for (int q = 0; q < n_queries; q++) {
         double query[MAX_FEATURES];
         for (int j = 0; j < n_features; j++) {
@@ -203,7 +195,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < k; i++) {
             cout << "Neighbor " << i + 1 << ": Index = " << k_nearest[i].index
                  << ", Distance = " << k_nearest[i].distance << endl;
-            all_results[q * k * 2 + i * 2] = static_cast<flx::floatx<8, 7>>(k_nearest[i].index);
+            all_results[q * k * 2 + i * 2] = static_cast<double>(k_nearest[i].index);
             all_results[q * k * 2 + i * 2 + 1] = k_nearest[i].distance;
         }
 
@@ -216,7 +208,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-        accuracies[q] = static_cast<flx::floatx<5, 2>>(correct) / k;
+        accuracies[q] = static_cast<double>(correct) / k;
 
         delete[] k_nearest;
     }
