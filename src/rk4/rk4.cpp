@@ -31,7 +31,6 @@ void add(const double* x, const double* y, double* result, int n) {
 }
 
 
-
 void ode_function(double t, const double* y, double* dydt, int n) {
     // ODE: dy_i/dt = y_{i-1} - 2*y_i + y_{i+1} (tridiagonal system)
     dydt[0] = -2.0 * y[0] + y[1];
@@ -101,22 +100,21 @@ void analytical_solution(double t, double* y_exact, int n) {
 
 // RK4 solver
 void rk4_solve(double t0, double tf, double h, double* y0, int n,
-               double** results, int* num_steps) {
-    *num_steps = static_cast<int>((tf - t0) / h) + 1;
+               double* results, int* num_steps) {
+
     if (*num_steps <= 0) return;
 
-    *results = new double[*num_steps * n];
     double* y = new double[n];
     double* y_new = new double[n];
 
     copy(y, y0, n);
-    copy(*results, y0, n);
+    copy(results, y0, n);
     double t = t0;
 
     for (int i = 1; i < *num_steps; ++i) {
         rk4_step(t, h, y, n, y_new);
         copy(y, y_new, n);
-        copy(*results + i * n, y, n);
+        copy(results + i * n, y, n);
         t += h;
     }
 
@@ -172,15 +170,14 @@ int main() {
     double h = 0.001; // Test different step sizes
 
     std::cout << "h, Max Abs Error, Mean Abs Error, RMSE, Max Rel Error\n";
-
-    double* results = nullptr;
-    int num_steps = 0;
-    rk4_solve(t0, tf, h, y0, n, &results, &num_steps);
+    int num_steps = static_cast<int>((tf - t0) / h) + 1;
+    double* results = new double[num_steps * n];
+ 
+    rk4_solve(t0, tf, h, y0, n, results, &num_steps);
 
     double max_abs_error, mean_abs_error, rmse, max_rel_error;
     compute_metrics(t0, h, results, n, num_steps,
                     &max_abs_error, &mean_abs_error, &rmse, &max_rel_error);
-
 
     std::cout << h << ", " << max_abs_error << ", " << mean_abs_error << ", "
                 << rmse << ", " << max_rel_error << "\n";

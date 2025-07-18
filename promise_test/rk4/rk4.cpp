@@ -31,7 +31,6 @@ void add(__PROMISE__* x, __PROMISE__* y, __PROMISE__* result, int n) {
 }
 
 
-
 void ode_function(__PROMISE__ t, __PROMISE__* y, __PROMISE__* dydt, int n) {
     // ODE: dy_i/dt = y_{i-1} - 2*y_i + y_{i+1} (tridiagonal system)
     dydt[0] = -2.0 * y[0] + y[1];
@@ -73,9 +72,8 @@ void rk4_step(__PROMISE__ t, __PROMISE__ h, __PROMISE__* y, int n, __PROMISE__* 
 }
 
 
-
+// Analytical solution: for n=2, exact; for n>2, use RK4 with small h
 void analytical_solution(__PROMISE__ t, __PROMISE__* y_exact, int n) {
-    // Analytical solution: for n=2, exact; for n>2, use RK4 with small h
     if (n == 2) {
         y_exact[0] = 0.5 * exp(-t) + 0.5 * exp(-3.0 * t);
         y_exact[1] = 0.5 * exp(-t) - 0.5 * exp(-3.0 * t);
@@ -100,14 +98,12 @@ void analytical_solution(__PROMISE__ t, __PROMISE__* y_exact, int n) {
     }
 }
 
+// RK4 solver
 void rk4_solve(__PROMISE__ t0, __PROMISE__ tf, __PROMISE__ h, __PROMISE__* y0, int n,
                __PROMISE__* results, int* num_steps) {
 
-    // RK4 solver
-    *num_steps = static_cast<int>((tf - t0) / h) + 1;
     if (*num_steps <= 0) return;
 
-    results = new __PROMISE__[*num_steps * n];
     __PROMISE__* y = new __PROMISE__[n];
     __PROMISE__* y_new = new __PROMISE__[n];
 
@@ -167,29 +163,25 @@ int main() {
     int n = 10; // Changed to n=10
     __PROMISE__ t0 = 0.0;
     __PROMISE__ tf = 1.0;
-    __PROMISE__* y0 = new __PROMISE__[n];
+    __PR_1__* y0 = new  __PR_1__[n];
     y0[0] = 1.0;
     for (int i = 1; i < n; ++i) y0[i] = 0.0;
 
     __PROMISE__ h = 0.001; // Test different step sizes
 
     std::cout << "h, Max Abs Error, Mean Abs Error, RMSE, Max Rel Error\n";
-
-    
-    int num_steps = static_cast<int>((tf - t0) / h) + 1;;
-    __PR_1__* results = new __PR_1__[num_steps * n];
+    int num_steps = static_cast<int>((tf - t0) / h) + 1;
+     __PR_2__* results = new  __PR_2__[num_steps * n];
+ 
     rk4_solve(t0, tf, h, y0, n, results, &num_steps);
 
-    
     __PROMISE__ max_abs_error, mean_abs_error, rmse, max_rel_error;
     compute_metrics(t0, h, results, n, num_steps,
                     &max_abs_error, &mean_abs_error, &rmse, &max_rel_error);
 
-
     std::cout << h << ", " << max_abs_error << ", " << mean_abs_error << ", "
                 << rmse << ", " << max_rel_error << "\n";
 
-    
     PROMISE_CHECK_ARRAY(results, num_steps * n);
     delete[] results;
   
