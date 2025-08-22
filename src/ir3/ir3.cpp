@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cmath>
 #include <random>
@@ -7,7 +6,6 @@
 #include <limits>
 #include <fstream>
 
-// Allocate a 1D array for row-major matrix
 double* create_dense_matrix(int rows, int cols) {
     return new double[rows * cols]();
 }
@@ -25,16 +23,6 @@ void free_vector(double* vec) {
 }
 
 template<typename T>
-T get_element(T* matrix, int rows, int cols, int i, int j) {
-    return matrix[i * cols + j];
-}
-
-template<typename T>
-void set_element(T* matrix, int rows, int cols, int i, int j, T value) {
-    matrix[i * cols + j] = value;
-}
-
-template<typename T>
 T* matrix_multiply(T* A, int rowsA, int colsA, T* B, int rowsB, int colsB) {
     if (colsA != rowsB) {
         std::cerr << "Matrix dimensions incompatible\n";
@@ -45,9 +33,9 @@ T* matrix_multiply(T* A, int rowsA, int colsA, T* B, int rowsB, int colsB) {
         for (int j = 0; j < colsB; ++j) {
             T sum = T(0);
             for (int k = 0; k < colsA; ++k) {
-                sum += get_element(A, rowsA, colsA, i, k) * get_element(B, rowsB, colsB, k, j);
+                sum += A[i * colsA + k] * B[k * colsB + j];
             }
-            set_element(C, rowsA, colsB, i, j, sum);
+            C[i * colsB + j] = sum;
         }
     }
     return C;
@@ -58,7 +46,7 @@ T* transpose(T* A, int rows, int cols) {
     T* T_mat = create_dense_matrix(cols, rows);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            set_element(T_mat, cols, rows, j, i, get_element(A, rows, cols, i, j));
+            T_mat[j * rows + i] = A[i * cols + j];
         }
     }
     return T_mat;
@@ -71,15 +59,15 @@ T* gram_schmidt(T* A, int n) {
     
     for (int j = 0; j < n; ++j) {
         for (int i = 0; i < n; ++i) {
-            temp[i] = get_element(A, n, n, i, j);
+            temp[i] = A[i * n + j];
         }
         for (int k = 0; k < j; ++k) {
             T dot = T(0);
             for (int i = 0; i < n; ++i) {
-                dot += get_element(Q, n, n, i, k) * get_element(A, n, n, i, j);
+                dot += Q[i * n + k] * A[i * n + j];
             }
             for (int i = 0; i < n; ++i) {
-                temp[i] -= dot * get_element(Q, n, n, i, k);
+                temp[i] -= dot * Q[i * n + k];
             }
         }
         T norm = T(0);
@@ -89,7 +77,7 @@ T* gram_schmidt(T* A, int n) {
         norm = std::sqrt(norm);
         if (norm < T(1e-10)) norm = T(1e-10);
         for (int i = 0; i < n; ++i) {
-            set_element(Q, n, n, i, j, temp[i] / norm);
+            Q[i * n + j] = temp[i] / norm;
         }
     }
     delete[] temp;
@@ -202,7 +190,7 @@ double* gallery_randsvd(int n, double kappa, int mode = 3, int kl = -1, int ku =
         
         double* D = create_dense_matrix(n, n);
         for (int i = 0; i < n; ++i) {
-            set_element(D, n, n, i, i, sigma[i]);
+            D[i * n + i] = sigma[i];
         }
         
         double* QT = transpose(Q, n, n);
@@ -266,7 +254,7 @@ double* gallery_randsvd(int n, double kappa, int mode = 3, int kl = -1, int ku =
     
     double* Sigma = create_dense_matrix(m, n);
     for (int i = 0; i < p; ++i) {
-        set_element(Sigma, m, n, i, i, sigma[i]);
+        Sigma[i * n + i] = sigma[i];
     }
     
     double* X = create_dense_matrix(m, m);
@@ -291,7 +279,7 @@ double* gallery_randsvd(int n, double kappa, int mode = 3, int kl = -1, int ku =
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
                 if (j < i - kl || j > i + ku) {
-                    set_element(A, m, n, i, j, 0.0);
+                    A[i * n + j] = 0.0;
                 }
             }
         }
@@ -357,6 +345,30 @@ void lu_factorization(const double* A, int n, double* L, double* U, int* P) {
     }
 }
 
+double* forward_substitution_init(const double* L, int n, const double* b, const int* P) {
+    double* y = create_vector(n);
+    for (int i = 0; i < n; ++i) {
+        double sum = 0.0;
+        for (int j = 0; j < i; ++j) {
+            sum += L[i * n + j] * y[j];
+        }
+        y[i] = b[P[i]] - sum;
+    }
+    return y;
+}
+
+double* backward_substitution_init(const double* U, int n, const double* y) {
+    double* x = create_vector(n);
+    for (int i = n - 1; i >= 0; --i) {
+        double sum = 0.0;
+        for (int j = i + 1; j < n; ++j) {
+            sum += U[i * n + j] * x[j];
+        }
+        x[i] = (y[i] - sum) / U[i * n + i];
+    }
+    return x;
+}
+
 double* forward_substitution(const double* L, int n, const double* b, const int* P) {
     double* y = create_vector(n);
     for (int i = 0; i < n; ++i) {
@@ -398,8 +410,8 @@ double* vec_add(const double* a, const double* b, int size) {
 }
 
 double* initial_solve(const double* L, const double* U, int n, const int* P, const double* b) {
-    double* y = forward_substitution(L, n, b, P);
-    double* x = backward_substitution(U, n, y);
+    double* y = forward_substitution_init(L, n, b, P);
+    double* x = backward_substitution_init(U, n, y);
     free_vector(y);
     return x;
 }
@@ -537,10 +549,9 @@ double* iterative_refinement(const double* A, int n, const double* b, const doub
         }
 
         std::cout << "Iteration " << iter << ": residual=" << residual_history[iter]
-                    << ", ferr=" << ferr_history[iter]
-                    << ", nbe=" << nbe_history[iter]
-                    << ", cbe=" << cbe_history[iter] << "\n";
-                    
+                  << ", ferr=" << ferr_history[iter]
+                  << ", nbe=" << nbe_history[iter]
+                  << ", cbe=" << cbe_history[iter] << "\n";
 
         // Solve for correction
         double* d = solve_correction(L, U, n, P, r);
@@ -570,13 +581,6 @@ int main() {
         std::cerr << "Failed to generate matrix A\n";
         return 1;
     }
-    //std::cout << "\nMatrix A (kappa=" << kappa << "):\n";
-    //for (int i = 0; i < n; ++i) {
-    //    for (int j = 0; j < n; ++j) {
-    //        std::cout << std::fixed << std::setprecision(6) << get_element(A, n, n, i, j) << " ";
-    //    }
-    //    std::cout << "\n";
-    //}
 
     // Generate true solution and right-hand side
     double* x_true = create_vector(n);
@@ -618,7 +622,5 @@ int main() {
     delete[] ferr_history;
     delete[] nbe_history;
     delete[] cbe_history;
-
-
     return 0;
 }
