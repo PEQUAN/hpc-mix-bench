@@ -10,15 +10,15 @@ double* create_dense_matrix(int rows, int cols) {
     return new double[rows * cols]();
 }
 
-void free_dense_matrix(__PROMISE__* mat) {
+void free_dense_matrix(double* mat) {
     delete[] mat;
 }
 
-__PROMISE__* create_vector(int size) {
-    return new __PROMISE__[size]();
+double* create_vector(int size) {
+    return new double[size]();
 }
 
-void free_vector(__PROMISE__* vec) {
+void free_vector(double* vec) {
     delete[] vec;
 }
 
@@ -297,7 +297,7 @@ double* gallery_randsvd(int n, double kappa, int mode = 3, int kl = -1, int ku =
     return A;
 }
 
-void matvec(const __PROMISE__* A, int n, const __PROMISE__* x, __PROMISE__* y) {
+void matvec(const double* A, int n, const double* x, double* y) {
     for (int i = 0; i < n; ++i) {
         y[i] = 0.0;
         for (int j = 0; j < n; ++j) {
@@ -306,7 +306,7 @@ void matvec(const __PROMISE__* A, int n, const __PROMISE__* x, __PROMISE__* y) {
     }
 }
 
-void lu_factorization(const __PROMISE__* A, int n, __PROMISE__* L, __PROMISE__* U, int* P) {
+void lu_factorization(const double* A, int n, double* L, double* U, int* P) {
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             U[i * n + j] = A[i * n + j];
@@ -316,7 +316,7 @@ void lu_factorization(const __PROMISE__* A, int n, __PROMISE__* L, __PROMISE__* 
     }
 
     for (int k = 0; k < n; ++k) {
-        __PROMISE__ max_val = abs(U[k * n + k]);
+        flx::floatx<5, 2> max_val = abs(U[k * n + k]);
         int pivot = k;
         for (int i = k + 1; i < n; ++i) {
             if (abs(U[i * n + k]) > max_val) {
@@ -345,10 +345,10 @@ void lu_factorization(const __PROMISE__* A, int n, __PROMISE__* L, __PROMISE__* 
     }
 }
 
-__PROMISE__* forward_substitution_init(const __PROMISE__* L, int n, const __PROMISE__* b, const int* P) {
-    __PROMISE__* y = create_vector(n);
+double* forward_substitution_init(const double* L, int n, const double* b, const int* P) {
+    double* y = create_vector(n);
     for (int i = 0; i < n; ++i) {
-        __PROMISE__ sum = 0.0;
+        flx::floatx<5, 2> sum = 0.0;
         for (int j = 0; j < i; ++j) {
             sum += L[i * n + j] * y[j];
         }
@@ -357,10 +357,10 @@ __PROMISE__* forward_substitution_init(const __PROMISE__* L, int n, const __PROM
     return y;
 }
 
-__PROMISE__* backward_substitution_init(const __PROMISE__* U, int n, const __PROMISE__* y) {
-    __PROMISE__* x = create_vector(n);
+double* backward_substitution_init(const double* U, int n, const double* y) {
+    double* x = create_vector(n);
     for (int i = n - 1; i >= 0; --i) {
-        __PROMISE__ sum = 0.0;
+        flx::floatx<5, 2> sum = 0.0;
         for (int j = i + 1; j < n; ++j) {
             sum += U[i * n + j] * x[j];
         }
@@ -369,10 +369,10 @@ __PROMISE__* backward_substitution_init(const __PROMISE__* U, int n, const __PRO
     return x;
 }
 
-__PROMISE__* forward_substitution(const __PROMISE__* L, int n, const __PROMISE__* b, const int* P) {
-    __PROMISE__* y = create_vector(n);
+double* forward_substitution(const double* L, int n, const double* b, const int* P) {
+    double* y = create_vector(n);
     for (int i = 0; i < n; ++i) {
-        __PROMISE__ sum = 0.0;
+        flx::floatx<8, 7> sum = 0.0;
         for (int j = 0; j < i; ++j) {
             sum += L[i * n + j] * y[j];
         }
@@ -381,10 +381,10 @@ __PROMISE__* forward_substitution(const __PROMISE__* L, int n, const __PROMISE__
     return y;
 }
 
-__PROMISE__* backward_substitution(const __PROMISE__* U, int n, const __PROMISE__* y) {
-    __PROMISE__* x = create_vector(n);
+double* backward_substitution(const double* U, int n, const double* y) {
+    double* x = create_vector(n);
     for (int i = n - 1; i >= 0; --i) {
-        __PROMISE__ sum = 0.0;
+        flx::floatx<8, 7> sum = 0.0;
         for (int j = i + 1; j < n; ++j) {
             sum += U[i * n + j] * x[j];
         }
@@ -393,62 +393,62 @@ __PROMISE__* backward_substitution(const __PROMISE__* U, int n, const __PROMISE_
     return x;
 }
 
-__PROMISE__* vec_sub(const __PROMISE__* a, const __PROMISE__* b, int size) {
-    __PROMISE__* result = create_vector(size);
+double* vec_sub(const double* a, const double* b, int size) {
+    double* result = create_vector(size);
     for (int i = 0; i < size; ++i) {
         result[i] = a[i] - b[i];
     }
     return result;
 }
 
-__PROMISE__* vec_add(const __PROMISE__* a, const __PROMISE__* b, int size) {
-    __PROMISE__* result = create_vector(size);
+double* vec_add(const double* a, const double* b, int size) {
+    double* result = create_vector(size);
     for (int i = 0; i < size; ++i) {
         result[i] = a[i] + b[i];
     }
     return result;
 }
 
-__PROMISE__* initial_solve(const __PROMISE__* L, const __PROMISE__* U, int n, const int* P, const __PROMISE__* b) {
-    __PROMISE__* y = forward_substitution_init(L, n, b, P);
-    __PROMISE__* x = backward_substitution_init(U, n, y);
+double* initial_solve(const double* L, const double* U, int n, const int* P, const double* b) {
+    double* y = forward_substitution_init(L, n, b, P);
+    double* x = backward_substitution_init(U, n, y);
     free_vector(y);
     return x;
 }
 
-__PROMISE__* compute_residual(const __PROMISE__* A, int n, const __PROMISE__* b, const __PROMISE__* x) {
-    __PROMISE__* Ax = create_vector(n);
+double* compute_residual(const double* A, int n, const double* b, const double* x) {
+    double* Ax = create_vector(n);
     matvec(A, n, x, Ax);
-    __PROMISE__* r = vec_sub(b, Ax, n);
+    double* r = vec_sub(b, Ax, n);
     free_vector(Ax);
     return r;
 }
 
-__PROMISE__* solve_correction(const __PROMISE__* L, const __PROMISE__* U, int n, const int* P, const __PROMISE__* r) {
-    __PROMISE__* y = forward_substitution(L, n, r, P);
-    __PROMISE__* d = backward_substitution(U, n, y);
+double* solve_correction(const double* L, const double* U, int n, const int* P, const double* r) {
+    double* y = forward_substitution(L, n, r, P);
+    double* d = backward_substitution(U, n, y);
     free_vector(y);
     return d;
 }
 
-__PROMISE__* update_solution(const __PROMISE__* x, const __PROMISE__* d, int n) {
+double* update_solution(const double* x, const double* d, int n) {
     return vec_add(x, d, n);
 }
 
-__PROMISE__* iterative_refinement(const __PROMISE__* A, int n, const __PROMISE__* b, const __PROMISE__* x_true, __PROMISE__ kappa, int max_iter, __PROMISE__*& residual_history, __PROMISE__*& ferr_history, __PROMISE__*& nbe_history, __PROMISE__*& cbe_history, int& history_size) {
+double* iterative_refinement(const double* A, int n, const double* b, const double* x_true, float kappa, int max_iter, double*& residual_history, double*& ferr_history, double*& nbe_history, double*& cbe_history, int& history_size) {
     if (n > 10000) {
         std::cerr << "Error: Matrix too large for dense conversion\n";
         return nullptr;
     }
 
     history_size = 0;
-    residual_history = new __PROMISE__[max_iter];
-    ferr_history = new __PROMISE__[max_iter];
-    nbe_history = new __PROMISE__[max_iter];
-    cbe_history = new __PROMISE__[max_iter];
+    residual_history = new double[max_iter];
+    ferr_history = new double[max_iter];
+    nbe_history = new double[max_iter];
+    cbe_history = new double[max_iter];
 
-    __PROMISE__* L = create_dense_matrix(n, n);
-    __PROMISE__* U = create_dense_matrix(n, n);
+    double* L = create_dense_matrix(n, n);
+    double* U = create_dense_matrix(n, n);
     int* P = new int[n];
     try {
         lu_factorization(A, n, L, U, P);
@@ -460,17 +460,17 @@ __PROMISE__* iterative_refinement(const __PROMISE__* A, int n, const __PROMISE__
         return nullptr;
     }
 
-    __PROMISE__* x = initial_solve(L, U, n, P, b);
+    double* x = initial_solve(L, U, n, P, b);
 
-    __PROMISE__ u = std::numeric_limits<__PROMISE__>::epsilon(); // Machine epsilon
+    float u = std::numeric_limits<double>::epsilon(); // Machine epsilon
 
     std::cout << "u:" << u << std::endl;
     for (int iter = 0; iter < max_iter; ++iter) {
         // Compute residual
-        __PROMISE__* r = compute_residual(A, n, b, x);
+        double* r = compute_residual(A, n, b, x);
 
         // Compute residual norm
-        __PROMISE__ norm_r = 0.0;
+        float norm_r = 0.0;
         for (int i = 0; i < n; ++i) {
             norm_r += r[i] * r[i];
         }
@@ -478,40 +478,40 @@ __PROMISE__* iterative_refinement(const __PROMISE__* A, int n, const __PROMISE__
         residual_history[history_size] = norm_r;
 
         // Compute forward error: max |x - x_true| / max |x_true|
-        __PROMISE__ ferr = 0.0;
-        __PROMISE__ x_true_norm = 0.0;
+        float ferr = 0.0;
+        float x_true_norm = 0.0;
         for (int i = 0; i < n; ++i) {
-            __PROMISE__ err = abs(x[i] - x_true[i]);
+            flx::floatx<8, 7> err = abs(x[i] - x_true[i]);
             if (err > ferr) ferr = err;
             if (abs(x_true[i]) > x_true_norm) x_true_norm = abs(x_true[i]);
         }
         ferr_history[history_size] = x_true_norm > 0 ? ferr / x_true_norm : ferr;
 
         // Compute normwise backward error: ||r|| / (||A|| * ||x|| + ||b||)
-        __PROMISE__ x_norm = 0.0;
+        flx::floatx<5, 2> x_norm = 0.0;
         for (int i = 0; i < n; ++i) {
             if (abs(x[i]) > x_norm) x_norm = abs(x[i]);
         }
-        __PROMISE__ A_norm = 0.0;
+        flx::floatx<5, 2> A_norm = 0.0;
         for (int i = 0; i < n; ++i) {
-            __PROMISE__ row_sum = 0.0;
+            flx::floatx<5, 2> row_sum = 0.0;
             for (int j = 0; j < n; ++j) {
                 row_sum += abs(A[i * n + j]);
             }
             if (row_sum > A_norm) A_norm = row_sum;
         }
-        __PROMISE__ b_norm = 0.0;
+        flx::floatx<5, 2> b_norm = 0.0;
         for (int i = 0; i < n; ++i) {
             if (abs(b[i]) > b_norm) b_norm = abs(b[i]);
         }
         nbe_history[history_size] = norm_r / (A_norm * x_norm + b_norm);
 
         // Compute componentwise backward error: max |r_i| / (|A| * |x| + |b|)_i
-        __PROMISE__* temp = new __PROMISE__[n];
-        __PROMISE__ cbe = 0.0;
+        float* temp = new float[n];
+        flx::floatx<5, 2> cbe = 0.0;
         double temp_st = 0;
         for (int i = 0; i < n; ++i) {
-            __PROMISE__ axb = 0.0;
+            float axb = 0.0;
             for (int j = 0; j < n; ++j) {
                 axb += abs(A[i * n + j]) * abs(x[j]);
             }
@@ -538,11 +538,11 @@ __PROMISE__* iterative_refinement(const __PROMISE__* A, int n, const __PROMISE__
                   << ", cbe=" << cbe_history[iter] << "\n";
 
         // Solve for correction
-        __PROMISE__* d = solve_correction(L, U, n, P, r);
+        double* d = solve_correction(L, U, n, P, r);
         free_vector(r);
 
         // Update solution
-        __PROMISE__* x_new = update_solution(x, d, n);
+        double* x_new = update_solution(x, d, n);
         free_vector(d);
         free_vector(x);
         x = x_new;
@@ -556,31 +556,31 @@ __PROMISE__* iterative_refinement(const __PROMISE__* A, int n, const __PROMISE__
 
 int main() {
     int n = 100; // Matrix size
-    __PROMISE__ kappa = 1e4; // Condition number
+    flx::floatx<5, 2> kappa = 1e4; // Condition number
     int max_iter = n;
 
     // Generate matrix A using gallery_randsvd
-    __PROMISE__* A = gallery_randsvd(n, kappa);
+    double* A = gallery_randsvd(n, kappa);
     if (!A) {
         std::cerr << "Failed to generate matrix A\n";
         return 1;
     }
 
     // Generate true solution and right-hand side
-    __PROMISE__* x_true = create_vector(n);
+    double* x_true = create_vector(n);
     for (int i = 0; i < n; ++i) {
         x_true[i] = 1.0;
     }
-    __PROMISE__* b = create_vector(n);
+    double* b = create_vector(n);
     matvec(A, n, x_true, b);
 
     // Run iterative refinement
-    __PROMISE__* residual_history = nullptr;
-    __PROMISE__* ferr_history = nullptr;
-    __PROMISE__* nbe_history = nullptr;
-    __PROMISE__* cbe_history = nullptr;
+    double* residual_history = nullptr;
+    double* ferr_history = nullptr;
+    double* nbe_history = nullptr;
+    double* cbe_history = nullptr;
     int history_size = 0;
-    __PROMISE__* x = iterative_refinement(A, n, b, x_true, kappa, max_iter, residual_history, ferr_history, nbe_history, cbe_history, history_size);
+    double* x = iterative_refinement(A, n, b, x_true, kappa, max_iter, residual_history, ferr_history, nbe_history, cbe_history, history_size);
     PROMISE_CHECK_ARRAY(x, n);
 
     if (x == nullptr) {
