@@ -455,7 +455,8 @@ void write_solution(const double* x, int size, const std::string& filename, cons
     file.close();
 }
 
-double* iterative_refinement(const double* A, int n, const double* b, const double* x_true, double kappa, int max_iter, double*& residual_history, double*& ferr_history, double*& nbe_history, double*& cbe_history, int& history_size) {
+double* iterative_refinement(const double* A, int n, const double* b, const double* x_true, double kappa, double tol,
+        int max_iter, double*& residual_history, double*& ferr_history, double*& nbe_history, double*& cbe_history, int& history_size) {
     if (n > 10000) {
         std::cerr << "Error: Matrix too large for dense conversion\n";
         return nullptr;
@@ -545,7 +546,7 @@ double* iterative_refinement(const double* A, int n, const double* b, const doub
 
         std::cout << "u * sqrt(kappa): " << std::sqrt(u * kappa) << "\n";
         // Stopping criterion: max(max(ferr, nbe), cbe) <= u * kappa
-        if (std::max(std::max(ferr_history[iter], nbe_history[iter]), cbe_history[iter]) <= u * kappa) {
+        if (ferr_history[iter] <= tol) {
             std::cout << "Converged after " << iter + 1 << " iterations\n";
             free_vector(r);
             break;
@@ -624,6 +625,7 @@ double* read_matrix_market(const std::string& filename, int& n) {
 
 int main() {
     int n;
+    double tol = 1e-8;
     std::string matrix_file = "../data/suitesparse/1138_bus.mtx";
     double kappa = 1e6; // Condition number (approximate or estimated)
     int max_iter = 2000; // Adjusted for larger matrix
@@ -647,7 +649,7 @@ int main() {
     double* nbe_history = nullptr;
     double* cbe_history = nullptr;
     int history_size = 0;
-    double* x = iterative_refinement(A, n, b, x_true, kappa, max_iter, residual_history, ferr_history, nbe_history, cbe_history, history_size);
+    double* x = iterative_refinement(A, n, b, x_true, kappa, tol, max_iter, residual_history, ferr_history, nbe_history, cbe_history, history_size);
 
     if (x == nullptr) {
         std::cerr << "Failed to solve system\n";
