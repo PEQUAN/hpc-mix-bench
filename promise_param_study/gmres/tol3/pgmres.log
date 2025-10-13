@@ -1,5 +1,117 @@
-09/18 16:47:43: 🤘 cadnaPromise 🤘
-09/18 16:47:43: Using the compiler: g++
-09/18 16:47:43: We are working with 1 file and 90 different types
-09/18 16:47:43: The expectation is 1 digits.
-09/18 16:47:43: a) Get a reference result with cadna (double)
+10/03 20:15:11: 🤘 cadnaPromise 🤘
+10/03 20:15:11: Using the compiler: g++
+10/03 20:15:11: We are working with 1 file and 101 different types
+10/03 20:15:11: The expectation is 10 digits.
+10/03 20:15:11: a) Get a reference result with cadna (double)
+10/03 20:15:28: b) Check with highest format (Double)
+10/03 20:15:30: c) Delta-Debug Single/Double
+10/03 20:21:13: d) Delta-Debug bfloat16/Single
+10/03 20:22:55: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1464
+Iteration 100: Residual = 0.806497
+Iteration 200: Residual = 0.342739
+Iteration 300: Residual = 0.19828
+Iteration 400: Residual = 0.147872
+Iteration 500: Residual = 0.126421
+Error: Invalid norm
+
+10/03 20:24:37: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.36623
+Iteration 200: Residual = 0.224147
+Iteration 300: Residual = 0.0733447
+Iteration 400: Residual = 0.0311881
+Iteration 500: Residual = 0.0166149
+Error: Invalid norm
+
+10/03 20:26:43: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.36623
+Iteration 200: Residual = 0.224147
+Iteration 300: Residual = 0.0733447
+Iteration 400: Residual = 0.0311881
+Iteration 500: Residual = 0.0166149
+Error: Invalid norm
+
+10/03 20:26:47: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.37363
+Iteration 200: Residual = 0.221525
+Iteration 300: Residual = 0.0733802
+Iteration 400: Residual = 0.031379
+Iteration 500: Residual = 0.016615
+Error: Invalid norm
+
+10/03 20:26:51: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.36623
+Iteration 200: Residual = 0.224147
+Iteration 300: Residual = 0.0733447
+Iteration 400: Residual = 0.0311881
+Iteration 500: Residual = 0.0166149
+Error: Invalid norm
+
+10/03 20:25:24: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.36623
+Iteration 200: Residual = 0.224147
+Iteration 300: Residual = 0.0733447
+Iteration 400: Residual = 0.0311881
+Iteration 500: Residual = 0.0166149
+Error: Invalid norm
+
+10/03 20:25:28: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.37363
+Iteration 200: Residual = 0.221525
+Iteration 300: Residual = 0.0733802
+Iteration 400: Residual = 0.031379
+Iteration 500: Residual = 0.016615
+Error: Invalid norm
+
+10/03 20:27:49: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.36623
+Iteration 200: Residual = 0.224147
+Iteration 300: Residual = 0.0733447
+Iteration 400: Residual = 0.0311881
+Iteration 500: Residual = 0.0166149
+Error: Invalid norm
+
+10/03 20:27:55: Loaded matrix: 1138 x 1138 with 4054 non-zeros
+Generated b = A * x_true, where x_true = [1, 1, ..., 1]
+A.n=1138, A.nnz=4054
+Warning: Matrix has zero or near-zero diagonal elements in sparse LU
+Initial norm of residual: 1472
+Iteration 100: Residual = 3.37363
+Iteration 200: Residual = 0.221525
+Iteration 300: Residual = 0.0733802
+Iteration 400: Residual = 0.031379
+Iteration 500: Residual = 0.016615
+Error: Invalid norm
+
+10/03 20:27:55: e) Delta-Debug custom(5, 2)/bfloat16

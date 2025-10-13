@@ -1,1 +1,1 @@
-promise --precs=hsd --nbDigits=2
+promise --precs=hsd --nbDigits=10000

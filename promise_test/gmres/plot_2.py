@@ -253,7 +253,7 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     ax.set_ylabel('Number of variables of each type', fontsize=16, weight='bold')
     ax2.set_ylabel('Runtime (seconds)', fontsize=16, weight='bold', color='red')
     ax2.tick_params(axis='y', labelcolor='red')
-    ax.set_title('Precision Settings Distribution with Runtime', fontsize=16, weight='bold', pad=20)
+    ax.set_title('Precision Settings Distribution with Runtime (II)', fontsize=16, weight='bold', pad=20)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
     
     # Create legend with explicit order: bars in active_categories order, then runtime

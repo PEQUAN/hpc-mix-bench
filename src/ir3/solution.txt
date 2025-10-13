@@ -1140,8 +1140,9 @@ x
 
 Residual History
 0,1.82633e-13
+1,6.91871e-14
 
 Final Errors
 Forward Error: 2.22045e-16
-Normwise Backward Error: 3.04314e-18
-Componentwise Backward Error: 1.42245e-16
+Normwise Backward Error: 1.15284e-18
+Componentwise Backward Error: 1.09848e-16

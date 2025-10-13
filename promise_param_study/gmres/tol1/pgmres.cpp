@@ -497,13 +497,11 @@ int main(int argc, char* argv[]) {
 
         std::cout << "A.n=" << A.n << ", A.nnz=" << A.nnz << std::endl;
 
-
         int max_iter_param = 2000;
-        double tol_param = 1e-12;
         int restart_param = 500;
 
         int max_iter = (argc > 2) ? std::stoi(argv[2]) : max_iter_param;
-        __PROMISE__ tol = (argc > 3) ? std::stod(argv[3]) : 1e-12;
+        __PROMISE__ tol = (argc > 3) ? std::stod(argv[3]) : 1e-4;
         int restart = (argc > 4) ? std::stoi(argv[4]) : restart_param;
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -519,7 +517,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Forward error (||x - x_true||): " << forward_error << std::endl;
         std::cout << "Iterations to converge: " << result.iterations << std::endl;
 
-        double *check_solution = new __PROMISE__[A.n]();
+        __PROMISE__ *check_solution = new __PROMISE__[A.n]();
         if (!check_solution) throw std::runtime_error("Memory allocation failed");
         for (int i = 0; i < A.n; ++i) {
             check_solution[i] = result.x[i];
@@ -527,11 +525,11 @@ int main(int argc, char* argv[]) {
 
         PROMISE_CHECK_ARRAY(check_solution, A.n);
 
-        __PROMISE__* r = new __PROMISE__[A.n]();
+        double* r = new double[A.n]();
         if (!r) throw std::runtime_error("Memory allocation failed");
         matvec(A, result.x, r);
         axpy(-1.0, r, b, A.n, r);
-        __PROMISE__ verify_residual = norm(r, A.n);
+        double verify_residual = norm(r, A.n);
         std::cout << "Verification residual: " << verify_residual << std::endl;
         delete[] r;
 
