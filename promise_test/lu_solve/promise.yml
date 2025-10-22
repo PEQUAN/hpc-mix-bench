@@ -1,5 +1,5 @@
 compile:
-- g++ lu.cpp -frounding-math -m64 -o lu.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
+- g++ -O3 lu.cpp -frounding-math -m64 -o lu.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
 
 run: lu.out
 files: lu.cpp
