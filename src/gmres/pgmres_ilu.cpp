@@ -525,14 +525,14 @@ int main(int argc, char* argv[]) {
     Result result = {nullptr, 0.0, 0, nullptr, 0};
 
     try {
-        std::string filename = (argc > 1) ? argv[1] : "../data/suitesparse/1138_bus.mtx";
+        std::string filename = (argc > 1) ? argv[1] : "../../data/suitesparse/psmigr_2.mtx";
 
         A = read_mtx_file(filename);
         b = generate_rhs(A);
 
         std::cout << "A.n=" << A.n << ", A.nnz=" << A.nnz << std::endl;
 
-        int max_iter = (argc > 2) ? std::stoi(argv[2]) : 2000;
+        int max_iter = (argc > 2) ? std::stoi(argv[2]) : A.n;
         double tol = (argc > 3) ? std::stod(argv[3]) : 1e-16;
         int restart = (argc > 4) ? std::stoi(argv[4]) : 1000;
 

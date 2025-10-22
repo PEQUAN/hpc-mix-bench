@@ -8,8 +8,8 @@
 #include <sstream>
 #include <string>
 
-double* create_vector(int size) {
-    double* vec = new double[size]();
+double* create_vector(int size, bool initialize = true) {
+    double* vec = initialize ? new double[size]() : new double[size];
     if (!vec) {
         throw std::runtime_error("Failed to allocate vector");
     }
@@ -20,8 +20,8 @@ void free_vector(double* vec) {
     delete[] vec;
 }
 
-int* create_int_vector(int size) {
-    int* vec = new int[size]();
+int* create_int_vector(int size, bool initialize = true) {
+    int* vec = initialize ? new int[size]() : new int[size];
     if (!vec) {
         throw std::runtime_error("Failed to allocate int vector");
     }
@@ -33,7 +33,7 @@ void free_int_vector(int* vec) {
 }
 
 struct SparseMatrix {
-// Sparse matrix in CSR format
+    // Sparse matrix in CSR format
     double* val; 
     int* col_ind; 
     int* row_ptr; 
@@ -75,9 +75,9 @@ SparseMatrix read_matrix_market(const std::string& filename, int& n) {
     }
     n = rows;
 
-    double* temp_val = create_vector(nnz); // Temporary storage for coordinate format
-    int* temp_row = create_int_vector(nnz);
-    int* temp_col = create_int_vector(nnz);
+    double* temp_val = create_vector(nnz, false);
+    int* temp_row = create_int_vector(nnz, false);
+    int* temp_col = create_int_vector(nnz, false);
 
     for (int i = 0; i < nnz; ++i) {
         if (!std::getline(file, line)) {
@@ -96,8 +96,8 @@ SparseMatrix read_matrix_market(const std::string& filename, int& n) {
     file.close();
 
     // Convert to CSR format
-    double* val = create_vector(nnz);
-    int* col_ind = create_int_vector(nnz);
+    double* val = create_vector(nnz, false);
+    int* col_ind = create_int_vector(nnz, false);
     int* row_ptr = create_int_vector(rows + 1);
 
     // Count non-zeros per row
@@ -139,21 +139,18 @@ void sparse_matvec(const SparseMatrix& A, const double* x, double* y) {
     }
 }
 
-// Sparse LU decomposition with partial pivoting
-void sparse_lu_factorization(const SparseMatrix& A, SparseMatrix& L, SparseMatrix& U, int* P) {
+// Dense LU decomposition with partial pivoting, storing L and U as dense matrices
+void dense_lu_factorization(const SparseMatrix& A, double*& L, double*& U, int* P) {
     if (!A.val || !A.col_ind || !A.row_ptr) {
         throw std::runtime_error("Invalid input matrix");
     }
     int n = A.rows;
-    L.rows = n;
-    L.cols = n;
-    U.rows = n;
-    U.cols = n;
 
     for (int i = 0; i < n; ++i) {
         P[i] = i;
     }
 
+    // Convert sparse A to dense format (row-major)
     double* dense_A = create_vector(n * n);
     for (int i = 0; i < n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
@@ -161,128 +158,91 @@ void sparse_lu_factorization(const SparseMatrix& A, SparseMatrix& L, SparseMatri
         }
     }
 
-    double* dense_L = create_vector(n * n);
-    double* dense_U = create_vector(n * n);
+    // Initialize L and U
+    L = create_vector(n * n);
+    U = create_vector(n * n);
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            dense_U[i * n + j] = dense_A[i * n + j];
+            U[i * n + j] = dense_A[i * n + j];
+            L[i * n + j] = (i == j) ? 1.0 : 0.0;
         }
-        dense_L[i * n + i] = 1.0;
+    }
+
+    // Compute matrix infinity norm for singularity check
+    double A_norm = 0.0;
+    for (int i = 0; i < n; ++i) {
+        double row_sum = 0.0;
+        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
+            row_sum += std::abs(A.val[j]);
+        }
+        if (row_sum > A_norm) A_norm = row_sum;
     }
 
     // LU factorization with partial pivoting
     for (int k = 0; k < n; ++k) {
-        double max_val = std::abs(dense_U[k * n + k]);
+        double max_val = std::abs(U[k * n + k]);
         int pivot = k;
         for (int i = k + 1; i < n; ++i) {
-            if (std::abs(dense_U[i * n + k]) > max_val) {
-                max_val = std::abs(dense_U[i * n + k]);
+            if (std::abs(U[i * n + k]) > max_val) {
+                max_val = std::abs(U[i * n + k]);
                 pivot = i;
             }
         }
-        if (std::abs(max_val) < 1e-15) {
+        if (std::abs(max_val) < 1e-15 * A_norm) {
             throw std::runtime_error("Matrix singular or nearly singular");
         }
         if (pivot != k) {
             for (int j = 0; j < n; ++j) {
-                std::swap(dense_U[k * n + j], dense_U[pivot * n + j]);
+                std::swap(U[k * n + j], U[pivot * n + j]);
                 if (j < k) {
-                    std::swap(dense_L[k * n + j], dense_L[pivot * n + j]);
+                    std::swap(L[k * n + j], L[pivot * n + j]);
                 }
             }
             std::swap(P[k], P[pivot]);
         }
         for (int i = k + 1; i < n; ++i) {
-            dense_L[i * n + k] = dense_U[i * n + k] / dense_U[k * n + k];
+            L[i * n + k] = U[i * n + k] / U[k * n + k];
             for (int j = k; j < n; ++j) {
-                dense_U[i * n + j] -= dense_L[i * n + k] * dense_U[k * n + j];
+                U[i * n + j] -= L[i * n + k] * U[k * n + j];
             }
         }
     }
-
-    // Convert L and U to sparse format
-    int nnz_L = 0, nnz_U = 0;
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j <= i; ++j) {
-            if (std::abs(dense_L[i * n + j]) > 1e-15) nnz_L++;
-        }
-        for (int j = i; j < n; ++j) {
-            if (std::abs(dense_U[i * n + j]) > 1e-15) nnz_U++;
-        }
-    }
-
-    L.val = create_vector(nnz_L);
-    L.col_ind = create_int_vector(nnz_L);
-    L.row_ptr = create_int_vector(n + 1);
-    U.val = create_vector(nnz_U);
-    U.col_ind = create_int_vector(nnz_U);
-    U.row_ptr = create_int_vector(n + 1);
-
-    int pos_L = 0, pos_U = 0;
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j <= i; ++j) {
-            if (std::abs(dense_L[i * n + j]) > 1e-15) {
-                L.val[pos_L] = dense_L[i * n + j];
-                L.col_ind[pos_L] = j;
-                pos_L++;
-            }
-        }
-        L.row_ptr[i + 1] = pos_L;
-        for (int j = i; j < n; ++j) {
-            if (std::abs(dense_U[i * n + j]) > 1e-15) {
-                U.val[pos_U] = dense_U[i * n + j];
-                U.col_ind[pos_U] = j;
-                pos_U++;
-            }
-        }
-        U.row_ptr[i + 1] = pos_U;
-    }
-    L.nnz = nnz_L;
-    U.nnz = nnz_U;
 
     free_vector(dense_A);
-    free_vector(dense_L);
-    free_vector(dense_U);
 }
 
-// Forward substitution for sparse L
-double* sparse_forward_substitution(const SparseMatrix& L, int n, const double* b, const int* P) {
-    if (!L.val || !L.col_ind || !L.row_ptr || !P) {
-        throw std::runtime_error("Invalid inputs in sparse_forward_substitution");
+// Forward substitution for dense L (unit lower triangular)
+double* dense_forward_substitution(const double* L, int n, const double* b, const int* P) {
+    if (!L || !P) {
+        throw std::runtime_error("Invalid inputs in dense_forward_substitution");
     }
     double* y = create_vector(n);
     for (int i = 0; i < n; ++i) {
         double sum = 0.0;
-        for (int j = L.row_ptr[i]; j < L.row_ptr[i + 1]; ++j) {
-            if (L.col_ind[j] < i) {
-                sum += L.val[j] * y[L.col_ind[j]];
-            }
+        for (int j = 0; j < i; ++j) {
+            sum += L[i * n + j] * y[j];
         }
         y[i] = b[P[i]] - sum;
     }
     return y;
 }
 
-// Backward substitution for sparse U
-double* sparse_backward_substitution(const SparseMatrix& U, int n, const double* y) {
-    if (!U.val || !U.col_ind || !U.row_ptr) {
-        throw std::runtime_error("Invalid inputs in sparse_backward_substitution");
+// Backward substitution for dense U (upper triangular)
+double* dense_backward_substitution(const double* U, int n, const double* y) {
+    if (!U) {
+        throw std::runtime_error("Invalid inputs in dense_backward_substitution");
     }
     double* x = create_vector(n);
     for (int i = n - 1; i >= 0; --i) {
         double sum = 0.0;
-        double diag = 0.0;
-        for (int j = U.row_ptr[i]; j < U.row_ptr[i + 1]; ++j) {
-            if (U.col_ind[j] == i) {
-                diag = U.val[j];
-            } else if (U.col_ind[j] > i) {
-                sum += U.val[j] * x[U.col_ind[j]];
-            }
+        for (int j = i + 1; j < n; ++j) {
+            sum += U[i * n + j] * x[j];
         }
-        if (std::abs(diag) < 1e-15) {
+        if (std::abs(U[i * n + i]) < 1e-15) {
+            free_vector(x);
             throw std::runtime_error("U is singular or nearly singular");
         }
-        x[i] = (y[i] - sum) / diag;
+        x[i] = (y[i] - sum) / U[i * n + i];
     }
     return x;
 }
@@ -356,7 +316,7 @@ void write_solution(const double* x, int size, const std::string& filename, doub
         std::cerr << "Error opening output file: " << filename << std::endl;
         return;
     }
-    file << "Sparse LU Solution\n";
+    file << "Dense LU Solution\n";
     for (int i = 0; i < size; ++i) {
         file << x[i] << "\n";
     }
@@ -369,7 +329,7 @@ void write_solution(const double* x, int size, const std::string& filename, doub
 
 int main() {
     int n;
-    std::string matrix_file = "../../data/suitesparse/1138_bus.mtx";
+    std::string matrix_file = "../../data/suitesparse/psmigr_2.mtx";
 
     SparseMatrix A = read_matrix_market(matrix_file, n);
     if (!A.val) {
@@ -394,37 +354,38 @@ int main() {
         return 1;
     }
 
-    SparseMatrix L = {nullptr, nullptr, nullptr, 0, 0, 0};
-    SparseMatrix U = {nullptr, nullptr, nullptr, 0, 0, 0};
+    double* L = nullptr;
+    double* U = nullptr;
     int* P = nullptr;
     try {
         P = create_int_vector(n);
-        sparse_lu_factorization(A, L, U, P);
+        dense_lu_factorization(A, L, U, P);
     } catch (const std::exception& e) {
-        std::cerr << "Sparse LU factorization failed: " << e.what() << "\n";
+        std::cerr << "Dense LU factorization failed: " << e.what() << "\n";
         free_sparse_matrix(A);
-        free_sparse_matrix(L);
-        free_sparse_matrix(U);
         free_vector(x_true);
         free_vector(b);
         if (P) free_int_vector(P);
+        if (L) free_vector(L);
+        if (U) free_vector(U);
         return 1;
     }
 
     double* y = nullptr;
     double* x = nullptr;
     try {
-        y = sparse_forward_substitution(L, n, b, P);
-        x = sparse_backward_substitution(U, n, y);
+        y = dense_forward_substitution(L, n, b, P);
+        x = dense_backward_substitution(U, n, y);
     } catch (const std::exception& e) {
-        std::cerr << "Sparse LU solve failed: " << e.what() << "\n";
+        std::cerr << "Dense LU solve failed: " << e.what() << "\n";
         free_sparse_matrix(A);
-        free_sparse_matrix(L);
-        free_sparse_matrix(U);
         free_vector(x_true);
         free_vector(b);
         free_vector(y);
-        if (P) free_int_vector(P);
+        free_vector(x);
+        free_vector(L);
+        free_vector(U);
+        free_int_vector(P);
         return 1;
     }
 
@@ -434,26 +395,26 @@ int main() {
     } catch (const std::exception& e) {
         std::cerr << "Error computing errors: " << e.what() << "\n";
         free_sparse_matrix(A);
-        free_sparse_matrix(L);
-        free_sparse_matrix(U);
         free_vector(x_true);
         free_vector(b);
         free_vector(y);
         free_vector(x);
+        free_vector(L);
+        free_vector(U);
         free_int_vector(P);
         return 1;
     }
 
-
-    std::cout << "Sparse LU Solver Results:\n";
+    std::cout << "Dense LU Solver Results:\n";
+    // std::cout << std::fixed << std::setprecision(6);
     std::cout << "Forward Error: " << ferr << "\n";
     std::cout << "Normwise Backward Error: " << nbe << "\n";
     std::cout << "Componentwise Backward Error: " << cbe << "\n";
     write_solution(x, n, "solution_lu.txt", ferr, nbe, cbe);
 
     free_sparse_matrix(A);
-    free_sparse_matrix(L);
-    free_sparse_matrix(U);
+    free_vector(L);
+    free_vector(U);
     free_int_vector(P);
     free_vector(b);
     free_vector(y);
