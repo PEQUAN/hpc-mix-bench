@@ -1,1 +1,1 @@
-find tmp -maxdepth 1 -type d -name "tmp*" -exec rm -ri {} +
+find /tmp -maxdepth 1 -type d -name "tmp*" -exec rm -ri {} +
