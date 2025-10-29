@@ -1,7 +1,0 @@
-compile:
-- g++ cg_debug.cpp -frounding-math -O3 -m64 -o cg.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
-
-run: cg.out
-files: cg_debug.cpp
-log: cg.log
-output: debug/

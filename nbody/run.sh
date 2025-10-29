@@ -1,1 +1,0 @@
-g++ nbody.cpp -o nbody
