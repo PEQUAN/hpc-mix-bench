@@ -99,19 +99,6 @@ python json_counts_sum.py
 ```
 
 
-### 🧩 Common Issues & Solutions
-
-| ⚠️ **Issue** | 🛠️ **Solution** |
-|:--------------|:----------------|
-| `precision_settings_1.json` or `promise.yml` not found | 📁 Ensure both files exist in the same folder as `plot_*.py`. The script checks automatically, but regenerate them if missing (set `run_experiments=1`). |
-| `[Errno 2] No such file or directory` | 📂 Likely a path issue — run `cd` into the correct directory. If it persists, add `SCRIPT_DIR = Path(__file__).parent` in your Python script to use absolute paths. |
-| **No folders found** | 🔍 Verify folder names and spelling. You can also increase `-maxdepth` in your search command for deeper directory scanning. |
-| **Permission denied** | 🔑 Run `chmod +x run_benchmarks.sh` to make the script executable. |
-| **Python errors** | 🧠 Check the script output. Make sure required libraries like `matplotlib` and `yaml` are installed in your environment. |
-
-> 💡 **Tip:** Run `bash -x run_benchmarks.sh` for verbose debugging if you need to trace what the script is doing.
-
-
 ## License
 
 
