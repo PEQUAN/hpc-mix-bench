@@ -205,7 +205,7 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     fig, ax = plt.subplots(figsize=(11, 8))
     
     ax2 = ax.twinx()
-    
+    fontsize = 24
     x_indices = np.arange(len(digits))
 
     bottom = np.zeros(len(digits))
@@ -249,27 +249,29 @@ def plot_precision_settings(precision_settings, digits, runtimes):
 
     ax.set_xlim(-0.5, len(digits) - 0.5)
 
-    ax.set_xlabel('Number of required digits', fontsize=20, weight='bold')
-    ax.set_ylabel('Number of variables of each type', fontsize=20, weight='bold')
-    ax2.set_ylabel('Runtime (seconds)', fontsize=20, weight='bold', color='red')
+    ax.set_xlabel('Number of required digits', fontsize=fontsize, weight='bold')
+    ax.set_ylabel('Number of variables of each type', fontsize=fontsize, weight='bold')
+    ax2.set_ylabel('Runtime (seconds)', fontsize=fontsize, weight='bold', color='red')
     ax2.tick_params(axis='y', labelcolor='red')
 
-    ax.tick_params(axis='both', which='major', labelsize=20)   # for main x/y ticks
-    ax2.tick_params(axis='both', which='major', labelsize=22)  # for twin y-axis ticks
+    ax.tick_params(axis='both', which='major', labelsize=fontsize)   # for main x/y ticks
+    ax2.tick_params(axis='both', which='major', labelsize=fontsize)  # for twin y-axis ticks
 
-    ax.set_title('Precision Settings Distribution with Runtime (II)', fontsize=20, weight='bold', pad=20)
+    ax.set_title('Precision Settings with Runtime (I)', 
+                 fontsize=fontsize, weight='bold', pad=20)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+
     
     # Create legend with explicit order: bars in active_categories order, then runtime
     legend_handles = bar_handles + [runtime_line]
     legend_labels = bar_labels + ['Runtime']
-    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.2),
-              ncol=min(len(active_categories) + 1, 6), fontsize=20, frameon=True, edgecolor='black')
+    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.3),
+              ncol=min(len(active_categories) + 1, 6), fontsize=fontsize-3, frameon=True, edgecolor='black')
 
-    plt.tick_params(axis='both', which='major', labelsize=15)
+    plt.tick_params(axis='both', which='major', labelsize=fontsize)
     plt.tight_layout()
-    plt.savefig('precision2_with_runtime.png', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision2_with_runtime.png")
+    plt.savefig('precision2_with_runtime.jpg', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision2_with_runtime.jpg")
     plt.show()
 
 import sys
