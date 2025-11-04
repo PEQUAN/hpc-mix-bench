@@ -91,6 +91,12 @@ chmod +x run_benchmarks.sh
 >   `1 / true / y` = yes | `0 / false / n` = no
 
 
+In the end, one can quickly check their visualization in the plots folder via:
+
+```bash
+cd mp_tests
+bash move_plots.sh 
+```
 
 ### Generate Summary
 

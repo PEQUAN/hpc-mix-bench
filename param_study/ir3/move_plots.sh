@@ -21,7 +21,7 @@ TARGET_FOLDERS=("$@")
 process_folder() {
     local dir="$1"
     local folder_name=$(basename "$dir")
-    local plots_dir="../plots"  # Relative to current dir; adjust if needed
+    local plots_dir="../param_plots"  # Relative to current dir; adjust if needed
 
     echo "=== Processing folder: $dir ==="
 
@@ -63,7 +63,7 @@ if (( ${#TARGET_FOLDERS[@]} == 0 )); then
 else
     echo "Target folders: ${TARGET_FOLDERS[*]}"
 fi
-echo "Destination: plots/"
+echo "Destination: param_plots/"
 echo "=========================================="
 
 # ---------- 4. Run folders ----------
@@ -90,4 +90,4 @@ else
 fi
 
 echo "=========================================="
-echo "All done! Check 'plots/' for organized files."
+echo "All done! Check 'param_plots/' for organized files."
