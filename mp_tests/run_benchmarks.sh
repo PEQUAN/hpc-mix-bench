@@ -9,7 +9,7 @@
 #   • folders: optional, if none → all valid folders
 #
 #   Each folder must contain:
-#     - plot_1.py to plot_4.py
+#     - run_setting_*.py (any number, run in numerical order)
 #     - precision_settings_1.json
 #     - promise.yml
 # ------------------------------------------------------------
@@ -33,35 +33,45 @@ RUN_PLOTTING=$(normalize_bool "$RUN_PLOTTING")
 
 # ---------- 3. Helper: run one folder ----------
 run_folder() {
-    local dir="$1"
-    local abs_dir=$(realpath "$dir")  # full path for safety
+    local input_dir="$1"
+    local dir=$(realpath "$input_dir")  # Ensure absolute path
+    local abs_dir="$dir"
 
     echo "=== Processing folder: $abs_dir ==="
 
-    # Check required files
-    local missing=()
-    for file in plot_{1,2,3,4}.py precision_settings_1.json promise.yml; do
-        [[ -f "$dir/$file" ]] || missing+=("$file")
+    # Check required data files
+    local missing_data=()
+    for file in precision_settings_1.json promise.yml; do
+        [[ -f "$dir/$file" ]] || missing_data+=("$file")
     done
 
-    if (( ${#missing[@]} > 0 )); then
-        echo "  [Missing files] ${missing[*]}"
+    if (( ${#missing_data[@]} > 0 )); then
+        echo "  [Missing data files] ${missing_data[*]}"
+        echo "  Skipping $dir"
+        echo
+        return 1
+    fi
+
+    # Find all run_setting_*.py scripts, sorted numerically (absolute paths)
+    local scripts=($(find "$dir" -maxdepth 1 -name "run_setting_*.py" 2>/dev/null | sort -V))
+    if (( ${#scripts[@]} == 0 )); then
+        echo "  [No run_setting_*.py files found]"
         echo "  Skipping $dir"
         echo
         return 1
     fi
 
     # Run each script INSIDE the folder
-    for script in plot_{1,2,3,4}.py; do
-        echo "  → Running: $script"
+    for script in "${scripts[@]}"; do
+        echo "  → Running: $(basename "$script")"
         (
             cd "$dir"  # Critical: change to folder
             python3 "$script" "$RUN_EXPERIMENTS" "$RUN_PLOTTING"
         )
         if (( $? != 0 )); then
-            echo "  [Failed] $script"
+            echo "  [Failed] $(basename "$script")"
         else
-            echo "  [Success] $script"
+            echo "  [Success] $(basename "$script")"
         fi
     done
     echo
@@ -80,17 +90,18 @@ echo "=========================================="
 
 # ---------- 5. Run folders ----------
 if (( ${#TARGET_FOLDERS[@]} == 0 )); then
-    # Find all folders with plot_1.py (then validate)
+    # Find all folders with run_setting_1.py (anchor), then validate
     found_any=false
-    while IFS= read -r plot1; do
-        dir=$(dirname "$plot1")
-        # Quick pre-check
+    while IFS= read -r script1; do
+        dir=$(dirname "$script1")
+        dir=$(realpath "$dir")  # Ensure absolute path
+        # Quick pre-check for data files
         [[ -f "$dir/precision_settings_1.json" && -f "$dir/promise.yml" ]] || continue
         found_any=true
         run_folder "$dir"
-    done < <(find . -maxdepth 2 -type f -name "plot_1.py")
+    done < <(find . -maxdepth 2 -type f -name "run_setting_1.py")
 
-    $found_any || echo "Warning: No complete folder found (missing files)."
+    $found_any || echo "Warning: No complete folder found (missing files or run_setting_1.py)."
 
 else
     for folder in "${TARGET_FOLDERS[@]}"; do
