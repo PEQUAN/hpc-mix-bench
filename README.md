@@ -81,6 +81,8 @@ chmod +x run_benchmarks.sh
 | `./run_benchmarks.sh 1 1 setA setB` | 🎯 **Sequential:** run **both** in only `setA` and `setB` |
 | `./run_benchmarks.sh n y setA` | 🧩 Skip experiments, **plot only** in `setA` *(short form)* |
 | `./run_benchmarks.sh 0 1 --parallel` | ⚡ **Parallel:** runs **plots only** in all folders. |
+| `./run_benchmarks.sh 1 0 --parallel` | ⚡ **Parallel:** runs **experiments only** in all folders. |
+| `./run_benchmarks.sh 1 1 --parallel` | ⚡ **Parallel:** runs **experiments and plots** in all folders. |
 | `./run_benchmarks.sh 1 1 setA setB --parallel` | 🔀 **Parallel:** runs **experiments + plots** only in `setA` and `setB`. |
 
 
