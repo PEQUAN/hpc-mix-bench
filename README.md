@@ -21,7 +21,7 @@ We stored the numerical algorithm to be benchmarked in setA, setB, ...., and mor
 
 
 ```text
-projectss/
+projects/
 ├── setA/                     ← Each set contains a test for a single benchmark
 │   ├── run_setting_1.py
 │   ├── ......
