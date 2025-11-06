@@ -33,8 +33,7 @@ projects/
 ├── setB/
 │   └── (same files as above)
 ├── incomplete_set/                 ← will be skipped (missing files)
-├── run_benchmarks.sh                    ← this script
-└── README.md                       ← this file
+├── run_benchmarks.sh               ← main benchmark script
 
 
 > **Each valid folder must contain**:
