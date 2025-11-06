@@ -11,7 +11,7 @@ cd mp_tests
 
 A **Bash automation script** to run `run_setting_1.py` to `run_setting_4.py` across multiple experiment folders, with support for:
 
-- Running **experiments** (`prec_setting_1.json`, `promise.yml`)
+- Running **experiments** (`prec_setting_1.json`, `promise.yml`, `fp.json`)
 - **Plotting** results
 - Selective execution of **specific folders**
 
@@ -22,17 +22,15 @@ The folder structure:
 
 ```text
 project/
-├── exp_set1/
+├── Numerical Algorithm 2/
 │   ├── run_setting_1.py
-│   ├── run_setting_2.py
-│   ├── run_setting_3.py
-│   ├── run_setting_4.py
+│   ├── ......
+│   ├── run_setting_k.py
 │   ├── prec_setting_1.json   ← required (generated or pre-existing)
-│   ├── prec_setting_2.json   ← required (generated or pre-existing)
-│   ├── prec_setting_3.json   ← required (generated or pre-existing)
-│   ├── prec_setting_4.json   ← required (generated or pre-existing)
+│   ├── ......
+│   ├── prec_setting_k.json   ← required (generated or pre-existing)
 │   └── promise.yml                 ← required (generated or pre-existing)
-├── exp_set2/
+├── Numerical Algorithm 2/
 │   └── (same files as above)
 ├── incomplete_set/                 ← will be skipped (missing files)
 ├── run_benchmarks.sh                    ← this script
