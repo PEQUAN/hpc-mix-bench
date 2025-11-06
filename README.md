@@ -11,7 +11,7 @@ cd mp_tests
 
 A **Bash automation script** to run `run_setting_1.py` to `run_setting_4.py` across multiple experiment folders, with support for:
 
-- Running **experiments** (`prec_setting_1.json`, `promise.yml`, `fp.json`)
+- Running **experiments** (marked executable code, `promise.yml`, `fp.json`)
 - **Plotting** results
 - Selective execution of **specific folders**
 
