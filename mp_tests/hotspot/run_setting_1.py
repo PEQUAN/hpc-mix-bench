@@ -26,7 +26,7 @@ CATEGORY_COLORS = {
 
 def run_experiments(method, digits):
     """Run experiments, collect precision settings, and measure runtime."""
-    precision_settings = []
+    prec_setting = []
     runtimes = []
     for digit in digits:
         testargs = [
@@ -43,30 +43,30 @@ def run_experiments(method, digits):
             if result and isinstance(result, dict):
                 cleaned_result = {key: list(value) if isinstance(value, set) else value 
                                 for key, value in result.items()}
-                precision_settings.append(cleaned_result)
+                prec_setting.append(cleaned_result)
                 runtimes.append(elapsed_time)
                 print(f"Results for {digit} digits: {cleaned_result}, Runtime: {elapsed_time:.4f} seconds")
             else:
                 print(f"Warning: No valid result for {digit} digits")
-                precision_settings.append({})
+                prec_setting.append({})
                 runtimes.append(0)
         except Exception as e:
             print(f"Error running experiment for {digit} digits: {e}, Runtime: {elapsed_time:.4f} seconds")
-            precision_settings.append({})
+            prec_setting.append({})
             runtimes.append(0.0)
-    return precision_settings, runtimes
+    return prec_setting, runtimes
 
-def save_precision_settings(precision_settings, filename='precision_settings_1.json'):
+def save_prec_setting(prec_setting, filename='prec_setting_1.json'):
     """Save precision settings to a JSON file."""
     try:
-        for setting in precision_settings:
+        for setting in prec_setting:
             if not isinstance(setting, dict):
                 raise ValueError(f"Invalid data: Expected dict, got {type(setting)}")
             for key, value in setting.items():
                 if not isinstance(value, list):
                     raise ValueError(f"Invalid data for {key}: Expected list, got {type(value)}")
         with open(filename, 'w') as f:
-            json.dump(precision_settings, f, indent=4)
+            json.dump(prec_setting, f, indent=4)
         print(f"Precision settings saved to {filename}")
     except Exception as e:
         print(f"Error saving precision settings: {e}")
@@ -87,13 +87,13 @@ def save_runtimes_to_csv(digits, runtimes, filename='runtimes1.csv'):
     except Exception as e:
         print(f"Error saving runtimes to CSV: {e}")
 
-def load_precision_settings(filename='precision_settings_1.json'):
+def load_prec_setting(filename='prec_setting_1.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
-        precision_settings, _ = run_experiments('chsd', [2, 3, 4, 5])
-        save_precision_settings(precision_settings, filename)
-        return precision_settings
+        prec_setting, _ = run_experiments('chsd', [2, 3, 4, 5])
+        save_prec_setting(prec_setting, filename)
+        return prec_setting
     try:
         with open(filename, 'r') as f:
             data = json.load(f)
@@ -110,16 +110,16 @@ def load_precision_settings(filename='precision_settings_1.json'):
     except Exception as e:
         print(f"Error loading precision settings: {e}")
         print("Regenerating data due to loading error...")
-        precision_settings, _ = run_experiments('chsd', [2, 3, 4, 5])
-        save_precision_settings(precision_settings, filename)
-        return precision_settings
+        prec_setting, _ = run_experiments('chsd', [2, 3, 4, 5])
+        save_prec_setting(prec_setting, filename)
+        return prec_setting
 
 def load_runtimes(filename='runtimes1.csv'):
     """Load runtimes from a CSV file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        precision_settings, runtimes = run_experiments('chsd', digits)
+        prec_setting, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
     try:
@@ -140,31 +140,31 @@ def load_runtimes(filename='runtimes1.csv'):
         print(f"Error loading runtimes: {e}")
         print("Regenerating data due to loading error...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        precision_settings, runtimes = run_experiments('chsd', digits)
+        prec_setting, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
 
-def get_categories(precision_settings):
+def get_categories(prec_setting):
     """Extract unique categories from precision settings, with fallback."""
     categories = set()
-    for setting in precision_settings:
+    for setting in prec_setting:
         if isinstance(setting, dict):
             categories.update(setting.keys())
     return list(categories) if categories else list(CATEGORY_DISPLAY_NAMES.keys())
 
-def plot_precision_settings(precision_settings, digits, runtimes):
+def plot_prec_setting(prec_setting, digits, runtimes):
     """Visualize precision settings as a stacked bar chart with observation counts and runtime as a line plot."""
-    if not precision_settings:
+    if not prec_setting:
         print("Error: No precision settings to plot")
         return
     if len(runtimes) != len(digits):
         print(f"Error: Runtime length ({len(runtimes)}) does not match digits length ({len(digits)})")
         return
-    if len(precision_settings) != len(digits):
-        print(f"Error: Precision settings length ({len(precision_settings)}) does not match digits length ({len(digits)})")
+    if len(prec_setting) != len(digits):
+        print(f"Error: Precision settings length ({len(prec_setting)}) does not match digits length ({len(digits)})")
         return
     
-    categories = get_categories(precision_settings)
+    categories = get_categories(prec_setting)
     
     desired_order = [
         'flx::floatx<4, 3>',
@@ -176,7 +176,7 @@ def plot_precision_settings(precision_settings, digits, runtimes):
     ]
     
     heights = {cat: [] for cat in categories}
-    for setting in precision_settings:
+    for setting in prec_setting:
         for cat in categories:
             count = len(setting[cat]) if isinstance(setting, dict) and cat in setting else 0
             heights[cat].append(count)
@@ -293,8 +293,8 @@ if __name__ == "__main__":
     # --- Run experiments and save ---
     if run_experiments_flag:
         print("Running experiments...")
-        precision_settings, runtimes = run_experiments(method, digits)
-        save_precision_settings(precision_settings)
+        prec_setting, runtimes = run_experiments(method, digits)
+        save_prec_setting(prec_setting)
         save_runtimes_to_csv(digits, runtimes)
         print("Experiments completed and saved.")
     else:
@@ -303,9 +303,9 @@ if __name__ == "__main__":
     # --- Load data and plot ---
     if run_plot_flag:
         print("Loading data and generating plots...")
-        loaded_settings = load_precision_settings()
+        loaded_settings = load_prec_setting()
         loaded_runtimes = load_runtimes()
-        plot_precision_settings(loaded_settings, digits, loaded_runtimes)
+        plot_prec_setting(loaded_settings, digits, loaded_runtimes)
         print("Plotting completed.")
     else:
         print("Skipping plotting.")
@@ -315,4 +315,4 @@ if __name__ == "__main__":
     #elif len(loaded_runtimes) != len(digits):
     #    print(f"Error: Loaded runtimes length ({len(loaded_runtimes)}) does not match digits ({len(digits)})")
     #else:
-    #    plot_precision_settings(loaded_settings, digits, loaded_runtimes)
+    #    plot_prec_setting(loaded_settings, digits, loaded_runtimes)

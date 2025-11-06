@@ -11,7 +11,7 @@
 #
 #   Each folder must contain:
 #     - run_setting_*.py (any number, run in numerical order)
-#     - precision_settings_1.json
+#     - prec_setting_1.json
 #     - promise.yml
 # ------------------------------------------------------------
 
@@ -52,7 +52,7 @@ run_folder() {
 
     # Check required data files
     local missing_data=()
-    for file in precision_settings_1.json promise.yml; do
+    for file in prec_setting_1.json promise.yml; do
         [[ -f "$dir/$file" ]] || missing_data+=("$file")
     done
 
@@ -112,7 +112,7 @@ if (( ${#TARGET_FOLDERS[@]} == 0 )); then
         dir=$(dirname "$script1")
         dir=$(realpath "$dir")  # Ensure absolute path
         # Quick pre-check for data files
-        [[ -f "$dir/precision_settings_1.json" && -f "$dir/promise.yml" ]] || continue
+        [[ -f "$dir/prec_setting_1.json" && -f "$dir/promise.yml" ]] || continue
         valid_folders+=("$dir")
     done < <(find . -maxdepth 2 -type f -name "run_setting_1.py")
 
@@ -143,7 +143,7 @@ else
     valid_folders=()
     for folder in "${TARGET_FOLDERS[@]}"; do
         [[ -d "$folder" ]] || { echo "Error: '$folder' is not a directory."; continue; }
-        if [[ -f "$folder/run_setting_1.py" && -f "$folder/precision_settings_1.json" && -f "$folder/promise.yml" ]]; then
+        if [[ -f "$folder/run_setting_1.py" && -f "$folder/prec_setting_1.json" && -f "$folder/promise.yml" ]]; then
             valid_folders+=("$folder")
         else
             echo "Error: '$folder' missing required files. Skipping."

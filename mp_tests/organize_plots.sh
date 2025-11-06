@@ -21,7 +21,7 @@ TARGET_FOLDERS=("$@")
 process_folder() {
     local dir="$1"
     local folder_name=$(basename "$dir")
-    local plots_dir="../plots"  # Relative to current dir; adjust if needed
+    local plots_dir="./plots"  # Relative to current dir; adjust if needed
 
     echo "=== Processing folder: $dir ==="
 
