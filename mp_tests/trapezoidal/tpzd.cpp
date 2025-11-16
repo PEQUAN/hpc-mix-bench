@@ -14,12 +14,6 @@ void axpy(__PROMISE__ a, __PROMISE__* x, __PROMISE__* y, int n) {
     }
 }
 
-void add(__PROMISE__* x, __PROMISE__* y, __PROMISE__* result, int n) {
-    // result = x + y
-    for (int i = 0; i < n; ++i) {
-        result[i] = x[i] + y[i];
-    }
-}
 
 
 void ode_function(__PROMISE__ t, __PROMISE__* y, __PROMISE__* dydt, int n) {
