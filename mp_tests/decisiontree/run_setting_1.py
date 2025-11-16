@@ -229,7 +229,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
                     f'{int(bar_height)}',
                     ha='center',
                     va='center',
-                    fontsize=15,
+                    fontsize=20,
                     weight='bold',
                     color='black'
                 )

@@ -227,7 +227,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
                     f'{int(bar_height)}',
                     ha='center',
                     va='center',
-                    fontsize=15,
+                    fontsize=20,
                     weight='bold',
                     color='black'
                 )
@@ -255,7 +255,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
     ax.tick_params(axis='both', which='major', labelsize=fontsize)   # for main x/y ticks
     ax2.tick_params(axis='both', which='major', labelsize=fontsize)  # for twin y-axis ticks
 
-    ax.set_title('Precision Settings with Runtime (I)', 
+    ax.set_title('Precision Settings with Runtime (IV)', 
                  fontsize=fontsize, weight='bold', pad=20)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
 
