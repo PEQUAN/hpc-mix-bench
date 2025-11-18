@@ -41,10 +41,6 @@ THe same as promise.h, but without the function code
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <stdlib.h>
-#include <math.h>
-
-using namespace std;
 
 
 /* These two macros export the value(s) to check to Promise2

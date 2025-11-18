@@ -33,69 +33,78 @@ THe same as promise.h, but without the function code
 © Thibault Hilaire and Fabienne JÉZÉQUEL, April 2024
 */
 
+
 #ifndef __PROMISE_DUMP__
 #define __PROMISE_DUMP__
-
 
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <stdlib.h>
-#include <math.h>
+#include <type_traits>
+#include <limits>
+#include <cmath>
 #include <half_promise.hpp>
 #include <floatx.hpp>
-
-using namespace std;
-
 
 /* These two macros export the value(s) to check to Promise2
 Usage:
 - `PROMISE_CHECK_VAR(var);`     to export the variable `var`
-- `PROMISE_CHECK_ARRAY(var);`   to exporrt the n values of the array `var`
+- `PROMISE_CHECK_ARRAY(var);`   to export the n values of the array `var`
 */
 #define PROMISE_CHECK_VAR(var) promise_dump(#var, &var, 1)
 #define PROMISE_CHECK_ARRAY(var, n) promise_dump(#var, (var), n)
 #define PROMISE_CHECK_ARRAY2D(var, n, m) promise_dump_arr(#var, (var), n, m)
-
-
 
 /* dump (to stdout) a variable:
  - varName: name of the variable dump (obtained with a C macro)
  - a: pointer to the variable (scalar or array) to dump
  - size: size of the array (1 for a scalar)*/
 template<typename T>
-void promise_dump(char const* varName, T* a, long size){
+void promise_dump(char const* varName, T* a, std::size_t size){
 	/* export the stochastic double and significant digits */
-	for(long i=0; i<size; i++){
-		cout << hexfloat << "[PROMISE_DUMP] " << varName;
+	for(std::size_t i=0; i<size; i++){
+		std::cout << "[PROMISE_DUMP] " << varName;
 		if (size>1)
-			cout << "[" << i << "]";
-		cout << " = " << a[i] << defaultfloat << endl;
+			std::cout << "[" << i << "]";
+		std::cout << " = ";
+
+		// Handle special values before applying hexfloat
+		if constexpr (std::is_floating_point_v<T>) {
+			double val_as_double = static_cast<double>(a[i]);
+			if (std::isnan(val_as_double)) {
+				std::cout << "nan";
+			} else if (std::isinf(val_as_double)) {
+				std::cout << (a[i] > static_cast<T>(0) ? "+inf" : "-inf");
+			} else {
+				// Normal value: use hexfloat for exact rep
+				std::cout << std::hexfloat << a[i] << std::defaultfloat;
+			}
+		} else {
+			// Non-float types: print as-is (no hexfloat)
+			std::cout << a[i];
+		}
+		std::cout << std::endl;
 	}
 }
 
-
 template<typename T>
-void promise_dump_arr(char const* varName, T** a, long rows, long cols){
+void promise_dump_arr(char const* varName, T** a, std::size_t rows, std::size_t cols){
 	/* export the stochastic double and significant digits */
-	for(long i=0; i<rows; i++){
+	for(std::size_t i=0; i<rows; i++){
 		promise_dump(varName, a[i], cols);
 	}
 }
 
-
-/* explicitely instianciates the promise_dump function for half, single and double */
-template void promise_dump<float>(char const*, float*, long);
-template void promise_dump<double>(char const*, double*, long);
-template void promise_dump<half_float::half>(char const*, half_float::half*, long);
-template void promise_dump<flx::floatx<5, 10>>(char const*, flx::floatx<5, 10>*, long);
-
-template void promise_dump_arr<float>(char const*, float**, long, long);
-template void promise_dump_arr<double>(char const*, double**, long, long);
-template void promise_dump_arr<half_float::half>(char const*, half_float::half**, long, long);
-template void promise_dump_arr<flx::floatx<5, 10>>(char const*, flx::floatx<5, 10>**, long, long);
-
+/* explicitly instantiates the promise_dump function for half, single and double */
+template void promise_dump<float>(char const*, float*, std::size_t);
+template void promise_dump<double>(char const*, double*, std::size_t);
+template void promise_dump<half_float::half>(char const*, half_float::half*, std::size_t);
+template void promise_dump<flx::floatx<5, 10>>(char const*, flx::floatx<5, 10>*, std::size_t);
+template void promise_dump_arr<float>(char const*, float**, std::size_t, std::size_t);
+template void promise_dump_arr<double>(char const*, double**, std::size_t, std::size_t);
+template void promise_dump_arr<half_float::half>(char const*, half_float::half**, std::size_t, std::size_t);
+template void promise_dump_arr<flx::floatx<5, 10>>(char const*, flx::floatx<5, 10>**, std::size_t, std::size_t);
 
 #ifndef __CADNA__
 extern const char* strp(double a){
@@ -125,39 +134,58 @@ extern void cadna_end(){
  - varName: name of the variable dump (obtained with a C macro)
  - a: pointer to the variable (scalar or array) to dump
  - size: size of the array (1 for a scalar)*/
-void promise_dump(char const* varName, double_st* a, long size){
+void promise_dump(char const* varName, double_st* a, std::size_t size){
 	/* export the stochastic double and significant digits */
-	for(long i=0; i<size; i++){
+	for(std::size_t i=0; i<size; i++){
 	    /* display name  */
-		cout << hexfloat << "[PROMISE_DUMP_ST] " << varName;
+		std::cout << "[PROMISE_DUMP_ST] " << varName;
 		if (size>1)
-			cout << "[" << i << "]";
-		/* display stochastic values (using `hexfloat` output) */
-		cout << " = (" << a[i].getx() << "," << a[i].gety() << "," << a[i].getz() << ")" << defaultfloat;
+			std::cout << "[" << i << "]";
+		std::cout << " = ";
+
+		// Check if all components are NaN
+		double x_d = static_cast<double>(a[i].getx());
+		double y_d = static_cast<double>(a[i].gety());
+		double z_d = static_cast<double>(a[i].getz());
+		if (std::isnan(x_d) && std::isnan(y_d) && std::isnan(z_d)) {
+			std::cout << "(nan, nan, nan)";
+		} else {
+			/* display stochastic values (using `hexfloat` output) */
+			std::cout << std::hexfloat << "(" << a[i].getx() << "," << a[i].gety() << "," << a[i].getz() << ")" << std::defaultfloat;
+		}
 		/* display number of significant digits */
-		cout << ", nb significant digits=" << a[i].nb_significant_digit() << endl;
+		std::cout << ", nb significant digits=" << a[i].nb_significant_digit() << std::endl;
 	}
 }
 
-void promise_dump(char const* varName, float_st* a, long size){
+void promise_dump(char const* varName, float_st* a, std::size_t size){
 	/* export the stochastic float and significant digits */
-	for(long i=0; i<size; i++){
+	for(std::size_t i=0; i<size; i++){
 	    /* display name  */
-		cout << hexfloat << "[PROMISE_DUMP_ST] " << varName;
+		std::cout << "[PROMISE_DUMP_ST] " << varName;
 		if (size>1)
-			cout << "[" << i << "]";
-		/* display stochastic values (using `hexfloat` output) */
-		cout << " = (" << a[i].getx() << "," << a[i].gety() << "," << a[i].getz() << ")" << defaultfloat;
+			std::cout << "[" << i << "]";
+		std::cout << " = ";
+
+		// Check if all components are NaN
+		double x_d = static_cast<double>(a[i].getx());
+		double y_d = static_cast<double>(a[i].gety());
+		double z_d = static_cast<double>(a[i].getz());
+		if (std::isnan(x_d) && std::isnan(y_d) && std::isnan(z_d)) {
+			std::cout << "(nan, nan, nan)";
+		} else {
+			/* display stochastic values (using `hexfloat` output) */
+			std::cout << std::hexfloat << "(" << a[i].getx() << "," << a[i].gety() << "," << a[i].getz() << ")" << std::defaultfloat;
+		}
 		/* display number of significant digits */
-		cout << ", nb significant digits=" << a[i].nb_significant_digit() << endl;
+		std::cout << ", nb significant digits=" << a[i].nb_significant_digit() << std::endl;
 	}
 }
 
-void promise_dump(char const* varName, double_st* a, long size);
+// Remove redundant forward declaration (function already defined above)
 
-
-void promise_dump_arr(char const* varName, double** a, long rows, long cols){
-	for(long i=0; i<rows; i++){
+void promise_dump_arr(char const* varName, double** a, std::size_t rows, std::size_t cols){
+	for(std::size_t i=0; i<rows; i++){
 	    /* display name  */
 		promise_dump(varName, a[i], cols);
 	}

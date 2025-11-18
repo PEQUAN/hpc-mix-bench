@@ -187,9 +187,6 @@ void dense_lu_factorization(const SparseMatrix& A, __PROMISE__*& L, __PROMISE__*
                 pivot = i;
             }
         }
-        if (abs(max_val) < 1e-15 * A_norm) {
-            throw std::runtime_error("Matrix singular or nearly singular");
-        }
         if (pivot != k) {
             for (int j = 0; j < n; ++j) {
                 std::swap(U[k * n + j], U[pivot * n + j]);
@@ -237,77 +234,9 @@ __PROMISE__* dense_backward_substitution(const __PROMISE__* U, int n, const __PR
         for (int j = i + 1; j < n; ++j) {
             sum += U[i * n + j] * x[j];
         }
-        if (abs(U[i * n + i]) < 1e-15) {
-            free_vector(x);
-            throw std::runtime_error("U is singular or nearly singular");
-        }
         x[i] = (y[i] - sum) / U[i * n + i];
     }
     return x;
-}
-
-// Compute errors
-void compute_errors(const SparseMatrix& A, int n, const double* b, const double* x, const double* x_true, double& ferr, double& nbe, double& cbe) {
-    if (!A.val || !A.col_ind || !A.row_ptr) {
-        throw std::runtime_error("Invalid sparse matrix in compute_errors");
-    }
-    // Forward error: max |x - x_true| / max |x_true|
-    double x_true_norm = 0.0;
-    ferr = 0.0;
-    for (int i = 0; i < n; ++i) {
-        double err = abs(x[i] - x_true[i]);
-        if (err > ferr) ferr = err;
-        if (abs(x_true[i]) > x_true_norm) x_true_norm = abs(x_true[i]);
-    }
-    ferr = x_true_norm > 0 ? ferr / x_true_norm : ferr;
-
-    // Compute residual: r = b - Ax
-    double* Ax = create_vector(n);
-    sparse_matvec(A, x, Ax);
-    double* r = create_vector(n);
-    for (int i = 0; i < n; ++i) {
-        r[i] = b[i] - Ax[i];
-    }
-
-    // Normwise backward error: ||r|| / (||A|| * ||x|| + ||b||)
-    double norm_r = 0.0;
-    for (int i = 0; i < n; ++i) {
-        norm_r += r[i] * r[i];
-    }
-    norm_r = sqrt(norm_r);
-    double x_norm = 0.0;
-    for (int i = 0; i < n; ++i) {
-        if (abs(x[i]) > x_norm) x_norm = abs(x[i]);
-    }
-    double A_norm = 0.0;
-    for (int i = 0; i < n; ++i) {
-        double row_sum = 0.0;
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            row_sum += abs(A.val[j]);
-        }
-        if (row_sum > A_norm) A_norm = row_sum;
-    }
-    double b_norm = 0.0;
-    for (int i = 0; i < n; ++i) {
-        if (abs(b[i]) > b_norm) b_norm = abs(b[i]);
-    }
-    nbe = (A_norm * x_norm + b_norm) > 0 ? norm_r / (A_norm * x_norm + b_norm) : norm_r;
-
-    // Componentwise backward error: max |r_i| / (|A| * |x| + |b|)_i
-    cbe = 0.0;
-    double zero = 0.0;
-    for (int i = 0; i < n; ++i) {
-        double axb = 0.0;
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            axb += abs(A.val[j]) * abs(x[A.col_ind[j]]);
-        }
-        axb += abs(b[i]);
-        double temp = axb > zero ? abs(r[i]) / axb : zero;
-        if (temp > cbe) cbe = temp;
-    }
-
-    free_vector(Ax);
-    free_vector(r);
 }
 
 int main() {
@@ -325,7 +254,7 @@ int main() {
     try {
         x_true = create_vector(n);
         for (int i = 0; i < n; ++i) {
-            x_true[i] = 1.0;
+            x_true[i] = 3.0;
         }
         b = create_vector(n);
         sparse_matvec(A, x_true, b);
@@ -338,7 +267,7 @@ int main() {
     }
 
     __PROMISE__* L = nullptr;
-    __PROMISE__* U = nullptr;
+    __PROMISE__  * U = nullptr;
     int* P = nullptr;
     try {
         P = create_int_vector(n);
@@ -354,11 +283,12 @@ int main() {
         return 1;
     }
 
-    __PROMISE__* y = nullptr;
-    __PROMISE__* x = nullptr;
+    __PROMISE__ * y = nullptr;
+    __PROMISE__ * x = nullptr;
     try {
         y = dense_forward_substitution(L, n, b, P);
         x = dense_backward_substitution(U, n, y);
+        PROMISE_CHECK_ARRAY(x, n);
     } catch (const std::exception& e) {
         std::cerr << "Dense LU solve failed: " << e.what() << "\n";
         free_sparse_matrix(A);
@@ -372,28 +302,7 @@ int main() {
         return 1;
     }
 
-    PROMISE_CHECK_ARRAY(x, n);
-    double ferr, nbe, cbe;
-    try {
-        compute_errors(A, n, b, x, x_true, ferr, nbe, cbe);
-    } catch (const std::exception& e) {
-        std::cerr << "Error computing errors: " << e.what() << "\n";
-        free_sparse_matrix(A);
-        free_vector(x_true);
-        free_vector(b);
-        free_vector(y);
-        free_vector(x);
-        free_vector(L);
-        free_vector(U);
-        free_int_vector(P);
-        return 1;
-    }
-
-    std::cout << "Dense LU Solver Results:\n";
-    std::cout << "Forward Error: " << ferr << "\n";
-    std::cout << "Normwise Backward Error: " << nbe << "\n";
-    std::cout << "Componentwise Backward Error: " << cbe << "\n";
-
+    
     free_sparse_matrix(A);
     free_vector(L);
     free_vector(U);

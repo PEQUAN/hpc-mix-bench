@@ -1,5 +1,91 @@
-11/17 00:17:19: 🤘 cadnaPromise 🤘
-11/17 00:17:19: Using the compiler: g++
-11/17 00:17:19: We are working with 1 file and 86 different types
-11/17 00:17:19: The expectation is 2 digits.
-11/17 00:17:19: a) Get a reference result with cadna (double)
+11/17 20:34:19: 🤘 cadnaPromise 🤘
+11/17 20:34:19: Using the compiler: g++
+11/17 20:34:19: We are working with 1 file and 86 different types
+11/17 20:34:19: The expectation is 10 digits.
+11/17 20:34:19: a) Get a reference result with cadna (double)
+11/17 20:34:22: In file included from pgmres.cpp:7:
+./promise.h: In function ‘std::string floatx_to_hex(const T&)’:
+./promise.h:65:22: error: ‘bit_cast’ is not a member of ‘std’; did you mean ‘bad_cast’?
+   65 |     auto bits = std::bit_cast<std::uint32_t>(val);  // Assumes 32-bit storage; adjust to uint16_t if <16 bits total
+      |                      ^~~~~~~~
+      |                      bad_cast
+./promise.h:65:44: error: expected primary-expression before ‘>’ token
+   65 |     auto bits = std::bit_cast<std::uint32_t>(val);  // Assumes 32-bit storage; adjust to uint16_t if <16 bits total
+      |                                            ^
+./promise.h: At global scope:
+./promise.h:74:13: error: redefinition of ‘template<class T> std::string floatx_to_hex(const T&)’
+   74 | std::string floatx_to_hex(const T& val) {
+      |             ^~~~~~~~~~~~~
+./promise.h:63:13: note: ‘template<class T> std::string floatx_to_hex(const T&)’ previously declared here
+   63 | std::string floatx_to_hex(const T& val) {
+      |             ^~~~~~~~~~~~~
+./promise.h:86:43: error: type/value mismatch at argument 1 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+   86 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                           ^
+./promise.h:86:43: note:   expected a constant of type ‘int’, got ‘E’
+./promise.h:86:43: error: type/value mismatch at argument 2 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+./promise.h:86:43: note:   expected a constant of type ‘int’, got ‘M’
+./promise.h:86:44: error: template argument 1 is invalid
+   86 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                            ^~
+./promise.h:86:59: error: template argument 1 is invalid
+   86 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                                           ^
+./promise.h:87:51: error: type/value mismatch at argument 1 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+   87 | promise_dump(char const* varName, flx::floatx<E, M>* a, long size) {
+      |                                                   ^
+./promise.h:87:51: note:   expected a constant of type ‘int’, got ‘E’
+./promise.h:87:51: error: type/value mismatch at argument 2 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+./promise.h:87:51: note:   expected a constant of type ‘int’, got ‘M’
+./promise.h: In function ‘int promise_dump(const char*, int*, long int)’:
+./promise.h:90:9: error: return-statement with no value, in function returning ‘int’ [-fpermissive]
+   90 |         return;
+      |         ^~~~~~
+./promise.h:92:67: error: expected primary-expression before ‘<<’ token
+   92 |     std::cout << "[PROMISE_DUMP] " << varName << " (floatx<" << E << "," << M << ">, size=" << size << "):" << std::endl;
+      |                                                                   ^~
+./promise.h:92:79: error: expected primary-expression before ‘<<’ token
+   92 |     std::cout << "[PROMISE_DUMP] " << varName << " (floatx<" << E << "," << M << ">, size=" << size << "):" << std::endl;
+      |                                                                               ^~
+./promise.h:96:71: error: expected primary-expression before ‘<<’ token
+   96 |         std::cout << " = " << floatx_to_hex(a[i]) << " (floatx<" << E << "," << M << ">)" << std::endl;
+      |                                                                       ^~
+./promise.h:96:83: error: expected primary-expression before ‘<<’ token
+   96 |         std::cout << " = " << floatx_to_hex(a[i]) << " (floatx<" << E << "," << M << ">)" << std::endl;
+      |                                                                                   ^~
+./promise.h: At global scope:
+./promise.h:102:43: error: type/value mismatch at argument 1 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+  102 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                           ^
+./promise.h:102:43: note:   expected a constant of type ‘int’, got ‘E’
+./promise.h:102:43: error: type/value mismatch at argument 2 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+./promise.h:102:43: note:   expected a constant of type ‘int’, got ‘M’
+./promise.h:102:44: error: template argument 1 is invalid
+  102 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                            ^~
+./promise.h:102:59: error: template argument 1 is invalid
+  102 | std::enable_if_t<is_floatx<flx::floatx<E, M>>::value, void>
+      |                                                           ^
+./promise.h:103:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+  103 | promise_dump_arr(char const* varName, flx::floatx<E, M>** a, long rows, long cols) {
+      |                                                       ^
+./promise.h:103:55: note:   expected a constant of type ‘int’, got ‘E’
+./promise.h:103:55: error: type/value mismatch at argument 2 in template parameter list for ‘template<int ExpBits, int SigBits, class BackendFloat> class flx::floatx’
+./promise.h:103:55: note:   expected a constant of type ‘int’, got ‘M’
+./promise.h: In function ‘int promise_dump_arr(const char*, int**, long int, long int)’:
+./promise.h:106:9: error: return-statement with no value, in function returning ‘int’ [-fpermissive]
+  106 |         return;
+      |         ^~~~~~
+./promise.h:113:21: error: no matching function for call to ‘promise_dump(const char*&, int*&, long int&)’
+  113 |         promise_dump(varName, a[i], cols);
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+./promise.h:87:1: note: candidate: ‘template<class E, class M> int promise_dump(const char*, int*, long int)’
+   87 | promise_dump(char const* varName, flx::floatx<E, M>* a, long size) {
+      | ^~~~~~~~~~~~
+./promise.h:87:1: note:   template argument deduction/substitution failed:
+./promise.h:113:21: note:   couldn’t deduce template parameter ‘E’
+  113 |         promise_dump(varName, a[i], cols);
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+
+11/17 20:34:22: Compilation failed
+Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
