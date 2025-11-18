@@ -4,8 +4,8 @@
 # Usage:
 #   ./organize_plots.sh [folder1 folder2 ...]
 #
-#   • If no folders specified → process ALL folders containing the PNG files
-#   • If folders specified → process ONLY those (must contain the PNG files)
+#   • If no folders specified → process ALL folders containing the JPG files
+#   • If folders specified → process ONLY those (must contain the JPG files)
 #
 #   Moves and renames:
 #     precision1_with_runtime.jpg → precision1_[folder_name]_runtime.jpg
@@ -25,7 +25,7 @@ process_folder() {
 
     echo "=== Processing folder: $dir ==="
 
-    # Check if all four PNGs exist
+    # Check if all four JPGs exist
     local missing=()
     for i in {1,2,3,4}; do
         local png="precision${i}_with_runtime.jpg"
@@ -59,7 +59,7 @@ process_folder() {
 # ---------- 3. Main logic ----------
 echo "=========================================="
 if (( ${#TARGET_FOLDERS[@]} == 0 )); then
-    echo "Target folders: ALL with PNG files"
+    echo "Target folders: ALL with JPG files"
 else
     echo "Target folders: ${TARGET_FOLDERS[*]}"
 fi
@@ -72,7 +72,7 @@ if (( ${#TARGET_FOLDERS[@]} == 0 )); then
     found_any=false
     while IFS= read -r png1; do
         dir=$(dirname "$png1")
-        # Quick pre-check for other PNGs
+        # Quick pre-check for other JPGs
         [[ -f "$dir/precision2_with_runtime.jpg" && \
            -f "$dir/precision3_with_runtime.jpg" && \
            -f "$dir/precision4_with_runtime.jpg" ]] || continue
@@ -80,7 +80,7 @@ if (( ${#TARGET_FOLDERS[@]} == 0 )); then
         process_folder "$dir"
     done < <(find . -maxdepth 2 -type f -name "precision1_with_runtime.jpg")
 
-    $found_any || echo "Warning: No folders with PNG files found."
+    $found_any || echo "Warning: No folders with JPG files found."
 
 else
     for folder in "${TARGET_FOLDERS[@]}"; do
