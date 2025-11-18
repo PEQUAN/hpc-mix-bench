@@ -49,7 +49,7 @@
 # - Backup files before delete step!
 # - Grant execute: chmod +x sync_run_settings.sh
 #
-# Author: Xinye Chen
+# Author: Xinye Chen (xinyechenai@gmail.com)
 # Last Updated: November 16, 2025
 
 DO_DELETE=false

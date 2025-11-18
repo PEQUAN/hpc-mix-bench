@@ -288,7 +288,7 @@ int main() {
     try {
         y = dense_forward_substitution(L, n, b, P);
         x = dense_backward_substitution(U, n, y);
-        PROMISE_CHECK_ARRAY(x, n);
+        
     } catch (const std::exception& e) {
         std::cerr << "Dense LU solve failed: " << e.what() << "\n";
         free_sparse_matrix(A);
@@ -302,6 +302,7 @@ int main() {
         return 1;
     }
 
+    PROMISE_CHECK_ARRAY(x, n);
     
     free_sparse_matrix(A);
     free_vector(L);

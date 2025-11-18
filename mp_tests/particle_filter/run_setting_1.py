@@ -10,6 +10,7 @@ CATEGORY_DISPLAY_NAMES = {
     'double': 'FP64',
     'float': 'FP32',
     'half_float::half': 'FP16',
+    'flx::floatx<5, 10>': 'FP16',
     'flx::floatx<8, 7>': 'BF16',
     'flx::floatx<4, 3>': 'E4M3',
     'flx::floatx<5, 2>': 'E5M2'
@@ -277,7 +278,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
 import sys
 
 if __name__ == "__main__":
-    method = 'whsd'
+    method = 'wpsd'
     digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     # Default behavior: run both if no args provided
