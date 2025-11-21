@@ -60,7 +60,7 @@ def run_experiments(method, digits):
             runtimes.append(0.0)
     return prec_setting, runtimes
 
-def save_prec_setting(prec_setting, filename='prec_setting_2.json'):
+def save_prec_setting(prec_setting, filename='prec_setting_3.json'):
     """Save precision settings to a JSON file."""
     try:
         for setting in prec_setting:
@@ -77,7 +77,7 @@ def save_prec_setting(prec_setting, filename='prec_setting_2.json'):
         with open(filename, 'w') as f:
             json.dump([], f)
 
-def save_runtimes_to_csv(digits, runtimes, filename='runtimes2.csv'):
+def save_runtimes_to_csv(digits, runtimes, filename='runtimes3.csv'):
     """Save runtimes and their average to a CSV file."""
     try:
         average_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
@@ -91,11 +91,11 @@ def save_runtimes_to_csv(digits, runtimes, filename='runtimes2.csv'):
     except Exception as e:
         print(f"Error saving runtimes to CSV: {e}")
 
-def load_prec_setting(filename='prec_setting_2.json'):
+def load_prec_setting(filename='prec_setting_3.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
-        prec_setting, _ = run_experiments('wbsd', [2, 3, 4, 5])
+        prec_setting, _ = run_experiments('chsd', [2, 3, 4, 5])
         save_prec_setting(prec_setting, filename)
         return prec_setting
     try:
@@ -110,19 +110,20 @@ def load_prec_setting(filename='prec_setting_2.json'):
                 if not isinstance(value, list):
                     raise ValueError(f"Invalid JSON data for {key}: Expected list, got {type(value)}")
         return data
+    
     except Exception as e:
         print(f"Error loading precision settings: {e}")
         print("Regenerating data due to loading error...")
-        prec_setting, _ = run_experiments('wbsd', [2, 3, 4, 5])
+        prec_setting, _ = run_experiments('chsd', [2, 3, 4, 5])
         save_prec_setting(prec_setting, filename)
         return prec_setting
 
-def load_runtimes(filename='runtimes2.csv'):
+def load_runtimes(filename='runtimes3.csv'):
     """Load runtimes from a CSV file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        prec_setting, runtimes = run_experiments('wbsd', digits)
+        prec_setting, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
     try:
@@ -143,7 +144,7 @@ def load_runtimes(filename='runtimes2.csv'):
         print(f"Error loading runtimes: {e}")
         print("Regenerating data due to loading error...")
         digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        prec_setting, runtimes = run_experiments('wbsd', digits)
+        prec_setting, runtimes = run_experiments('chsd', digits)
         save_runtimes_to_csv(digits, runtimes, filename)
         return runtimes
 
@@ -207,9 +208,10 @@ def plot_prec_setting(prec_setting, digits, runtimes):
         plt.style.use('default')
 
     fig, ax = plt.subplots(figsize=(11, 8))
-    fontsize = 24
-    ax2 = ax.twinx()
     
+    ax2 = ax.twinx()
+    fontsize = 24
+
     x_indices = np.arange(len(digits))
 
     bottom = np.zeros(len(digits))
@@ -261,7 +263,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
     ax.tick_params(axis='both', which='major', labelsize=fontsize)   # for main x/y ticks
     ax2.tick_params(axis='both', which='major', labelsize=fontsize)  # for twin y-axis ticks
 
-    #ax.set_title('Precision Settings with Runtime (II)', 
+    #ax.set_title('Precision Settings with Runtime (I)', 
     #             fontsize=fontsize, weight='bold', pad=20)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
 
@@ -274,14 +276,14 @@ def plot_prec_setting(prec_setting, digits, runtimes):
 
     plt.tick_params(axis='both', which='major', labelsize=fontsize)
     plt.tight_layout()
-    plt.savefig('precision2_with_runtime.jpg', bbox_inches='tight', dpi=300, transparent=False)
-    print("Plot saved as precision2_with_runtime.jpg")
+    plt.savefig('precision3_with_runtime.jpg', bbox_inches='tight', dpi=300, transparent=False)
+    print("Plot saved as precision3_with_runtime.jpg")
     plt.show()
 
 import sys
 
 if __name__ == "__main__":
-    method = 'wbsd'
+    method = 'cpsd'
     digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     # Default behavior: run both if no args provided

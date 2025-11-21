@@ -1,7 +1,14 @@
-11/21 09:40:56: 🤘 cadnaPromise 🤘
-11/21 09:40:56: Using the compiler: g++
-11/21 09:40:56: We are working with 1 file and 96 different types
-11/21 09:40:56: The expectation is 8 digits.
-11/21 09:40:56: a) Get a reference result with cadna (double)
-11/21 09:41:05: b) Check with highest format (Double)
-11/21 09:41:07: c) Delta-Debug Single/Double
+11/21 12:24:06: 🤘 cadnaPromise 🤘
+11/21 12:24:06: Using the compiler: g++
+11/21 12:24:06: We are working with 1 file and 96 different types
+11/21 12:24:06: The expectation is 10 digits.
+11/21 12:24:06: a) Get a reference result with cadna (double)
+11/21 12:24:15: b) Check with highest format (Double)
+11/21 12:24:17: c) Delta-Debug Single/Double
+11/21 12:28:36: d) Delta-Debug bfloat16/Single
+11/21 12:29:42: e) Delta-Debug custom(4, 3)/bfloat16
+11/21 12:29:43: The format flx::floatx<4, 3> is enough for your expectation
+11/21 12:29:43: The final result contains 73x double, 10x float and 13x flx::floatx<4, 3>.
+11/21 12:29:43: It tooks 337.73s
+11/21 12:29:43: 👉 400 compilations (364 failed) for 265.33s
+11/21 12:29:43: 👉 36 executions   (0 failed) for 37.34s
