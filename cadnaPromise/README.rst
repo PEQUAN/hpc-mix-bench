@@ -1,163 +1,174 @@
 cadnaPromise
-==============
+=============
 
 .. image:: https://img.shields.io/badge/License-GPLv3-yellowgreen.svg
-    :target: LICENSE
-    :alt: License
-
+   :target: LICENSE
+   :alt: License
 
 .. image:: https://gitlab.lip6.fr/hilaire/promise2/badges/master/pipeline.svg
-    :target: pipeline
-    :alt: Pipeline
----- 
+   :target: pipeline
+   :alt: Pipeline
 
-``cadnaPromise`` is a precision auto-tuning software using command-line interfaces.
+--------------------------------------------------------------------------------------------
 
+``cadnaPromise`` is a software for precision tuning via static analysis and dynamic profiling.  
+It is based on the `CADNA library <https://cadna.lip6.fr/>`_, which implements Discrete Stochastic Arithmetic (DSA) to estimate round-off error propagation in numerical codes.
 
---------
+``cadnaPromise`` provides precision auto-tuning through command-line interfaces.
+
+---------------
 Install
---------
-
-To install ``cadnaPromise``, simply use the pip command in terminal:  
-
-.. parsed-literal::
-
-  pip install cadnaPromise
-
-
-after that, to enable the arbitrary precision customization and cadna installation, simply activate the ``cadnaPromise`` via the command in terminal:
-
-.. parsed-literal::
-
-  activate-promise
-
-
-To reverse the process, simply do 
-
-.. parsed-literal::
-
-  deactivate-promise
-
-
-Besides, users can install ``floatx`` and ``CADNA`` outside, and then specifying the path via
-
-.. parsed-literal::
-
-	export CADNA_PATH=[YOURPATH]
-
-
-
-
-
-Check the if ``cadnaPromise`` is installed:
-
-.. parsed-literal::
-
-  promise --version
-
-
------------------------
-Usage and configuration
------------------------
-
-
-The installation of ``cadnaPromise`` requires the the following Python libraries: ``colorlog``, ``colorama``, ``pyyaml``, ``regex``.
-
-The compiling of ``cadnaPromise`` requires ``g++``. Please ensure the installation of above libraries for a proper running of cadnaPromise.
-
-Before the run of PROMISE, we require the following configration for the code to be tested:
-
-Setting up ``promise.yml`` file
---------------------------------
-
-
-Before running the program, users can customize the configuration file ``promise.yml``. 
-
-.. parsed-literal::
-
-	compile:
-	- g++ [SOURCE FILES] -frounding-math -m64 -o [OURPUT FILE] -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
-	run: [OURPUT FILE]
-	files: [SOURCE FILES]
-	log: [OURPUT FILE LOG]
-	output: debug/
-
-
-The ``compile`` indicates the command to compile the code, and ``run`` indicates the command to run the code. The ``files`` indicates the files to be examined by Promise (by default, all the .cc files). The ``log`` indicates the log file (no log file if this is not defined). The `output` indicates where the transformed code. 
-
-
-Mark the code
 --------------
 
-Use ``__PROMISE__`` to mark the variables to be used in low precision, and use ``PROMISE_CHECK_VAR([VARIABLE])`` and ``PROMISE_CHECK_ARRAY([ARRAY},[NUM OF ELEMENTS])`` to mark to variabke or array to be checked; 
+To install ``cadnaPromise``:
 
+.. code-block:: bash
 
+   pip install cadnaPromise
 
-Additionally, one can define their customized low precisions in ``fp.json``. The built-in precisions are: 'h', 's', 'd' (half, single, double precision). Users can also define their own precisions (e.g., bfloat16) by adding new letters in ``fp.json``. 
-A sample file is shown below:
+After installation, enable CADNA support and arbitrary-precision customization:
 
-.. parsed-literal::
+.. code-block:: bash
 
-	{   
-	"c": [5, 2],
-	"b": [8, 7],
-	"h": [5, 10],
-	"s": [8, 23],
-	"d": [11, 52]
-	}
+   activate-promise
 
-Like above, "c" and "b" corresponding to E5M2 and bfloat16 precisions. 
+To deactivate:
 
+.. code-block:: bash
 
-Run the program in terminal
---------------------------------
+   deactivate-promise
 
-In terminal, simply enter the command bellow: 
+Alternatively, users may install ``floatx`` and ``CADNA`` manually and specify the path:
 
-.. parsed-literal::
+.. code-block:: bash
 
-	get help:     promise --help | promise
-        get version:  promise --version
-	run program:  promise --precs=(customized precisions/built precisions) [options]
+   export CADNA_PATH=[YOURPATH]
 
+Check whether ``cadnaPromise`` is installed:
 
-Options:
+.. code-block:: bash
 
-.. parsed-literal::
+   promise --version
 
-	-h --help                     Show this screen.
-	--version                     Show version.
-	--precs=<strs>                Set the precision following the built-in or cutomized precision letters [default: sd]
-	--conf CONF_FILE              Get the configuration file [default: promise.yml]
-	--fp FPT_FILE                 Get the file for floating point number format [default: fp.json]
-	--output OUTPUT               Set the path of the output (where the result files are put)
-	--verbosity VERBOSITY         Set the verbosity (betwen 0  and 4 for very low level debug) [default: 1]
-	--log LOGFILE                 Set the log file (no log file if this is not defined)
-	--verbosityLog VERBOSITY      Set the verbosity of the log file
-	--debug                       Put intermediate files into `debug/` (and `compileErrors/` for compilation errrors) and display the execution trace when an error comes
-	--run RUN                     File to be run
-	--compile COMMAND             Command to compile the code
-	--files FILES                 List of files to be examined by Promise (by default, all the .cc files)
-	--nbDigits DIGITS             General required number of digits
-	--path PATH                   Set the path of the project (by default, the current path)
-	--pause                       Do pause between steps
-	--parsing                     Parse the C file (without this, __PROMISE__ are replaced and that's all)
-	--auto                        enable auto-instrumentation of source code
-	--relError THRES              use criteria of precision relative error less than THRES instead of number of digits
-	--noCadna                     will not use cadna, reference result computed in (non-stochastic) double precision
-	--alias ALIAS                 Allow aliases (examples "g++=g++-14") [default:""]
-	--CC        				          Set compiler for C program [default: g++]
-	--CXX                         Set compiler for C++ program [default: g++]
-	--plot                        Enable plotting of results [default: 1]
+------------------------------
+Usage and configuration
+------------------------------
 
+``cadnaPromise`` requires the following Python libraries:
+``colorlog``, ``colorama``, ``pyyaml``, ``regex``.
 
-For detailed examples, see the `Examples <./EXAMPLE.rst>`_ document.
+Compilation of instrumented code requires ``g++``.  
+Ensure these dependencies are installed for proper operation.
 
--------------------
+Before running PROMISE, a configuration file must be prepared.
+
+Setting up ``promise.yml``
+---------------------------------
+
+Users can customize the configuration file ``promise.yml``.  
+A sample configuration:
+
+.. code-block:: yaml
+
+   compile:
+     - g++ [SOURCE FILES] -frounding-math -m64 -o [OUTPUT FILE] -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
+   run: [OUTPUT FILE]
+   files: [SOURCE FILES]
+   log: [OUTPUT FILE LOG]
+   output: debug/
+
+Explanation:
+
+- ``compile`` — command used to compile the code  
+- ``run`` — command to execute the compiled program  
+- ``files`` — files to instrument (default: all ``.cc`` files)  
+- ``log`` — log output file (optional)  
+- ``output`` — directory containing transformed code  
+
+Marking the code
+-----------------------
+
+Use ``__PROMISE__`` to mark variables eligible for reduced precision.
+
+Use the following macros to mark variables or arrays for checking:
+
+- ``PROMISE_CHECK_VAR(variable)``
+- ``PROMISE_CHECK_ARRAY(array, n_elements)``
+
+Custom floating-point formats
+------------------------------------
+
+Users can define custom precisions in ``fp.json``.  
+Built-in formats: ``h`` (half), ``s`` (single), ``d`` (double).
+
+Example ``fp.json``:
+
+.. code-block:: json
+
+   {
+     "c": [5, 2],
+     "b": [8, 7],
+     "h": [5, 10],
+     "s": [8, 23],
+     "d": [11, 52]
+   }
+
+Here, ``c`` corresponds to E5M2, and ``b`` to bfloat16.
+
+Run the program
+----------------------
+
+Basic commands:
+
+.. code-block:: bash
+
+   # help
+   promise --help
+
+   # version
+   promise --version
+
+   # run program
+   promise --precs=<letters> [options]
+
+Options
+---------------------
+
+.. code-block:: text
+
+   -h --help                     Show this screen.
+   --version                     Show version.
+   --precs=<strs>                Precision letters [default: sd]
+   --conf CONF_FILE              Configuration file [default: promise.yml]
+   --fp FPT_FILE                 FP format file [default: fp.json]
+   --output OUTPUT               Output directory
+   --verbosity VERBOSITY         Verbosity level (0–4) [default: 1]
+   --log LOGFILE                 Log file (optional)
+   --verbosityLog VERBOSITY      Log verbosity level
+   --debug                       Store intermediate files and show execution trace
+   --run RUN                     File/program to run
+   --compile COMMAND             Compilation command
+   --files FILES                 Files to examine (default: all .cc files)
+   --nbDigits DIGITS             Required number of digits
+   --path PATH                   Project path (default: current directory)
+   --pause                       Pause between steps
+   --parsing                     Parse only; no transformation
+   --auto                        Enable automatic instrumentation
+   --relError THRES              Use relative error threshold
+   --noCadna                     Disable CADNA; use double-precision reference
+   --alias ALIAS                 Allow command aliases (e.g. "g++=g++-14")
+   --CC                          C compiler [default: g++]
+   --CXX                         C++ compiler [default: g++]
+   --plot                        Enable plotting of results [default: 1]
+
+For detailed examples, see ``EXAMPLE.rst``.
+
+----------------------
 Acknowledgements
--------------------
+----------------------
 
-``cadnaPromise`` is based on `Promise2 <https://gitlab.lip6.fr/hilaire/promise2>`_  (Hilaire et al), a full rewriting of the first PROMISE version (Picot et al).
+``cadnaPromise`` is based on `Promise2 <https://gitlab.lip6.fr/hilaire/promise2>`_ (Hilaire et al.),  
+a full rewrite of the original PROMISE (Picot et al.).
 
-This work was supported by the France 2030 NumPEx Exa-MA (ANR-22-EXNU-0002) project managed by the French National Research Agency (ANR).
-``Promise2`` has been developed with the financial support of the COMET project Model-Based Condition Monitoring and Process Control Systems, hosted by the Materials Center Leoben Forschung GmbH.
+This work was supported by the France 2030 NumPEx Exa-MA (ANR-22-EXNU-0002) project funded by the French National Research Agency (ANR).  
+``Promise2`` was also developed with support from the COMET project *Model-Based Condition Monitoring and Process Control Systems*, hosted by Materials Center Leoben Forschung GmbH.

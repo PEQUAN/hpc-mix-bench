@@ -92,7 +92,26 @@ _types = {'b': 'flx::floatx<8, 7>',
           'd': 'double', 
           'q': 'float128',
           'o': 'flx::floatx<19, 236>',
-         }
+}
+
+# Display names and colors for each category
+CATEGORY_DISPLAY_NAMES = {
+    'double': 'FP64',
+    'float': 'FP32',
+    'half_float::half': 'FP16',
+    'flx::floatx<8, 7>': 'BF16',
+    'flx::floatx<4, 3>': 'E4M3',
+    'flx::floatx<5, 2>': 'E5M2'
+}
+
+CATEGORY_COLORS = {
+    'double': '#81D4FAB3',         # Sky Pop Blue
+    'float': '#FFAB91B3',          # Candy Coral
+    'half_float::half': '#BA68C8B3', # Bubblegum Purple
+    'flx::floatx<8, 7>': '#F06292B3', # Strawberry Pink
+    'flx::floatx<4, 3>': '#AED581B3', # Apple Green
+    'flx::floatx<5, 2>': '#FFF176B3', # Pineapple Yellow
+}
 
 
 
@@ -158,6 +177,7 @@ def runPromise(argv=None):
         options = getYMLOptions(args)                                           # get the options from the yml file
         method, path, files, run, nbDigits, _, compileLines, outputPath, typeCustom, alias = parseOptions(options)    # parse the options
 
+        
         fpfmt = getFPM(args)
         method = sort_precs(method, fpfmt)
 
@@ -191,8 +211,12 @@ def runPromise(argv=None):
 
         PrFile.setCustom(typeCustom)
         compileErrorPath = join(path, 'compileErrors') if args['--debug'] else None
-        tempPath = join(path, 'debug') if args['--debug'] else None
 
+        #print("1 path:", path)
+        #print("1 args['--debug']:", args['--debug'])
+        tempPath = join(path, 'debug') if args['--debug'] else None
+        #print("1 tempPath:", tempPath)
+        #print("1 compileErrorPath:", compileErrorPath)
         # run with timing
         with Timing() as timing:
             # create Promise object
@@ -230,6 +254,8 @@ def runPromise(argv=None):
 
             # do the Delta-Debug passes ('s','d' and then 'h','s' when method is 'hsd' for example)
             for lo, hi in reversed(list(zip(method, method[1:]))):
+                #print("tempPath:", tempPath)
+                #print("compileErrorPath:", compileErrorPath)
                 logger.step("Delta-Debug %s/%s" % (typeNames[lo], typeNames[hi]))
                 res = pr.runDeltaDebug(types[lo], types[hi], tempPath, args['--pause'], compileErrorPath)
                 # stop if the DeltaDebug is not successful
@@ -274,27 +300,6 @@ def runPromise(argv=None):
 
 
 
-
-
-
-
-CATEGORY_DISPLAY_NAMES = {
-    'double': 'FP64',
-    'float': 'FP32',
-    'half_float::half': 'FP16',
-    'flx::floatx<8, 7>': 'BF16',
-    'flx::floatx<4, 3>': 'E4M3',
-    'flx::floatx<5, 2>': 'E5M2'
-}
-
-CATEGORY_COLORS = {
-    'double': '#81D4FAB3',         # Sky Pop Blue
-    'float': '#FFAB91B3',          # Candy Coral
-    'half_float::half': '#BA68C8B3', # Bubblegum Purple
-    'flx::floatx<8, 7>': '#F06292B3', # Strawberry Pink
-    'flx::floatx<4, 3>': '#AED581B3', # Apple Green
-    'flx::floatx<5, 2>': '#FFF176B3', # Pineapple Yellow
-}
 
 def run_experiments(method, digits):
     """Run experiments, collect precision settings, and measure runtime."""

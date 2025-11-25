@@ -2,7 +2,7 @@ from .promise import Promise
 from .run import runPromise
 
 import os
-__version__ = '0.3.3'
+__version__ = '0.3.6'
 
 curr_loc = os.path.dirname(os.path.realpath(__file__))
 

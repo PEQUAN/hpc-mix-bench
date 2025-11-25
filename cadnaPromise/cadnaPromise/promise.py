@@ -31,10 +31,10 @@ from tempfile import mkdtemp
 from os.path import join
 from os import getcwd, environ#, chmod
 from stat import S_IXUSR
-from pkg_resources import resource_filename
+from importlib.resources import as_file, files  # Python >=3.9
+
 import re
-from tqdm import tqdm
-from math import ceil, log2, isnan, isinf
+from math import isnan, isinf
 from colorama import Fore
 from datetime import datetime
 
@@ -47,12 +47,20 @@ from .logger import PrLogger
 from os.path import join, split
 
 logger = PrLogger()
-
-
 regDumpST = re.compile(
 	r"^\[PROMISE_DUMP_ST\] (\w+)(?:\[(\d+)\])? = \(([\w\-+.]+),([\w\-+.]+),([\w\-+.]+)\), nb significant digits=(\d+)")
 regDump = re.compile(r"^\[PROMISE_DUMP\] (\w+)(?:\[(\d+)\])? = ([\w\-+.]+)")
 
+
+def _copy_resource(rel_path: str, dest_dir: str, preserve_mode: bool = False):
+    """Copy a package data file to destination, preserving executable bit if requested."""
+    resource = files(__name__).joinpath(rel_path)
+    with as_file(resource) as src_path:
+        cmd = ['cp']
+        if preserve_mode:
+            cmd.append('-p')
+        cmd += [str(src_path), dest_dir]
+        runCommand(cmd)
 
 
 class Promise:
@@ -251,10 +259,11 @@ class Promise:
 
 			# copy all the project (but exclude the dest/ in case it is in the same folder)
 			runCommand(['rsync', '-a', join(self._path, '*'), dest, '--exclude', dest] + (['--exclude', compileErrorPath] if compileErrorPath else []))
-			# copy all the useful files (promise.h, cadnaizer)
-			runCommand(['cp', resource_filename(__name__, "extra/promise.h"), dest])
-			runCommand(['cp', resource_filename(__name__, "extra/promise_header.h"), dest])
-			runCommand(['cp', '-p', resource_filename(__name__, "extra/cadnaizer"), dest])
+
+			# copy the required extra files (promise.h, cadnaizer)
+			_copy_resource("extra/promise.h", dest)
+			_copy_resource("extra/promise_header.h", dest)
+			_copy_resource("extra/cadnaizer", dest, preserve_mode=True)   # ← keeps +x bit!
 
 			# update the files that have to be changed
 			for i, f in enumerate(self._files):
@@ -476,7 +485,7 @@ class Promise:
 				elif os.path.splitext(error_log_path)[1] == '.log' and os.path.isdir(os.path.splitext(error_log_path)[0]):
 					error_log_path = os.path.join(os.path.splitext(error_log_path)[0], f"errors_{os.getpid()}.log")
 				
-				os.makedirs(os.path.dirname(error_log_path), exist_ok=True)
+				#os.makedirs(os.path.dirname(error_log_path), exist_ok=True)
 				dd = PromiseDD(self, lowest, highest, status, bar, tempPath, doPause, error_log_path)
 				dd.run()
 

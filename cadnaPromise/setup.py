@@ -17,7 +17,7 @@ def get_version(fname):
 
 
 setup_args = {'name': 'cadnaPromise',
-		'version':  '0.3.3',
+		'version':  '0.3.6',
 		'description':'Precision auto-tuning of floating-point variables in program',
 		'long_description':readme(),
 		'classifiers':["Intended Audience :: Science/Research",
