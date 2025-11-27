@@ -70,18 +70,18 @@ else
 fi
 
 # -------------------------------
-# 2. Remove debug folders
+# 2. Remove prec folders
 # -------------------------------
 if op_enabled "d"; then
-    echo "Removing debug folders..."
+    echo "Removing prec folders..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
-            \( -name "compileErrors" -o -name "*debug*" \) \
+            \( -name "compileErrors" -o -name "*prec*" \) \
             -print -exec rm -rf {} +
     done
     echo "Debug folders deleted."
 else
-    echo "Skipping debug folder deletion."
+    echo "Skipping prec folder deletion."
 fi
 
 # -------------------------------
