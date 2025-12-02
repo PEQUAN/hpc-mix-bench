@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 
     printf("Computation Done\n");
 
-    PROMISE_CHECK_ARRAY(dW, size_I);
+    PROMISE_CHECK_ARRAY(J, size_I);
     free(I);
     free(J);
     free(iN);

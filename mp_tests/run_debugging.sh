@@ -1,18 +1,7 @@
 #!/bin/bash
 # Usage:
-#   ./broadcast_rename_debug.sh [-r] [-b] [-x]
-#   ./broadcast_rename_debug.sh [--remove] [--broadcast] [--execute]
-#
-# Actions:
-#   -r, --remove       Remove rename_debug.sh from each subdirectory
-#   -b, --broadcast    Copy run_settings/rename_debug.sh into each subdirectory
-#   -x, --execute      Run rename_debug.sh inside each subdirectory (in parallel)
-#                      Only runs in subdirectories containing promise.yml
-# Short options can be bundled: e.g., -rbx
-#!/bin/bash
-# Usage:
-#   ./broadcast_rename_debug.sh [-r] [-b] [-x] [-p]
-#   ./broadcast_rename_debug.sh [--remove] [--broadcast] [--execute] [--parallel]
+#   ./broadcast_rename_debug.sh [-r] [-b] [-x] [-p] [folders...]
+#   ./broadcast_rename_debug.sh [--remove] [--broadcast] [--execute] [--parallel] [folders...]
 #
 # Actions:
 #   -r, --remove       Remove rename_debug.sh from each subdirectory
@@ -21,10 +10,13 @@
 #                      Only runs in subdirectories containing promise.yml
 #   -p, --parallel     Execute in parallel (default is sequential)
 #
+# Optional:
+#   [folders...]        Specific folders to process; if none given, all subdirectories are processed
+#
 # Short options can be bundled: e.g., -rbxp
 # ------------------------------------------------------------
 # Author: Xinye Chen (xinyechenai@gmail.com)
-# Last Updated: November 18, 2025
+# Last Updated: December 1, 2025
 # ---------------------------------------
 
 REMOVE=false
@@ -35,6 +27,7 @@ PARALLEL=false
 # ---------------------------------------
 # Parse parameters (support bundled short options)
 # ---------------------------------------
+POSITIONAL=()
 for arg in "$@"; do
     if [[ "$arg" == --* ]]; then
         case "$arg" in
@@ -56,10 +49,12 @@ for arg in "$@"; do
             esac
         done
     else
-        echo "Unknown argument: $arg"
-        exit 1
+        POSITIONAL+=("$arg")  # save non-option arguments (folders)
     fi
 done
+
+# Restore positional arguments
+set -- "${POSITIONAL[@]}"
 
 # Ensure at least one action is selected
 if ! $REMOVE && ! $BROADCAST && ! $EXECUTE; then
@@ -75,13 +70,20 @@ if $BROADCAST && [ ! -f "$PARENT_SCRIPT" ]; then
     exit 1
 fi
 
-echo "Processing subdirectories..."
+# Determine folders to process
+if [ $# -gt 0 ]; then
+    FOLDERS=("$@")
+else
+    FOLDERS=(*/)
+fi
+
+echo "Processing folders: ${FOLDERS[*]}"
 
 PIDS=()
 
-for d in */ ; do
-    [ -d "$d" ] || continue
-    [ "$d" = "run_settings/" ] && continue
+for d in "${FOLDERS[@]}"; do
+    [ -d "$d" ] || { echo "Skipping $d: not a directory"; continue; }
+    [[ "$d" == "run_settings/" ]] && continue
 
     # Step 1 — Remove
     if $REMOVE; then
