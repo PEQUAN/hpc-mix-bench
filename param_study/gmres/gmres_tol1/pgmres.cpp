@@ -161,9 +161,9 @@ void axpy(__PROMISE__ alpha, const __PROMISE__* x, const __PROMISE__* y, int n, 
     }
 }
 
-__PROMISE__ norm(const __PROMISE__* v, int n) {
+__PROMISE__ norm(__PROMISE__* v, int n) {
     __PROMISE__ d = dot(v, v, n);
-    if (isnan(d) || isinf(d) || d < 0.0) {
+    if (isnan(d) || isinf(d)) {
         throw std::runtime_error("Invalid norm");
     }
     return sqrt(d);
@@ -222,7 +222,7 @@ void arnoldi_step(const CSRMatrix& A, const __PROMISE__* r, __PROMISE__* V, __PR
         axpy(-h_ij, &V[i * n], w, n, w);
     }
     __PROMISE__ h_jp1_j = norm(w, n);
-    __PROMISE__ check_point = 1e-12;
+    double check_point = 1e-16;
     H[(j + 1) * restart + j] = h_jp1_j;
     if (h_jp1_j < check_point) {
         std::cerr << "Warning: Small h_jp1_j at iteration " << j << ", continuing..." << std::endl;
@@ -278,7 +278,7 @@ Result gmres(const CSRMatrix& A, const __PROMISE__* b, int max_iter, __PROMISE__
     std::copy(b, b + n, r);
     __PROMISE__ initial_norm = norm(r, n);
     std::cout << "Initial norm of residual: " << initial_norm << std::endl;
-    __PROMISE__ check_point = 1e-16;
+    double check_point = 1e-16;
     __PROMISE__ tol_abs = tol * max(initial_norm, check_point);
 
     int total_iterations = 0;
@@ -312,7 +312,7 @@ Result gmres(const CSRMatrix& A, const __PROMISE__* b, int max_iter, __PROMISE__
                 __PROMISE__ a = H[j * restart + j];
                 __PROMISE__ b1 = H[(j + 1) * restart + j];
                 __PROMISE__ rho = sqrt(a * a + b1 * b1);
-                if (rho < 1e-12) {
+                if (rho < 1e-16) {
                     std::cerr << "Warning: Givens rotation breakdown at iteration " << total_iterations << std::endl;
                     breakdown = true;
                     break;
@@ -353,7 +353,7 @@ Result gmres(const CSRMatrix& A, const __PROMISE__* b, int max_iter, __PROMISE__
             for (int k = i + 1; k < j; ++k) {
                 y[i] -= H[i * restart + k] * y[k];
             }
-            if (abs(H[i * restart + i]) < 1e-12) {
+            if (abs(H[i * restart + i]) < 1e-16) {
                 std::cerr << "Warning: Least-squares breakdown at iteration " << total_iterations << std::endl;
                 breakdown = true;
                 break;

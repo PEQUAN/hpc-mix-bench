@@ -164,7 +164,7 @@ void axpy(double alpha, const double* x, const double* y, int n, double* result)
 
 double norm(const double* v, int n) {
     double d = dot(v, v, n);
-    if (isnan(d) || isinf(d) || d < 0.0) {
+    if (isnan(d) || isinf(d)) {
         throw std::runtime_error("Invalid norm");
     }
     return sqrt(d);
@@ -223,7 +223,7 @@ void arnoldi_step(const CSRMatrix& A, const double* r, double* V, double* H, int
         axpy(-h_ij, &V[i * n], w, n, w);
     }
     double h_jp1_j = norm(w, n);
-    double check_point = 1e-12;
+    double check_point = 1e-16;
     H[(j + 1) * restart + j] = h_jp1_j;
     if (h_jp1_j < check_point) {
         std::cerr << "Warning: Small h_jp1_j at iteration " << j << ", continuing..." << std::endl;
@@ -313,7 +313,7 @@ Result gmres(const CSRMatrix& A, const double* b, int max_iter, double tol, int 
                 double a = H[j * restart + j];
                 double b1 = H[(j + 1) * restart + j];
                 double rho = sqrt(a * a + b1 * b1);
-                if (rho < 1e-12) {
+                if (rho < 1e-16) {
                     std::cerr << "Warning: Givens rotation breakdown at iteration " << total_iterations << std::endl;
                     breakdown = true;
                     break;
@@ -354,7 +354,7 @@ Result gmres(const CSRMatrix& A, const double* b, int max_iter, double tol, int 
             for (int k = i + 1; k < j; ++k) {
                 y[i] -= H[i * restart + k] * y[k];
             }
-            if (abs(H[i * restart + i]) < 1e-12) {
+            if (abs(H[i * restart + i]) < 1e-16) {
                 std::cerr << "Warning: Least-squares breakdown at iteration " << total_iterations << std::endl;
                 breakdown = true;
                 break;
