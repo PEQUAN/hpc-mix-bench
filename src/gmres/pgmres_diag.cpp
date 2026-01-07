@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <limits>
-#include <vector> // Added for diagonal preconditioner
+#include <vector> 
 
 struct CSRMatrix {
     int n;
@@ -196,7 +196,6 @@ double compute_forward_error(const double* x, int n) {
     return forward_error;
 }
 
-// New: Diagonal (Jacobi) preconditioner
 void apply_diag_precond(const CSRMatrix& A, const double* r, double* z, int n) {
     std::vector<double> diag(n, 0.0);
     for (int i = 0; i < n; ++i) {
