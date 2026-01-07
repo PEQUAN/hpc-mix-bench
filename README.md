@@ -47,18 +47,18 @@ We stored the numerical algorithm to be benchmarked in setA, setB, ...., and mor
 
 ```text
 projects/
-├── setA/                     ← Each set contains a test for a single benchmark
+├── setA/                     <- Each set contains a test for a single benchmark
 │   ├── run_setting_1.py
 │   ├── ......
 │   ├── run_setting_k.py
-│   ├── prec_setting_1.json   ← required (generated or pre-existing)
+│   ├── prec_setting_1.json   <- required (generated or pre-existing)
 │   ├── ......
-│   ├── prec_setting_k.json   ← required (generated or pre-existing)
-│   └── promise.yml                 ← required (generated or pre-existing)
+│   ├── prec_setting_k.json   <- required (generated or pre-existing)
+│   └── promise.yml                 <- required (generated or pre-existing)
 ├── setB/
 │   └── (same files as above)
-├── incomplete_set/                 ← will be skipped (missing files)
-├── run_benchmarks.sh               ← main benchmark script
+├── incomplete_set/                 <- will be skipped (missing files)
+├── run_benchmarks.sh               <- main benchmark script
 
 
 > **Each valid folder must contain**:
