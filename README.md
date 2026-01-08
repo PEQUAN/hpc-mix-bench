@@ -58,12 +58,13 @@ projects/
 │   └── (same files as above)
 ├── run_benchmarks.sh               <- main benchmark script
 
+```
 
 > **Each valid benchmark folder to be exmined must at least contain**:
 > - `run_setting_{i}.py`
 > - `promise.yml`
 > -  C/C++ source code
-```
+
 ---
  
 1. Make it executable:
