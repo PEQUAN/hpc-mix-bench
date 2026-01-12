@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV VENV_PATH=/opt/venv
 
-# ---------- build arg（install matplotlib or not，default yes） ----------
+# build arg（install matplotlib or not，default yes）
 ARG WITH_PLOT=1
 
 RUN apt-get update && apt-get install -y \

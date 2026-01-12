@@ -24,6 +24,43 @@ Options:
 * --copy or -c: Execute Step 2 (copy files). Default: enabled if no options.
 
 
+## Docker Build & Run
+
+Ensure docker is installed and running. To deploy our benchmark tools in docker, one would consider:
+
+- macOS (Apple Silicon) and Windows on ARM:
+  Build and run with --platform linux/amd64.
+
+To avoid cpmpilation pronlem of -m64 / ARM, build with
+
+```bash
+docker buildx build --platform linux/amd64 -t hpc-mix-cadna .
+```
+
+To run:
+```bash
+docker run --platform linux/amd64 -it --rm hpc-mix-cadna
+```
+
+
+- Windows (Intel/AMD) and Linux (x86_64):
+  Build and run normally (no platform flag required).
+
+To build
+```bash
+docker build -t hpc-mix-cadna .
+```
+
+To run
+```bash
+docker run -it --rm hpc-mix-cadna
+```
+
+
+After that, one would need to activate the ``cadnaPromise`` in their terminal:
+```bash
+activate-promise
+```
 
 ## Benchmark Run
 
@@ -136,6 +173,8 @@ python json_counts_sum.py
 >   `./run_benchmarks.sh [run_experiments] [run_plots] [optional_folder_names...]`  
 > - Accepted values:  
 >   `1 / true / y` = yes | `0 / false / n` = no
+
+
 
 
 
