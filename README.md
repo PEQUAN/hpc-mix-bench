@@ -33,7 +33,7 @@ To run the mixed-precision benchmarks by PROMISE, one need to go to the folder `
 cd mp_tests
 ```
 
-!Workflow](./workfloat)
+!Workflow](./workfloat.png)
 
 A **Bash automation script** to run `run_setting_1.py` to `run_setting_4.py` exisit across multiple experiment folders, with support for:
 
