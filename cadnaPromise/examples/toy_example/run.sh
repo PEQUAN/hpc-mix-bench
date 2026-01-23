@@ -1,2 +1,2 @@
-g++ toy.cpp -o toy.out
-./toy.out
+g++ -O3 -o toy_unmarked.out toy_unmarked.cpp
+./toy_unmarked.out

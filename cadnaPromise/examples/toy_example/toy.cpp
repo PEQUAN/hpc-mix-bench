@@ -16,7 +16,7 @@ int main() {
 
     sumArrays(arr1, arr2, result, &result_sum, size);
     PROMISE_CHECK_VAR(result_sum);
-    std::cout << std::endl;
+    std::cout << "result_sum:" << result_sum << std::endl;
     delete[] arr1; delete[] arr2; delete[] result;
 
     return 0;
