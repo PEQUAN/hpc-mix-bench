@@ -1,2 +1,3 @@
-g++ 3D.cpp -o 3D -fopenmp
-./3D 512 8 100 power_512x8 temp_512x8 output.txt
+g++ backprop.c backprop_kernel.c facetrain.c imagenet.c -frounding-math -m64 -o backprop -fopenmp
+./backprop 65536
+

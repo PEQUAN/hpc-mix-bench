@@ -8,17 +8,17 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-extern void bpnn_layerforward(__PR_5__ *l1, __PR_5__ *l2, __PR_5__ **conn, int n1,
+extern void bpnn_layerforward(double *l1, double *l2, double **conn, int n1,
                               int n2);
 
-extern void bpnn_output_error(__PR_2__ *delta, __PR_2__ *target, __PR_2__ *output,
-                              int nj, __PR_2__ *err);
+extern void bpnn_output_error(double *delta, double *target, double *output,
+                              int nj, double *err);
 
-extern void bpnn_hidden_error(__PR_4__ *delta_h, int nh, __PR_4__ *delta_o, int no,
-                              __PR_4__ **who, __PR_4__ *hidden, __PR_4__ *err);
+extern void bpnn_hidden_error(double *delta_h, int nh, double *delta_o, int no,
+                              double **who, double *hidden, double *err);
 
-extern void bpnn_adjust_weights(__PR_3__ *delta, int ndelta, __PR_3__ *ly, int nly,
-                                __PR_3__ **w, __PR_3__ **oldw);
+extern void bpnn_adjust_weights(double *delta, int ndelta, double *ly, int nly,
+                                double **w, double **oldw);
 
 
 extern int setup(int argc, char **argv);
@@ -39,7 +39,7 @@ double gettime() {
 int main(int argc, char **argv) { setup(argc, argv); }
 
 
-void bpnn_train_kernel(BPNN *net, __PR_6__ *eo, __PR_6__ *eh) {
+void bpnn_train_kernel(BPNN *net, double *eo, double *eh) {
     int in, hid, out;
     double out_err, hid_err;
 
@@ -60,6 +60,4 @@ void bpnn_train_kernel(BPNN *net, __PR_6__ *eo, __PR_6__ *eh) {
                         net->hidden_weights, net->hidden_prev_weights);
     bpnn_adjust_weights(net->hidden_delta, hid, net->input_units, in,
                         net->input_weights, net->input_prev_weights);
-
-    PROMISE_CHECK_VAR(net->hidden_weights[0][0]);
 }

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 
-extern void bpnn_train_kernel(BPNN *net, __PR_6__ *eo, __PR_6__ *eh);
+extern void bpnn_train_kernel(BPNN *net, double *eo, double *eh);
 extern int load(BPNN *net);
 
 int layer_size = 0;

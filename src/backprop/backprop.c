@@ -42,18 +42,18 @@ static void init_rng(unsigned int seed) {
  }
  
  /* Generate random double between -1.0 and 1.0 */
- static __PROMISE__ dpn1(void) {
+ static double dpn1(void) {
      return drnd() * 2.0f - 1.0f;
  }
  
  /* Sigmoid activation function */
- static __PROMISE__ squash(__PROMISE__ x) {
+ static double squash(double x) {
      return 1.0f / (1.0f + expf(-x));
  }
  
  /* Allocate 1D array of doubles */
- static __PR_2__* alloc_1d_dbl(int n) {
-    __PR_2__* new_array = (__PR_2__*)calloc(n, sizeof(__PR_2__));
+ static double* alloc_1d_dbl(int n) {
+    double* new_array = (double*)calloc(n, sizeof(double));
      if (!new_array) {
          fprintf(stderr, "alloc_1d_dbl: Couldn't allocate array of %d doubles\n", n);
          return NULL;
@@ -64,7 +64,7 @@ static void init_rng(unsigned int seed) {
  
  /* Allocate 2D array of doubles */
  static double** alloc_2d_dbl(int m, int n) {
-     __PR_1__** new_array = (__PR_1__**)calloc(m, sizeof(__PR_1__*));
+     double** new_array = (double**)calloc(m, sizeof(double*));
      if (!new_array) {
          fprintf(stderr, "alloc_2d_dbl: Couldn't allocate array of %d pointers\n", m);
          return NULL;
@@ -204,7 +204,7 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
      }
  }
  
- void bpnn_layerforward(__PR_5__* l1, __PR_5__* l2, __PR_5__** conn, int n1, int n2) {
+ void bpnn_layerforward(double* l1, double* l2, double** conn, int n1, int n2) {
      l1[0] = 1.0f;
      #pragma omp parallel for num_threads(NUM_THREAD)
      for (int j = 1; j <= n2; j++) {
@@ -216,12 +216,12 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
      }
  }
  
- void bpnn_output_error(__PR_2__* delta, __PR_2__* target, __PR_2__* output, int nj, __PR_2__* err) {
-    __PROMISE__ errsum = 0.0f;
+ void bpnn_output_error(double* delta, double* target, double* output, int nj, double* err) {
+    double errsum = 0.0f;
      #pragma omp parallel for reduction(+:errsum) num_threads(NUM_THREAD)
      for (int j = 1; j <= nj; j++) {
-        __PROMISE__ o = output[j];
-        __PROMISE__ t = target[j];
+        double o = output[j];
+        double t = target[j];
          delta[j] = o * (1.0f - o) * (t - o);
          errsum += ABS(delta[j]);
      }
@@ -229,12 +229,12 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
      
  }
  
- void bpnn_hidden_error(__PR_4__* delta_h, int nh, __PR_4__* delta_o, int no, __PR_4__** who, __PR_4__* hidden, __PR_4__* err) {
-     __PROMISE__ errsum = 0.0f;
+ void bpnn_hidden_error(double* delta_h, int nh, double* delta_o, int no, double** who, double* hidden, double* err) {
+     double errsum = 0.0f;
      #pragma omp parallel for reduction(+:errsum) num_threads(NUM_THREAD)
      for (int j = 1; j <= nh; j++) {
-         __PROMISE__ h = hidden[j];
-         __PROMISE__ sum = 0.0f;
+         double h = hidden[j];
+         double sum = 0.0f;
          for (int k = 1; k <= no; k++) {
              sum += delta_o[k] * who[j][k];
          }
@@ -244,11 +244,11 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
      *err = errsum;
  }
  
- void bpnn_adjust_weights(__PR_3__* delta, int ndelta, __PR_3__* ly, int nly, __PR_3__** w, __PR_3__** oldw) {
+ void bpnn_adjust_weights(double* delta, int ndelta, double* ly, int nly, double** w, double** oldw) {
      #pragma omp parallel for collapse(2) num_threads(NUM_THREAD)
      for (int j = 1; j <= ndelta; j++) {
          for (int k = 0; k <= nly; k++) {
-             __PROMISE__ new_dw = (ETA * delta[j] * ly[k]) + (MOMENTUM * oldw[k][j]);
+             double new_dw = (ETA * delta[j] * ly[k]) + (MOMENTUM * oldw[k][j]);
              w[k][j] += new_dw;
              oldw[k][j] = new_dw;
          }
