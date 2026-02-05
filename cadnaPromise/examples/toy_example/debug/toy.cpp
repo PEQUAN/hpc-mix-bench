@@ -5,7 +5,7 @@
 void sumArrays(flx::floatx<5, 5>* arr1, flx::floatx<8, 7>* arr2, flx::floatx<5, 5>* result, flx::floatx<8, 7> *sum, int size) {
     for (int i = 0; i < size; i++) {
         result[i] = arr1[i] - arr2[i];
-        *sum += (double)result[i];
+        *sum += result[i];
     }
 }
 

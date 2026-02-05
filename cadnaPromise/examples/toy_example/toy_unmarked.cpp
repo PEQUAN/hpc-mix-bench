@@ -3,7 +3,7 @@
 void sumArrays(double* arr1, double* arr2, double* result, double *sum, int size) {
     for (int i = 0; i < size; i++) {
         result[i] = arr1[i] - arr2[i];
-        *sum += (double)result[i];
+        *sum += result[i];
     }
 }
 

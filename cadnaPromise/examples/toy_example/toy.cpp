@@ -3,7 +3,7 @@
 void sumArrays(__PR_1__* arr1, __PR_2__* arr2, __PR_3__* result, __PROMISE__ *sum, int size) {
     for (int i = 0; i < size; i++) {
         result[i] = arr1[i] - arr2[i];
-        *sum += (double)result[i];
+        *sum += result[i];
     }
 }
 

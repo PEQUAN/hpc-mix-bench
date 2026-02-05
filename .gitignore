@@ -13,11 +13,9 @@ mp_tests/decisiontree/*.csv
 mp_tests/decisiontree_reg/*.csv
 mp_tests/gassnb/*.csv
 mp_tests/gmres/*.csv
-mp_tests/iterative_refinement/
 mp_tests/kmeans/*.csv
 mp_tests/mlp/*.csv
 mp_tests/mlp_reg/*.csv
 mp_tests/randomforest/*.csv
 mp_tests/plots/*
-**/*prec*/**
 param_study/param_plots/*.jpg
