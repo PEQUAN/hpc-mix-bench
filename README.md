@@ -11,7 +11,6 @@ see [cadnaRromise](cadnaPromise/) in detail.
 To add the code for benchmarking, add a project folder inside directory ``mp_tests`` including data aa well as executable code, and properly configured file ``promise.yml`` as well as floating point type format ``fp.json``. 
 
 
-
 To set up the results and plots, one can go the the folder ``run_settings``, and cutomized the plots and settings for the files  ``run_settings_{k}_py`` (you can copy multiple files there and will all be run). Once completed, go the folder  ``mp_tests``, and run the ``sync_run_settings.sh`` in ``mp_tests`` directory, then the ``run_settings_{k}_py`` in ``run_settings`` will be broadcasted to each subfolder. 
 The script ``sync_run_settings.sh`` is useful for automating the synchronization of experiment or run settings files across multiple folders for benchmarking, the usage is below:
 
