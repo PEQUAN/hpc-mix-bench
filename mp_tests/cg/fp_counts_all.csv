@@ -1,4 +1,4 @@
-Precision Setting,Significant Digits,FP64,FP32,FP16,BF16,E4M3,E5M2
+Combination,Significant Digits,FP64,FP32,FP16,BF16,E4M3,E5M2
 1,1,44,6,7,0,0,9
 1,2,44,8,4,0,0,10
 1,3,44,11,2,0,0,9

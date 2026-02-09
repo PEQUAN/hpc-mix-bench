@@ -1,6 +1,4 @@
 #!/bin/bash
-rm -rf prec2 prec4 prec6 prec8
-
 promise --precs=wpsd --nbDigits=1
 mv debug prec1_1
 promise --precs=wpsd --nbDigits=2

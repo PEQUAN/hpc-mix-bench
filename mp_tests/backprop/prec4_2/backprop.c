@@ -43,10 +43,6 @@ static void init_rng(unsigned int seed) {
      return (double)rng_state / (double)BIGRND;
  }
  
- /* Generate random double between -1.0 and 1.0 */
- static flx::floatx<4, 3> dpn1(void) {
-     return drnd() * 2.0f - 1.0f;
- }
  
  /* Sigmoid activation function */
  static flx::floatx<8, 7> squash(flx::floatx<4, 3> x) {
