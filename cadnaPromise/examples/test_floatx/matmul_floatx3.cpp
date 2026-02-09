@@ -51,7 +51,7 @@ double matmul(int N) {
 template <typename T>
 double run_test_average(int N) {
     double total_time = 0.0;
-    const int repeats = 3;
+    const int repeats = 1;
     for (int r = 0; r < repeats; ++r) {
         total_time += matmul<T>(N);
     }
@@ -59,7 +59,7 @@ double run_test_average(int N) {
 }
 
 int main() {
-    vector<int> sizes = {500, 1500};
+    vector<int> sizes = {500, 1000};
 
     ofstream outfile("results.csv");
     outfile << "MatrixSize,Type,ExpBits,SigBits,AvgTime\n";
