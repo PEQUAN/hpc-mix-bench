@@ -1,21 +1,22 @@
+# Data CSVs
 /data/classification/*.csv
 /data/clustering/*.csv
 /data/query/*.csv
 /data/regression/*.csv
+
+# SuiteSparse matrices
 /data/suitesparse/*.mtx
+
+# Results
 /data/results/kmeans/*.csv
-param_study/trash/*
-mp_tests/cg/*.mtx
-mp_tests/bicgstab/*.mtx
-mp_tests/bicgstab/*.mtx
-mp_tests/dbscan/*.csv
-mp_tests/decisiontree/*.csv
-mp_tests/decisiontree_reg/*.csv
-mp_tests/gassnb/*.csv
-mp_tests/gmres/*.csv
-mp_tests/kmeans/*.csv
-mp_tests/mlp/*.csv
-mp_tests/mlp_reg/*.csv
-mp_tests/randomforest/*.csv
-mp_tests/plots/*
+
+# Parameter study
+param_study/trash/
 param_study/param_plots/*.jpg
+
+# All mp_tests data: recursively ignore .csv and .mtx
+mp_tests/**/*.csv
+mp_tests/**/*.mtx
+
+# Ignore plots folder in mp_tests
+mp_tests/plots/

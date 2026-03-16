@@ -1,1 +1,0 @@
-promise --precs=rsd --nbDigits=2

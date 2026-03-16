@@ -140,7 +140,7 @@ double norm(const double* v, int n) {
 double* axpy(double alpha, const double* x, const double* y, int n) {
     double* result = new double[n];
     for (int i = 0; i < n; ++i) {
-        result[i] = alpha * x[i] + y[i];// std::fma(alpha, x[i], y[i]);
+        result[i] = alpha * x[i] + y[i];
     }
     return result;
 }
@@ -158,6 +158,7 @@ double* get_diagonal(const CSRMatrix& A) {
     return diag;
 }
 
+// ==================== MODIFIED SOR (NO PRECONDITIONER) ====================
 SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 5000, double tol = 1e-6) {
     if (omega <= 0.0 || omega >= 2.0) {
         std::cerr << "Error: Omega must be between 0 and 2" << std::endl;
@@ -180,26 +181,13 @@ SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 
     double initial_norm = norm(r, n);
     double tol_abs = tol * initial_norm;
     if (initial_norm < 1e-10) tol_abs = tol;
-    const double eps = std::numeric_limits<double>::epsilon();
+    const double eps = 1e-15;               // hardcoded (no extra header needed)
 
-    double* diag = get_diagonal(A);
-    double* b_scaled = new double[n];
-    for (int i = 0; i < n; ++i) {
-        b_scaled[i] = (std::abs(diag[i]) > eps ? b[i] / diag[i] : b[i]);
-    }
-    
-    double* values_scaled = new double[A.nnz];
-    for (int i = 0; i < A.n; ++i) {
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            values_scaled[j] = (std::abs(diag[i]) > eps ? A.values[j] / diag[i] : A.values[j]);
-        }
-    }
+    double* diag = get_diagonal(A);         // still needed only for a_ii
 
     if (initial_norm < eps) {
         delete[] r;
         delete[] diag;
-        delete[] b_scaled;
-        delete[] values_scaled;
         return {x, initial_norm, 0, true};
     }
 
@@ -210,20 +198,18 @@ SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 
             for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
                 int col = A.col_indices[j];
                 if (col != i) {
-                    sum += values_scaled[j] * x[col];
+                    sum += A.values[j] * x[col];   // original matrix, no scaling
                 }
             }
-            double diag_val = std::abs(diag[i]) > eps ? 1.0 : 0.0;
-            if (diag_val < eps) {
+            double a_ii = diag[i];
+            if (std::abs(a_ii) < eps) {
                 std::cerr << "Error: Zero diagonal element at row " << i << std::endl;
                 delete[] x;
                 delete[] r;
                 delete[] diag;
-                delete[] b_scaled;
-                delete[] values_scaled;
                 return {new double[n](), 0.0, iter, false};
             }
-            x[i] = (1.0 - omega) * x[i] + (omega / diag_val) * (b_scaled[i] - sum);
+            x[i] = (1.0 - omega) * x[i] + (omega / a_ii) * (b[i] - sum);  // classical SOR
         }
 
         double* Ax = matvec(A, x);
@@ -237,8 +223,6 @@ SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 
             std::cout << "Converged at iteration " << iter + 1 << std::endl;
             delete[] r;
             delete[] diag;
-            delete[] b_scaled;
-            delete[] values_scaled;
             return {x, r_norm, iter + 1, true};
         }
     }
@@ -246,10 +230,9 @@ SORResult sor(const CSRMatrix& A, const double* b, double omega, int max_iter = 
     std::cout << "Max iterations reached: " << iter << std::endl;
     delete[] r;
     delete[] diag;
-    delete[] b_scaled;
-    delete[] values_scaled;
     return {x, norm(r, n), iter, false};
 }
+// =========================================================================
 
 void write_solution(const double* x, int n, const std::string& filename) {
     std::ofstream file(filename);
@@ -285,11 +268,11 @@ int main() {
         double* b = matvec(A, x_true);
 
         double* diag = get_diagonal(A);
-        double omega = 1.0;
+        double omega = 0.5;
         std::cout << "Using omega: " << omega << std::endl;
 
         auto start = std::chrono::high_resolution_clock::now();
-        SORResult result = sor(A, b, omega, 5000, 1e-6);
+        SORResult result = sor(A, b, omega, 5000, 1e-12);
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 

@@ -26,7 +26,7 @@ struct SORResult {
     bool converged;
 };
 
-bool compare_by_column(Pair& a, Pair& b) {
+bool compare_by_column(const Pair& a, const Pair& b) {
     return a.first < b.first;
 }
 
@@ -39,7 +39,7 @@ void free_csr_matrix(CSRMatrix& A) {
     A.row_ptr = nullptr;
 }
 
-CSRMatrix read_mtx(std::string& filename) {
+CSRMatrix read_mtx(const std::string& filename) {
     CSRMatrix A = {0, nullptr, nullptr, nullptr, 0};
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -48,6 +48,7 @@ CSRMatrix read_mtx(std::string& filename) {
     }
 
     std::string line;
+    // Skip comments
     while (std::getline(file, line)) {
         if (line.empty() || line[0] != '%') break;
     }
@@ -98,6 +99,7 @@ CSRMatrix read_mtx(std::string& filename) {
         pos[i] = A.row_ptr[i];
     }
 
+    // Fill CSR
     for (int i = 0; i < nnz; ++i) {
         int flat = entries[i].first;
         int row = flat / n;
@@ -115,7 +117,7 @@ CSRMatrix read_mtx(std::string& filename) {
     return A;
 }
 
-__PROMISE__* matvec(CSRMatrix& A, __PROMISE__* x) {
+__PROMISE__* matvec(const CSRMatrix& A, const __PROMISE__* x) {
     __PROMISE__* y = new __PROMISE__[A.n]();
     for (int i = 0; i < A.n; ++i) {
         __PROMISE__ sum = 0.0;
@@ -127,7 +129,7 @@ __PROMISE__* matvec(CSRMatrix& A, __PROMISE__* x) {
     return y;
 }
 
-__PROMISE__ norm(__PROMISE__* v, int n) {
+__PROMISE__ norm(const __PROMISE__* v, int n) {
     __PROMISE__ d = 0.0;
     for (int i = 0; i < n; ++i) {
         d += v[i] * v[i];
@@ -135,7 +137,7 @@ __PROMISE__ norm(__PROMISE__* v, int n) {
     return sqrt(d);
 }
 
-__PROMISE__* axpy(__PROMISE__ alpha, __PROMISE__* x, __PROMISE__* y, int n) {
+__PROMISE__* axpy(__PROMISE__ alpha, const __PROMISE__* x, const __PROMISE__* y, int n) {
     __PROMISE__* result = new __PROMISE__[n];
     for (int i = 0; i < n; ++i) {
         result[i] = alpha * x[i] + y[i];
@@ -143,7 +145,7 @@ __PROMISE__* axpy(__PROMISE__ alpha, __PROMISE__* x, __PROMISE__* y, int n) {
     return result;
 }
 
-__PROMISE__* get_diagonal(CSRMatrix& A) {
+__PROMISE__* get_diagonal(const CSRMatrix& A) {
     __PROMISE__* diag = new __PROMISE__[A.n]();
     for (int i = 0; i < A.n; ++i) {
         for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
@@ -156,7 +158,8 @@ __PROMISE__* get_diagonal(CSRMatrix& A) {
     return diag;
 }
 
-SORResult sor(CSRMatrix& A, __PROMISE__* b, __PROMISE__ omega, int max_iter = 5000, __PROMISE__ tol = 1e-6) {
+// ==================== MODIFIED SOR (NO PRECONDITIONER) ====================
+SORResult sor(const CSRMatrix& A, const __PROMISE__* b, __PROMISE__ omega, int max_iter = 5000, __PROMISE__ tol = 1e-6) {
     if (omega <= 0.0 || omega >= 2.0) {
         std::cerr << "Error: Omega must be between 0 and 2" << std::endl;
         __PROMISE__* x = new __PROMISE__[A.n]();
@@ -178,26 +181,13 @@ SORResult sor(CSRMatrix& A, __PROMISE__* b, __PROMISE__ omega, int max_iter = 50
     __PROMISE__ initial_norm = norm(r, n);
     __PROMISE__ tol_abs = tol * initial_norm;
     if (initial_norm < 1e-10) tol_abs = tol;
-    __PROMISE__ eps = std::numeric_limits<__PROMISE__>::epsilon();
+    const __PROMISE__ eps = 1e-15;               // hardcoded (no extra header needed)
 
-    __PROMISE__* diag = get_diagonal(A);
-    __PROMISE__* b_scaled = new __PROMISE__[n];
-    for (int i = 0; i < n; ++i) {
-        b_scaled[i] = (abs(diag[i]) > eps ? b[i] / diag[i] : b[i]);
-    }
-    
-    __PROMISE__* values_scaled = new __PROMISE__[A.nnz];
-    for (int i = 0; i < A.n; ++i) {
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            values_scaled[j] = (abs(diag[i]) > eps ? A.values[j] / diag[i] : A.values[j]);
-        }
-    }
+    __PROMISE__* diag = get_diagonal(A);         // still needed only for a_ii
 
     if (initial_norm < eps) {
         delete[] r;
         delete[] diag;
-        delete[] b_scaled;
-        delete[] values_scaled;
         return {x, initial_norm, 0, true};
     }
 
@@ -208,20 +198,18 @@ SORResult sor(CSRMatrix& A, __PROMISE__* b, __PROMISE__ omega, int max_iter = 50
             for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
                 int col = A.col_indices[j];
                 if (col != i) {
-                    sum += values_scaled[j] * x[col];
+                    sum += A.values[j] * x[col];   // original matrix, no scaling
                 }
             }
-            __PROMISE__ diag_val = abs(diag[i]) > eps ? 1.0 : 0.0;
-            if (diag_val < eps) {
+            __PROMISE__ a_ii = diag[i];
+            if (abs(a_ii) < eps) {
                 std::cerr << "Error: Zero diagonal element at row " << i << std::endl;
                 delete[] x;
                 delete[] r;
                 delete[] diag;
-                delete[] b_scaled;
-                delete[] values_scaled;
                 return {new __PROMISE__[n](), 0.0, iter, false};
             }
-            x[i] = (1.0 - omega) * x[i] + (omega / diag_val) * (b_scaled[i] - sum);
+            x[i] = (1.0 - omega) * x[i] + (omega / a_ii) * (b[i] - sum);  // classical SOR
         }
 
         __PROMISE__* Ax = matvec(A, x);
@@ -235,8 +223,6 @@ SORResult sor(CSRMatrix& A, __PROMISE__* b, __PROMISE__ omega, int max_iter = 50
             std::cout << "Converged at iteration " << iter + 1 << std::endl;
             delete[] r;
             delete[] diag;
-            delete[] b_scaled;
-            delete[] values_scaled;
             return {x, r_norm, iter + 1, true};
         }
     }
@@ -244,14 +230,13 @@ SORResult sor(CSRMatrix& A, __PROMISE__* b, __PROMISE__ omega, int max_iter = 50
     std::cout << "Max iterations reached: " << iter << std::endl;
     delete[] r;
     delete[] diag;
-    delete[] b_scaled;
-    delete[] values_scaled;
     return {x, norm(r, n), iter, false};
 }
 
+
 int main() {
     try {
-        std::string mtx_file = "1138_bus.mtx";  // Adjust path if needed
+        const std::string mtx_file = "1138_bus.mtx"; 
         CSRMatrix A = read_mtx(mtx_file);
         if (A.n == 0 || A.values == nullptr) {
             free_csr_matrix(A);
@@ -259,20 +244,21 @@ int main() {
         }
 
         int n = A.n;
+
+        
         __PROMISE__* x_true = new __PROMISE__[n];
         for (int i = 0; i < n; ++i) {
-            x_true[i] = 1.0; // Ground truth: x = ones(n)
+            x_true[i] = 1.0; 
         }
 
-        // Compute b = A @ x_true
         __PROMISE__* b = matvec(A, x_true);
 
         __PROMISE__* diag = get_diagonal(A);
-        __PROMISE__ omega = 1.0;
+        __PROMISE__ omega = 0.5;
         std::cout << "Using omega: " << omega << std::endl;
 
         auto start = std::chrono::high_resolution_clock::now();
-        SORResult result = sor(A, b, omega, 5000, 1e-6);
+        SORResult result = sor(A, b, omega, 5000, 1e-12);
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
@@ -285,15 +271,14 @@ int main() {
         __PROMISE__* error_vec = axpy(-1.0, result.x, x_true, n);
         __PROMISE__ error = norm(error_vec, n);
         std::cout << "Error ||x - x_true||_2: " << error << std::endl;
-        
-        double* check_x = new double[n];
+
+        __PROMISE__* check_x = new __PROMISE__[n];
         
         for (int i = 0; i < n; ++i) {
             check_x[i] = result.x[i];
         }
-        
-        PROMISE_CHECK_ARRAY(check_x, n);
 
+        PROMISE_CHECK_ARRAY(check_x, n);
 
         free_csr_matrix(A);
         delete[] b;
@@ -302,7 +287,7 @@ int main() {
         delete[] diag;
         delete[] error_vec;
     }
-    catch (std::exception& e) {
+    catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }

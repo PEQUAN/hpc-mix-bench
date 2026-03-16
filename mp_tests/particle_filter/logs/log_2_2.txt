@@ -1,0 +1,31 @@
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 1 file and 43 different types[0m
+[37mThe expectation is 2 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug bfloat16/Single[0m
+[37me) Delta-Debug custom(5, 2)/bfloat16[0m
+[31mfile has vanished: "/home/xinye/hpc-mix-mlbench/mp_tests/particle_filter/fp.json"
+rsync warning: some files vanished before they could be transferred (code 24) at main.c(1338) [sender=3.2.7]
+[0m
+[34mThe final result contains 23x double, 11x float, 2x flx::floatx<8, 7> and 7x flx::floatx<5, 2>.[0m
+[34mIt tooks 390.26s[0m
+[34m👉 184 compilations (117 failed) for 137.02s[0m
+[34m👉 67 executions   (0 failed) for 238.01s[0m
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 1 file and 43 different types[0m
+[37mThe expectation is 2 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug bfloat16/Single[0m
+[37me) Delta-Debug custom(5, 2)/bfloat16[0m
+[34mThe final result contains 23x double, 11x float, 2x flx::floatx<8, 7> and 7x flx::floatx<5, 2>.[0m
+[34mIt tooks 555.60s[0m
+[34m👉 184 compilations (117 failed) for 207.06s[0m
+[34m👉 67 executions   (0 failed) for 326.96s[0m

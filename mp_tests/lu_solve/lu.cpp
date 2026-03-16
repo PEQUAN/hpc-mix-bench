@@ -1,317 +1,428 @@
+/**
+ * Dense Matrix LU Decomposition Benchmark
+ * =========================================
+ * Generates matrices with specific condition numbers (1e1, 1e4) using
+ * the same SVD-based method as MATLAB's gallery('randsvd', n, kappa).
+ *
+ */
+
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <random>
-#include <algorithm>
-#include <limits>
-#include <fstream>
-#include <sstream>
+#include <chrono>
 #include <string>
+#include <cassert>
+#include <functional>
 
-__PROMISE__* create_vector(int size, bool initialize = true) {
-    __PROMISE__* vec = initialize ? new __PROMISE__[size]() : new __PROMISE__[size];
-    if (!vec) {
-        throw std::runtime_error("Failed to allocate vector");
-    }
-    return vec;
+// ─────────────────────────────────────────────────────────────
+// Flat 2-D matrix helpers
+//   Row-major: element (i,j) of an n-column matrix → data[i*n + j]
+// ─────────────────────────────────────────────────────────────
+
+__PROMISE__* alloc_matrix(int n) {
+    __PROMISE__* A = new __PROMISE__[n * n]();   // () → zero-initialised
+    return A;
 }
 
-void free_vector(__PROMISE__* vec) {
-    delete[] vec;
+void free_matrix(__PROMISE__*& A) {
+    delete[] A;
+    A = nullptr;
 }
 
-int* create_int_vector(int size, bool initialize = true) {
-    int* vec = initialize ? new int[size]() : new int[size];
-    if (!vec) {
-        throw std::runtime_error("Failed to allocate int vector");
-    }
-    return vec;
+__PROMISE__* alloc_vector(int n) {
+    return new __PROMISE__[n]();
 }
 
-void free_int_vector(int* vec) {
-    delete[] vec;
+void free_vector(__PROMISE__*& v) {
+    delete[] v;
+    v = nullptr;
 }
 
-struct SparseMatrix {
-    // Sparse matrix in CSR format
-    __PROMISE__* val; 
-    int* col_ind; 
-    int* row_ptr; 
-    int rows; 
-    int cols; 
-    int nnz; 
-};
+#define M(A, i, j, n)  (A)[(i)*(n) + (j)]
 
-void free_sparse_matrix(SparseMatrix& mat) {
-    if (mat.val) delete[] mat.val;
-    if (mat.col_ind) delete[] mat.col_ind;
-    if (mat.row_ptr) delete[] mat.row_ptr;
-    mat.val = nullptr;
-    mat.col_ind = nullptr;
-    mat.row_ptr = nullptr;
-    mat.nnz = 0;
+// ─────────────────────────────────────────────────────────────
+// Basic matrix / vector utilities
+// ─────────────────────────────────────────────────────────────
+
+// Set A = identity
+void make_identity(__PROMISE__* A, int n) {
+    for (int i = 0; i < n * n; ++i) A[i] = 0.0;
+    for (int i = 0; i < n; ++i) M(A, i, i, n) = 1.0;
 }
 
-SparseMatrix read_matrix_market(const std::string& filename, int& n) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error opening matrix file: " << filename << std::endl;
-        return {nullptr, nullptr, nullptr, 0, 0, 0};
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        if (line[0] != '%') break;
-    }
-
-    int rows, cols, nnz;
-    std::istringstream iss(line);
-    iss >> rows >> cols >> nnz;
-
-    if (rows != cols) {
-        std::cerr << "Matrix must be square for this implementation\n";
-        file.close();
-        return {nullptr, nullptr, nullptr, 0, 0, 0};
-    }
-    n = rows;
-
-    __PROMISE__* temp_val = create_vector(nnz, false);
-    int* temp_row = create_int_vector(nnz, false);
-    int* temp_col = create_int_vector(nnz, false);
-
-    for (int i = 0; i < nnz; ++i) {
-        if (!std::getline(file, line)) {
-            std::cerr << "Error reading matrix entries\n";
-            free_vector(temp_val);
-            free_int_vector(temp_row);
-            free_int_vector(temp_col);
-            file.close();
-            return {nullptr, nullptr, nullptr, 0, 0, 0};
+// C = A * B  (all n×n, flat row-major)
+void mat_mul(const __PROMISE__* A, const __PROMISE__* B, __PROMISE__* C, int n) {
+    for (int i = 0; i < n * n; ++i) C[i] = 0.0;
+    for (int i = 0; i < n; ++i)
+        for (int k = 0; k < n; ++k) {
+            __PROMISE__ aik = M(A, i, k, n);
+            if (aik == 0.0) continue;
+            for (int j = 0; j < n; ++j)
+                M(C, i, j, n) += aik * M(B, k, j, n);
         }
-        std::istringstream entry(line);
-        entry >> temp_row[i] >> temp_col[i] >> temp_val[i];
-        temp_row[i]--; // Convert to 0-based indexing
-        temp_col[i]--;
-    }
-    file.close();
-
-    // Convert to CSR format
-    __PROMISE__* val = create_vector(nnz, false);
-    int* col_ind = create_int_vector(nnz, false);
-    int* row_ptr = create_int_vector(rows + 1);
-
-    // Count non-zeros per row
-    for (int i = 0; i < nnz; ++i) {
-        row_ptr[temp_row[i] + 1]++;
-    }
-    // Cumulative sum for row_ptr
-    for (int i = 1; i <= rows; ++i) {
-        row_ptr[i] += row_ptr[i - 1];
-    }
-    // Place entries in CSR format
-    int* row_counts = create_int_vector(rows);
-    for (int i = 0; i < nnz; ++i) {
-        int r = temp_row[i];
-        int pos = row_ptr[r] + row_counts[r];
-        val[pos] = temp_val[i];
-        col_ind[pos] = temp_col[i];
-        row_counts[r]++;
-    }
-
-    free_vector(temp_val);
-    free_int_vector(temp_row);
-    free_int_vector(temp_col);
-    free_int_vector(row_counts);
-
-    return {val, col_ind, row_ptr, rows, cols, nnz};
 }
 
-// Sparse matrix-vector multiplication
-void sparse_matvec(const SparseMatrix& A, const __PROMISE__* x, __PROMISE__* y) {
-    if (!A.val || !A.col_ind || !A.row_ptr) {
-        throw std::runtime_error("Invalid sparse matrix in sparse_matvec");
-    }
-    for (int i = 0; i < A.rows; ++i) {
-        y[i] = 0.0;
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            y[i] += A.val[j] * x[A.col_ind[j]];
-        }
-    }
+// C = A - B
+void mat_sub(const __PROMISE__* A, const __PROMISE__* B, __PROMISE__* C, int n) {
+    for (int i = 0; i < n * n; ++i) C[i] = A[i] - B[i];
 }
 
-// Dense LU decomposition with partial pivoting, storing L and U as dense matrices
-void dense_lu_factorization(const SparseMatrix& A, __PROMISE__*& L, __PROMISE__*& U, int* P) {
-    if (!A.val || !A.col_ind || !A.row_ptr) {
-        throw std::runtime_error("Invalid input matrix");
-    }
-    int n = A.rows;
-
+// b = A * x
+void mat_vec(const __PROMISE__* A, const __PROMISE__* x, __PROMISE__* b, int n) {
     for (int i = 0; i < n; ++i) {
-        P[i] = i;
+        b[i] = 0.0;
+        for (int j = 0; j < n; ++j)
+            b[i] += M(A, i, j, n) * x[j];
     }
+}
 
-    // Convert sparse A to dense format (row-major)
-    __PROMISE__* dense_A = create_vector(n * n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            dense_A[i * n + A.col_ind[j]] = A.val[j];
+// Copy src → dst (n elements)
+void vec_copy(const __PROMISE__* src, __PROMISE__* dst, int n) {
+    for (int i = 0; i < n; ++i) dst[i] = src[i];
+}
+
+// c = a - b (vectors of length n)
+void vec_sub(const __PROMISE__* a, const __PROMISE__* b, __PROMISE__* c, int n) {
+    for (int i = 0; i < n; ++i) c[i] = a[i] - b[i];
+}
+
+__PROMISE__ norm2(const __PROMISE__* v, int n) {
+    __PROMISE__ s = 0.0;
+    for (int i = 0; i < n; ++i) s += v[i] * v[i];
+    return sqrt(s);
+}
+
+__PROMISE__ normF(const __PROMISE__* A, int n) {
+    __PROMISE__ s = 0.0;
+    int nn = n * n;
+    for (int i = 0; i < nn; ++i) s += A[i] * A[i];
+    return sqrt(s);
+}
+
+// Copy n×n matrix src → dst
+void mat_copy(const __PROMISE__* src, __PROMISE__* dst, int n) {
+    int nn = n * n;
+    for (int i = 0; i < nn; ++i) dst[i] = src[i];
+}
+
+// ─────────────────────────────────────────────────────────────
+// Gram–Schmidt QR → random orthogonal matrix
+//   Q is n×n flat row-major; columns are orthonormal.
+// ─────────────────────────────────────────────────────────────
+void random_orthogonal(double* Q, int n, std::mt19937_64& rng) {
+    std::normal_distribution<double> nd(0.0, 1.0);
+
+    // Fill with random values (stored column-major temporarily for Gram–Schmidt
+    // on columns; but we keep row-major and treat Q[i][j] as the j-th column)
+    for (int i = 0; i < n * n; ++i) Q[i] = nd(rng);
+
+    // Classical Gram–Schmidt on columns (column j = Q[:,j] = Q[0..n-1][j])
+    for (int j = 0; j < n; ++j) {
+        // Subtract projections onto previous columns
+        for (int k = 0; k < j; ++k) {
+            double dot = 0.0;
+            for (int i = 0; i < n; ++i) dot += M(Q, i, k, n) * M(Q, i, j, n);
+            for (int i = 0; i < n; ++i) M(Q, i, j, n) -= dot * M(Q, i, k, n);
         }
+        // Normalize column j
+        double len = 0.0;
+        for (int i = 0; i < n; ++i) len += M(Q, i, j, n) * M(Q, i, j, n);
+        len = sqrt(len);
+        for (int i = 0; i < n; ++i) M(Q, i, j, n) /= len;
     }
+}
 
-    // Initialize L and U
-    L = create_vector(n * n);
-    U = create_vector(n * n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            U[i * n + j] = dense_A[i * n + j];
-            L[i * n + j] = (i == j) ? 1.0 : 0.0;
-        }
-    }
+// ─────────────────────────────────────────────────────────────
+// Generate n×n matrix with prescribed condition number kappa.
+//   A = U * diag(sigma) * V^T
+//   sigma_i geometrically spaced in [1, kappa].
+// ─────────────────────────────────────────────────────────────
+double* make_matrix_with_cond(int n, double kappa, std::mt19937_64& rng) {
+    double* U = alloc_matrix(n);
+    double* V = alloc_matrix(n);
+    random_orthogonal(U, n, rng);
+    random_orthogonal(V, n, rng);
 
-    // Compute matrix infinity norm for singularity check
-    __PROMISE__ A_norm = 0.0;
-    for (int i = 0; i < n; ++i) {
-        __PROMISE__ row_sum = 0.0;
-        for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; ++j) {
-            row_sum += abs(A.val[j]);
-        }
-        if (row_sum > A_norm) A_norm = row_sum;
-    }
+    // Singular values: geometrically spaced 1 … kappa
+    double* sigma = new double[n];
+    for (int i = 0; i < n; ++i)
+        sigma[i] = std::pow(kappa, static_cast<double>(i) / (n - 1));
 
-    // LU factorization with partial pivoting
+    // A = U * Sigma * V^T
+    double* A = alloc_matrix(n);
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            for (int k = 0; k < n; ++k)
+                M(A, i, j, n) += M(U, i, k, n) * sigma[k] * M(V, j, k, n);
+
+    delete[] sigma;
+    free_matrix(U);
+    free_matrix(V);
+    return A;    // caller owns this allocation
+}
+
+// ─────────────────────────────────────────────────────────────
+// LU decomposition with partial pivoting  (in-place, flat row-major)
+//
+//   On entry : A is n×n.
+//   On exit  : A overwritten with L (strictly lower) and U (upper).
+//              piv[i] = row swapped into position i.
+//
+//   Returns false if matrix is singular to working precision.
+// ─────────────────────────────────────────────────────────────
+bool lu_factorize_core(__PROMISE__* A, int* piv, int n) {
+    for (int i = 0; i < n; ++i) piv[i] = i;
+
     for (int k = 0; k < n; ++k) {
-        __PROMISE__ max_val = abs(U[k * n + k]);
-        int pivot = k;
+        // Find pivot row
+        int    p       = k;
+        __PROMISE__ max_val = abs(M(A, k, k, n));
         for (int i = k + 1; i < n; ++i) {
-            if (abs(U[i * n + k]) > max_val) {
-                max_val = abs(U[i * n + k]);
-                pivot = i;
-            }
+            __PROMISE__ v = abs(M(A, i, k, n));
+            if (v > max_val) { max_val = v; p = i; }
         }
-        if (pivot != k) {
-            for (int j = 0; j < n; ++j) {
-                std::swap(U[k * n + j], U[pivot * n + j]);
-                if (j < k) {
-                    std::swap(L[k * n + j], L[pivot * n + j]);
-                }
-            }
-            std::swap(P[k], P[pivot]);
+        if (max_val < 1e-15) return false;   // singular
+
+        // Swap rows k ↔ p  (entire rows in flat storage)
+        if (p != k) {
+            for (int j = 0; j < n; ++j)
+                std::swap(M(A, k, j, n), M(A, p, j, n));
+            std::swap(piv[k], piv[p]);
         }
+
+        // Eliminate below diagonal
+        __PROMISE__ akk = M(A, k, k, n);
         for (int i = k + 1; i < n; ++i) {
-            L[i * n + k] = U[i * n + k] / U[k * n + k];
-            for (int j = k; j < n; ++j) {
-                U[i * n + j] -= L[i * n + k] * U[k * n + j];
-            }
+            M(A, i, k, n) /= akk;                            // multiplier → L
+            __PROMISE__ lik = M(A, i, k, n);
+            for (int j = k + 1; j < n; ++j)
+                M(A, i, j, n) -= lik * M(A, k, j, n);       // Schur complement
         }
     }
-
-    free_vector(dense_A);
+    return true;
 }
 
-// Forward substitution for dense L (unit lower triangular)
-__PROMISE__* dense_forward_substitution(const __PROMISE__* L, int n, const __PROMISE__* b, const int* P) {
-    if (!L || !P) {
-        throw std::runtime_error("Invalid inputs in dense_forward_substitution");
-    }
-    __PROMISE__* y = create_vector(n);
-    for (int i = 0; i < n; ++i) {
-        __PROMISE__ sum = 0.0;
-        for (int j = 0; j < i; ++j) {
-            sum += L[i * n + j] * y[j];
-        }
-        y[i] = b[P[i]] - sum;
-    }
+// ─────────────────────────────────────────────────────────────
+// Forward substitution: solve L y = P b
+//   L has unit diagonal; sub-diagonal stored in LU.
+//   Returns newly allocated vector y (caller must delete[]).
+// ─────────────────────────────────────────────────────────────
+__PROMISE__* forward_sub(const __PROMISE__* LU, const int* piv, const __PROMISE__* b, int n) {
+    __PROMISE__* y = new __PROMISE__[n];
+    // Apply permutation
+    for (int i = 0; i < n; ++i) y[i] = b[piv[i]];
+    // Forward sweep
+    for (int i = 1; i < n; ++i)
+        for (int j = 0; j < i; ++j)
+            y[i] -= M(LU, i, j, n) * y[j];
     return y;
 }
 
-// Backward substitution for dense U (upper triangular)
-__PROMISE__* dense_backward_substitution(const __PROMISE__* U, int n, const __PROMISE__* y) {
-    if (!U) {
-        throw std::runtime_error("Invalid inputs in dense_backward_substitution");
-    }
-    __PROMISE__* x = create_vector(n);
+// Back substitution: solve U x = y
+//   Returns newly allocated vector x (caller must delete[]).
+__PROMISE__* back_sub(const __PROMISE__* LU, const __PROMISE__* y, int n) {
+    __PROMISE__* x = new __PROMISE__[n];
+    for (int i = 0; i < n; ++i) x[i] = y[i];
     for (int i = n - 1; i >= 0; --i) {
-        __PROMISE__ sum = 0.0;
-        for (int j = i + 1; j < n; ++j) {
-            sum += U[i * n + j] * x[j];
-        }
-        x[i] = (y[i] - sum) / U[i * n + i];
+        for (int j = i + 1; j < n; ++j)
+            x[i] -= M(LU, i, j, n) * x[j];
+        x[i] /= M(LU, i, i, n);
     }
     return x;
 }
 
-int main() {
-    int n;
-    std::string matrix_file = "bp_0.mtx";
+// ─────────────────────────────────────────────────────────────
+// Public solve: x = A^{-1} b  using pre-factored LU
+//   Returns newly allocated solution vector (caller must delete[]).
+// ─────────────────────────────────────────────────────────────
+__PROMISE__* lu_solve(const __PROMISE__* LU, const int* piv, const __PROMISE__* b, int n) {
+    __PROMISE__* y = forward_sub(LU, piv, b, n);
+    __PROMISE__* x = back_sub(LU, y, n);
+    delete[] y;
+    return x;
+}
 
-    SparseMatrix A = read_matrix_market(matrix_file, n);
-    if (!A.val) {
-        std::cerr << "Failed to read matrix A\n";
-        return 1;
-    }
+// ─────────────────────────────────────────────────────────────
+// Reconstruct P, L, U from packed LU and pivot vector
+//   Caller must free_matrix() P, L, U after use.
+// ─────────────────────────────────────────────────────────────
+void extract_PLU(const __PROMISE__* LU_packed, const int* piv,
+                 __PROMISE__*& P, __PROMISE__*& L, __PROMISE__*& U, int n) {
+    P = alloc_matrix(n);
+    L = alloc_matrix(n);
+    U = alloc_matrix(n);
 
-    __PROMISE__* x_true = nullptr;
-    __PROMISE__* b = nullptr;
-    try {
-        x_true = create_vector(n);
-        for (int i = 0; i < n; ++i) {
-            x_true[i] = 3.0;
+    // Permutation: piv[i] = original row at position i
+    for (int i = 0; i < n; ++i) M(P, i, piv[i], n) = 1.0;
+
+    // Split packed LU into L (unit lower) and U (upper)
+    make_identity(L, n);
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j) {
+            if (j < i)  M(L, i, j, n) = M(LU_packed, i, j, n);
+            else        M(U, i, j, n) = M(LU_packed, i, j, n);
         }
-        b = create_vector(n);
-        sparse_matvec(A, x_true, b);
-    } catch (const std::exception& e) {
-        std::cerr << "Error setting up true solution: " << e.what() << "\n";
-        free_sparse_matrix(A);
-        if (x_true) free_vector(x_true);
-        if (b) free_vector(b);
-        return 1;
+}
+
+// ─────────────────────────────────────────────────────────────
+// LU entry point A  (dedicated to low-condition matrix)
+// ─────────────────────────────────────────────────────────────
+bool lu_factorize(__PROMISE__* A, int* piv, int n) {
+    return lu_factorize_core(A, piv, n);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Run a complete benchmark for one matrix
+// ─────────────────────────────────────────────────────────────
+void benchmark(const std::string& label,
+               const __PROMISE__* A_orig,
+               int n,
+               std::function<bool(__PROMISE__*, int*, int)> lu_fn) {
+
+    // ── Build known RHS from x_true = [1, 2, …, n] ──────────
+    __PROMISE__* x_true = new __PROMISE__[n];
+    for (int i = 0; i < n; ++i) x_true[i] = static_cast<__PROMISE__>(i + 1);
+
+    __PROMISE__* b = new __PROMISE__[n];
+    mat_vec(A_orig, x_true, b, n);
+
+    // ── Factorize (timed) ────────────────────────────────────
+    __PROMISE__* LU  = alloc_matrix(n);
+    mat_copy(A_orig, LU, n);
+    int*    piv = new int[n];
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+    bool ok = lu_fn(LU, piv, n);
+    auto t1 = std::chrono::high_resolution_clock::now();
+
+    __PROMISE__ elapsed_ms =
+        std::chrono::duration<__PROMISE__, std::milli>(t1 - t0).count();
+
+    if (!ok) {
+        std::cout << label << " : factorization FAILED (singular matrix)\n";
+        delete[] x_true; delete[] b; free_matrix(LU); delete[] piv;
+        return;
     }
 
-    __PROMISE__* L = nullptr;
-    __PROMISE__  * U = nullptr;
-    int* P = nullptr;
-    try {
-        P = create_int_vector(n);
-        dense_lu_factorization(A, L, U, P);
-    } catch (const std::exception& e) {
-        std::cerr << "Dense LU factorization failed: " << e.what() << "\n";
-        free_sparse_matrix(A);
-        free_vector(x_true);
-        free_vector(b);
-        if (P) free_int_vector(P);
-        if (L) free_vector(L);
-        if (U) free_vector(U);
-        return 1;
-    }
+    // ── Solve ────────────────────────────────────────────────
+    __PROMISE__* x_computed = lu_solve(LU, piv, b, n);
 
-    __PROMISE__ * y = nullptr;
-    __PROMISE__ * x = nullptr;
-    try {
-        y = dense_forward_substitution(L, n, b, P);
-        x = dense_backward_substitution(U, n, y);
-        
-    } catch (const std::exception& e) {
-        std::cerr << "Dense LU solve failed: " << e.what() << "\n";
-        free_sparse_matrix(A);
-        free_vector(x_true);
-        free_vector(b);
-        free_vector(y);
-        free_vector(x);
-        free_vector(L);
-        free_vector(U);
-        free_int_vector(P);
-        return 1;
-    }
+    // ── Accuracy metrics ─────────────────────────────────────
+    // 1) Relative residual  ||Ax - b||_2 / ||b||_2
+    __PROMISE__* Ax  = new __PROMISE__[n];
+    mat_vec(A_orig, x_computed, Ax, n);
+    __PROMISE__* res = new __PROMISE__[n];
+    vec_sub(Ax, b, res, n);
+    __PROMISE__ rel_residual = norm2(res, n) / norm2(b, n);
 
-    PROMISE_CHECK_ARRAY(x, n);
-    
-    free_sparse_matrix(A);
-    free_vector(L);
-    free_vector(U);
-    free_int_vector(P);
-    free_vector(b);
-    free_vector(y);
-    free_vector(x);
-    free_vector(x_true);
+    // 2) Relative error  ||x - x_true||_2 / ||x_true||_2
+    __PROMISE__* err = new __PROMISE__[n];
+    vec_sub(x_computed, x_true, err, n);
+    __PROMISE__ rel_error = norm2(err, n) / norm2(x_true, n);
 
+    // 3) Backward error  ||PA - LU||_F / ||A||_F
+    __PROMISE__ *P_mat = nullptr, *L_mat = nullptr, *U_mat = nullptr;
+    extract_PLU(LU, piv, P_mat, L_mat, U_mat, n);
+
+    __PROMISE__* PA   = alloc_matrix(n);
+    __PROMISE__* LU_m = alloc_matrix(n);
+    __PROMISE__* diff = alloc_matrix(n);
+    mat_mul(P_mat, A_orig, PA,   n);
+    mat_mul(L_mat, U_mat,  LU_m, n);
+    mat_sub(PA, LU_m, diff, n);
+    __PROMISE__ back_err = normF(diff, n) / normF(A_orig, n);
+
+    // ── Print results ────────────────────────────────────────
+    std::cout << std::string(60, '=') << "\n";
+    std::cout << "  " << label << "\n";
+    std::cout << std::string(60, '-') << "\n";
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "  Matrix size          : " << n << " x " << n << "\n";
+    std::cout << "  Factorization time   : " << elapsed_ms << " ms\n";
+    std::cout << std::scientific << std::setprecision(4);
+    std::cout << "  Relative residual    : " << rel_residual << "\n";
+    std::cout << "  Relative error       : " << rel_error    << "\n";
+    std::cout << "  Factorization err    : " << back_err     << "\n";
+    std::cout << std::string(60, '=') << "\n\n";
+
+    // ── Clean up ─────────────────────────────────────────────
+    delete[] x_true;
+    delete[] b;
+    free_matrix(LU);
+    delete[] piv;
+    delete[] x_computed;
+    delete[] Ax;
+    delete[] res;
+    delete[] err;
+    free_matrix(P_mat);
+    free_matrix(L_mat);
+    free_matrix(U_mat);
+    free_matrix(PA);
+    free_matrix(LU_m);
+    free_matrix(diff);
+}
+
+int main() {
+    const int    N     = 500;
+    const __PROMISE__ KAPPA = 1e4;
+
+    std::mt19937_64 rng(42);     
+
+    std::cout << "\n";
+    std::cout << "  Dense LU with Partial Pivoting  –  Accuracy & Timing\n";
+    std::cout << "  Condition numbers: 1e4\n";
+    std::cout << "  Matrix size: " << N << "x" << N << "\n\n";
+
+    std::cout << "Time scaling vs. matrix size (cond = 1e4):\n";
+    std::cout << std::string(40, '-') << "\n";
+    std::cout << std::left
+              << std::setw(10) << "N"
+              << std::setw(18) << "Factorize (ms)"
+              << "Rel. residual\n";
+    std::cout << std::string(40, '-') << "\n";
+
+    double* A = make_matrix_with_cond(N, KAPPA, rng);
+
+    double* x_true = new double[N];
+    for (int i = 0; i < N; ++i) x_true[i] = 1.0;
+
+    double* b = new double[N];
+    mat_vec(A, x_true, b, N);
+
+    __PROMISE__* LU  = alloc_matrix(N);
+    mat_copy(A, LU, N);
+    int*    piv = new int[N];
+
+    auto t0 = std::chrono::high_resolution_clock::now();
+    lu_factorize(LU, piv, N);
+    auto t1 = std::chrono::high_resolution_clock::now();
+    __PROMISE__ ms = std::chrono::duration<__PROMISE__, std::milli>(t1 - t0).count();
+
+    __PROMISE__* x_comp = lu_solve(LU, piv, b, N);
+
+    PROMISE_CHECK_ARRAY(x_comp, N);
+    double* Ax     = new  double[N];
+    mat_vec(A, x_comp, Ax, N);
+    double* res    = new double[N];
+    vec_sub(Ax, b, res, N);
+    double rel_res = norm2(res, N) / norm2(b, N);
+
+
+    std::cout << std::fixed
+                << std::setw(10) << N
+                << std::setw(18) << std::setprecision(3) << ms
+                << std::scientific << std::setprecision(3) << rel_res << "\n";
+
+    free_matrix(A);
+    delete[] x_true;
+    delete[] b;
+    free_matrix(LU);
+    delete[] piv;
+    delete[] x_comp;
+    delete[] Ax;
+    delete[] res;
+
+    std::cout << std::string(40, '-') << "\n";
     return 0;
 }

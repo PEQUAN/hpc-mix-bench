@@ -10,19 +10,23 @@ CATEGORY_DISPLAY_NAMES = {
     'double': 'FP64',
     'float': 'FP32',
     'half_float::half': 'FP16',
+    'flx::floatx<5, 10>': 'FP16',
     'flx::floatx<8, 7>': 'BF16',
     'flx::floatx<4, 3>': 'E4M3',
     'flx::floatx<5, 2>': 'E5M2'
 }
 
+
 CATEGORY_COLORS = {
     'double': '#81D4FAB3',         # Sky Pop Blue
     'float': '#FFAB91B3',          # Candy Coral
     'half_float::half': '#BA68C8B3', # Bubblegum Purple
+    'flx::floatx<5, 10>': "#7262F0B3", # Violet Blue
     'flx::floatx<8, 7>': '#F06292B3', # Strawberry Pink
     'flx::floatx<4, 3>': '#AED581B3', # Apple Green
     'flx::floatx<5, 2>': '#FFF176B3', # Pineapple Yellow
 }
+
 
 def run_experiments(method, digits):
     """Run experiments, collect precision settings, and measure runtime."""
@@ -56,7 +60,7 @@ def run_experiments(method, digits):
             runtimes.append(0.0)
     return prec_setting, runtimes
 
-def save_prec_setting(prec_setting, filename='prec_setting_4.json'):
+def save_prec_setting(prec_setting, filename='prec_setting_2.json'):
     """Save precision settings to a JSON file."""
     try:
         for setting in prec_setting:
@@ -73,7 +77,7 @@ def save_prec_setting(prec_setting, filename='prec_setting_4.json'):
         with open(filename, 'w') as f:
             json.dump([], f)
 
-def save_runtimes_to_csv(digits, runtimes, filename='runtimes4.csv'):
+def save_runtimes_to_csv(digits, runtimes, filename='runtimes2.csv'):
     """Save runtimes and their average to a CSV file."""
     try:
         average_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
@@ -87,7 +91,7 @@ def save_runtimes_to_csv(digits, runtimes, filename='runtimes4.csv'):
     except Exception as e:
         print(f"Error saving runtimes to CSV: {e}")
 
-def load_prec_setting(filename='prec_setting_4.json'):
+def load_prec_setting(filename='prec_setting_2.json'):
     """Load precision settings from a JSON file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
@@ -113,7 +117,7 @@ def load_prec_setting(filename='prec_setting_4.json'):
         save_prec_setting(prec_setting, filename)
         return prec_setting
 
-def load_runtimes(filename='runtimes4.csv'):
+def load_runtimes(filename='runtimes2.csv'):
     """Load runtimes from a CSV file."""
     if not os.path.exists(filename):
         print(f"Error: {filename} does not exist, regenerating data...")
@@ -169,10 +173,12 @@ def plot_prec_setting(prec_setting, digits, runtimes):
         'flx::floatx<4, 3>',
         'flx::floatx<5, 2>',
         'flx::floatx<8, 7>',
+        'flx::floatx<5, 10>',
         'half_float::half',
         'float',
         'double'
     ]
+    
     
     heights = {cat: [] for cat in categories}
     for setting in prec_setting:
@@ -200,8 +206,8 @@ def plot_prec_setting(prec_setting, digits, runtimes):
         print(f"Warning: Could not use style '{preferred_style}', falling back to 'default'. Error: {e}")
         plt.style.use('default')
 
-    fig, ax = plt.subplots(figsize=(11, 8))
-    fontsize = 24
+    fig, ax = plt.subplots(figsize=(11, 8.5))
+    fontsize = 25
     ax2 = ax.twinx()
     
     x_indices = np.arange(len(digits))
@@ -227,7 +233,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
                     f'{int(bar_height)}',
                     ha='center',
                     va='center',
-                    fontsize=20,
+                    fontsize=22,
                     weight='bold',
                     color='black'
                 )
@@ -263,7 +269,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
     # Create legend with explicit order: bars in active_categories order, then runtime
     legend_handles = bar_handles + [runtime_line]
     legend_labels = bar_labels + ['Runtime']
-    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.3),
+    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.15),
               ncol=min(len(active_categories) + 1, 6), fontsize=fontsize-3, frameon=True, edgecolor='black')
 
     plt.tick_params(axis='both', which='major', labelsize=fontsize)

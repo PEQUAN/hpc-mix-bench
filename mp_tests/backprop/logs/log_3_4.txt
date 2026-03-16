@@ -1,0 +1,28 @@
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 4 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug custom(5, 10)/Single[0m
+[37me) Delta-Debug custom(4, 3)/custom(5, 10)[0m
+[34mThe final result contains 6x double, 3x float, 3x flx::floatx<5, 10> and 3x flx::floatx<4, 3>.[0m
+[34mIt tooks 181.57s[0m
+[34m👉 56 compilations (36 failed) for 171.63s[0m
+[34m👉 20 executions   (0 failed) for 4.84s[0m
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 4 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug custom(5, 10)/Single[0m
+[37me) Delta-Debug custom(4, 3)/custom(5, 10)[0m
+[34mThe final result contains 6x double, 3x float, 3x flx::floatx<5, 10> and 3x flx::floatx<4, 3>.[0m
+[34mIt tooks 279.15s[0m
+[34m👉 56 compilations (36 failed) for 259.87s[0m
+[34m👉 20 executions   (0 failed) for 6.78s[0m

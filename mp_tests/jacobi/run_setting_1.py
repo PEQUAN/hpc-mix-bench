@@ -205,10 +205,10 @@ def plot_prec_setting(prec_setting, digits, runtimes):
         print(f"Warning: Could not use style '{preferred_style}', falling back to 'default'. Error: {e}")
         plt.style.use('default')
 
-    fig, ax = plt.subplots(figsize=(11, 8))
+    fig, ax = plt.subplots(figsize=(11, 8.5))
     
     ax2 = ax.twinx()
-    fontsize = 24
+    fontsize = 25
     x_indices = np.arange(len(digits))
 
     bottom = np.zeros(len(digits))
@@ -232,7 +232,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
                     f'{int(bar_height)}',
                     ha='center',
                     va='center',
-                    fontsize=20,
+                    fontsize=22,
                     weight='bold',
                     color='black'
                 )
@@ -268,7 +268,7 @@ def plot_prec_setting(prec_setting, digits, runtimes):
     # Create legend with explicit order: bars in active_categories order, then runtime
     legend_handles = bar_handles + [runtime_line]
     legend_labels = bar_labels + ['Runtime']
-    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.3),
+    ax.legend(legend_handles, legend_labels, loc='upper center', bbox_to_anchor=(0.5, 1.15),
               ncol=min(len(active_categories) + 1, 6), fontsize=fontsize-3, frameon=True, edgecolor='black')
 
     plt.tick_params(axis='both', which='major', labelsize=fontsize)

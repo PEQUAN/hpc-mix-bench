@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ------------------------------------------------------------
 # Usage:
@@ -19,12 +19,18 @@
 # Last Updated: November 18, 2025
 
 # ---------- 1. Parse arguments ----------
+
+set -euo pipefail
+
+
 RUN_EXPERIMENTS=${1:-true}
 RUN_PLOTTING=${2:-true}
-shift 2
+
+shift 2 || true
 
 PARALLEL=false
 TARGET_FOLDERS=()
+
 for arg in "$@"; do
     if [[ "$arg" == "--parallel" ]]; then
         PARALLEL=true
@@ -33,199 +39,246 @@ for arg in "$@"; do
     fi
 done
 
-# ---------- 2. Normalize booleans ----------
+
 normalize_bool() {
     case "$1" in
-        1|true|True|TRUE|y|Y|yes|Yes|YES|t|T) echo "true" ;;
-        0|false|False|FALSE|n|N|no|No|NO|f|F) echo "false" ;;
+        1|true|True|TRUE|y|Y|yes|Yes|YES) echo "true" ;;
+        0|false|False|FALSE|n|N|no|No|NO) echo "false" ;;
         *) echo "true" ;;
     esac
 }
+
 RUN_EXPERIMENTS=$(normalize_bool "$RUN_EXPERIMENTS")
 RUN_PLOTTING=$(normalize_bool "$RUN_PLOTTING")
 
-# ---------- 3. Helper: detect at least one valid plotting pair ----------
+
+# parallel jobs
+
+JOBS=${JOBS:-$(nproc 2>/dev/null || echo 4)}
+
+
+# ------------------------------------------------------------
+# Helper: detect plotting data
+# ------------------------------------------------------------
+
 check_plot_pairs() {
-    local dir="$1"
+
+    dir="$1"
 
     shopt -s nullglob
-    local prec_files=("$dir"/prec_setting_*.json)
-    local runtime_files=("$dir"/runtimes*.csv)
+    prec_files=("$dir"/prec_setting_*.json)
     shopt -u nullglob
 
-    local matched_pairs=()
-
     for prec in "${prec_files[@]}"; do
-        local base=$(basename "$prec")
+
+        base=$(basename "$prec")
+
         if [[ $base =~ prec_setting_([0-9]+)\.json ]]; then
-            local i="${BASH_REMATCH[1]}"
+
+            i="${BASH_REMATCH[1]}"
+
             if [[ -f "$dir/runtimes${i}.csv" ]]; then
-                matched_pairs+=("$i")
+                return 0
             fi
+
         fi
+
     done
 
-    if (( ${#matched_pairs[@]} > 0 )); then
-        return 0  # success
+    return 1
+}
+
+
+
+# ------------------------------------------------------------
+# Resume detection
+# ------------------------------------------------------------
+
+experiment_already_done() {
+
+    dir="$1"
+
+    shopt -s nullglob
+    csvs=("$dir"/runtimes*.csv)
+    shopt -u nullglob
+
+    if (( ${#csvs[@]} > 0 )); then
+        return 0
     else
-        return 1  # failure
+        return 1
     fi
 }
 
-# ---------- 4. Run one folder ----------
+
+
+# ------------------------------------------------------------
+# Run benchmark folder
+# ------------------------------------------------------------
+
 run_folder() {
-    local input_dir="$1"
-    local dir=$(realpath "$input_dir")
 
-    echo "=== Processing folder: $dir ==="
+    input="$1"
+    dir=$(cd "$input" && pwd)
 
-    missing_data=()
+    name=$(basename "$dir")
 
-    # Always require promise.yml
-    [[ -f "$dir/promise.yml" ]] || missing_data+=("promise.yml")
+    mkdir -p logs
 
-    # Plotting requires matching pairs
-    if [[ "$RUN_PLOTTING" == "true" ]]; then
-        if ! check_plot_pairs "$dir"; then
-            missing_data+=("prec_setting_*.json + runtimes*.csv (matching index required)")
-        fi
+    LOGFILE="logs/${name}.log"
+
+    echo "================================================"
+    echo "Running benchmark: $name"
+    echo "Log: $LOGFILE"
+    echo "================================================"
+
+
+    if [[ ! -f "$dir/promise.yml" ]]; then
+        echo "[Skip] missing promise.yml"
+        return
     fi
 
-    # If missing something → skip
-    if (( ${#missing_data[@]} > 0 )); then
-        echo "  [Missing required files] ${missing_data[*]}"
-        echo "  Skipping $dir"
-        echo
-        return 1
-    fi
 
-    # Find all run_setting_*.py
     shopt -s nullglob
     scripts=("$dir"/run_setting_*.py)
     shopt -u nullglob
 
     if (( ${#scripts[@]} == 0 )); then
-        echo "  [No run_setting_*.py files found]"
-        echo "  Skipping $dir"
-        echo
-        return 1
+        echo "[Skip] no run_setting_*.py"
+        return
     fi
 
-    # Sort numerically (script index)
+
     IFS=$'\n' scripts=($(printf "%s\n" "${scripts[@]}" | sort -V))
 
-    for script in "${scripts[@]}"; do
-        echo "  → Running: $(basename "$script")"
-        (
-            cd "$dir"
-            python3 "$script" "$RUN_EXPERIMENTS" "$RUN_PLOTTING"
-        )
-        if (( $? != 0 )); then
-            echo "  [Failed] $(basename "$script")"
-        else
-            echo "  [Success] $(basename "$script")"
-        fi
-    done
 
-    echo
-}
+    # resume check
 
-# ---------- 5. Export for parallel ----------
-export -f normalize_bool check_plot_pairs run_folder
-export RUN_EXPERIMENTS RUN_PLOTTING
+    if [[ "$RUN_EXPERIMENTS" == "true" ]]; then
 
-# ---------- 6. Main banner ----------
-echo "=========================================="
-echo "Run experiments : $RUN_EXPERIMENTS"
-echo "Run plotting    : $RUN_PLOTTING"
-echo "Parallel mode   : $PARALLEL"
-
-if (( ${#TARGET_FOLDERS[@]} == 0 )); then
-    echo "Target folders  : ALL valid folders"
-else
-    echo "Target folders  : ${TARGET_FOLDERS[*]}"
-fi
-
-echo "=========================================="
-
-# ---------- 7. Auto-discovery mode ----------
-if (( ${#TARGET_FOLDERS[@]} == 0 )); then
-    valid_folders=()
-
-    # detect directories containing run_setting_*.py
-    while IFS= read -r script; do
-        dir=$(dirname "$script")
-        dir=$(realpath "$dir")
-
-        # must have promise.yml
-        [[ -f "$dir/promise.yml" ]] || continue
-
-        # must have valid plotting pairs (if plotting)
-        if [[ "$RUN_PLOTTING" == "true" ]]; then
-            check_plot_pairs "$dir" || continue
+        if experiment_already_done "$dir"; then
+            echo "[Resume] experiment results already exist"
         fi
 
-        valid_folders+=("$dir")
-    done < <(find . -maxdepth 2 -type f -name "run_setting_*.py")
-
-    # remove duplicates
-    mapfile -t valid_folders < <(printf "%s\n" "${valid_folders[@]}" | sort -u)
-
-    if (( ${#valid_folders[@]} == 0 )); then
-        echo "Warning: No valid folders found."
-    else
-        if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null 2>&1; then
-            echo "Running ${#valid_folders[@]} folders in parallel (max 4 jobs)..."
-            printf "%s\n" "${valid_folders[@]}" | parallel -j 4 run_folder {}
-        else
-            echo "Running ${#valid_folders[@]} folders sequentially..."
-            for dir in "${valid_folders[@]}"; do run_folder "$dir"; done
-        fi
     fi
 
-# ---------- 8. Manual folder selection ----------
+
+    for script in "${scripts[@]}"; do
+
+        echo "→ $(basename "$script")"
+
+        (
+            cd "$dir"
+
+            python3 "$script" "$RUN_EXPERIMENTS" "$RUN_PLOTTING"
+
+        ) >> "$LOGFILE" 2>&1
+
+        if (( $? != 0 )); then
+            echo "[FAILED] $(basename "$script")"
+            return
+        fi
+
+    done
+
+    echo "[DONE] $name"
+
+}
+
+
+
+export -f run_folder
+export -f check_plot_pairs
+export -f experiment_already_done
+
+export RUN_EXPERIMENTS
+export RUN_PLOTTING
+
+
+
+# ------------------------------------------------------------
+# Banner
+# ------------------------------------------------------------
+
+echo "======================================"
+echo "Run experiments : $RUN_EXPERIMENTS"
+echo "Run plotting    : $RUN_PLOTTING"
+echo "Parallel        : $PARALLEL"
+echo "Jobs            : $JOBS"
+
+if (( ${#TARGET_FOLDERS[@]} == 0 )); then
+    echo "Folders         : auto detect"
 else
-    valid_folders=()
+    echo "Folders         : ${TARGET_FOLDERS[*]}"
+fi
+
+echo "======================================"
+
+
+# ------------------------------------------------------------
+# Folder discovery
+# ------------------------------------------------------------
+
+valid_folders=()
+
+if (( ${#TARGET_FOLDERS[@]} == 0 )); then
+
+    while IFS= read -r script; do
+
+        dir=$(dirname "$script")
+
+        if [[ -f "$dir/promise.yml" ]]; then
+            valid_folders+=("$dir")
+        fi
+
+    done < <(find . -maxdepth 2 -type f -name "run_setting_*.py")
+
+else
 
     for folder in "${TARGET_FOLDERS[@]}"; do
-        [[ -d "$folder" ]] || { echo "Error: '$folder' is not a directory."; continue; }
 
-        # require run_setting_*.py
-        shopt -s nullglob
-        scripts=("$folder"/run_setting_*.py)
-        shopt -u nullglob
-        if (( ${#scripts[@]} == 0 )); then
-            echo "Error: '$folder' missing run_setting_*.py. Skipping."
+        if [[ ! -d "$folder" ]]; then
+            echo "Invalid folder: $folder"
             continue
         fi
 
-        # require promise.yml
-        [[ -f "$folder/promise.yml" ]] || { echo "Error: '$folder' missing promise.yml. Skipping."; continue; }
-
-        # require matching plot pairs if plotting
-        if [[ "$RUN_PLOTTING" == "true" ]]; then
-            if ! check_plot_pairs "$folder"; then
-                echo "Error: '$folder' missing matching prec_setting_*.json + runtimes*.csv. Skipping."
-                continue
-            fi
-        fi
-
         valid_folders+=("$folder")
+
     done
 
-    # run validated folders
-    if (( ${#valid_folders[@]} == 0 )); then
-        echo "No valid folders specified."
-    else
-        if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null 2>&1; then
-            echo "Running ${#valid_folders[@]} folders in parallel (max 4 jobs)..."
-            printf "%s\n" "${valid_folders[@]}" | parallel -j 4 run_folder {}
-        else
-            echo "Running ${#valid_folders[@]} folders sequentially..."
-            for dir in "${valid_folders[@]}"; do run_folder "$dir"; done
-        fi
-    fi
 fi
 
-echo "=========================================="
-echo "All done!"
+
+mapfile -t valid_folders < <(printf "%s\n" "${valid_folders[@]}" | sort -u)
+
+
+if (( ${#valid_folders[@]} == 0 )); then
+    echo "No valid benchmarks found."
+    exit 0
+fi
+
+
+# ------------------------------------------------------------
+# Run
+# ------------------------------------------------------------
+
+if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null; then
+
+    echo "Running ${#valid_folders[@]} benchmarks in parallel..."
+
+    printf "%s\n" "${valid_folders[@]}" | parallel -j "$JOBS" --lb run_folder {}
+
+else
+
+    echo "Running sequentially..."
+
+    for f in "${valid_folders[@]}"; do
+        run_folder "$f"
+    done
+
+fi
+
+
+echo "======================================"
+echo "All benchmarks finished."
+echo "Logs in ./logs/"
+echo "======================================"
