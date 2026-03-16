@@ -1,5 +1,5 @@
-03/16 22:54:35: 🤘 cadnaPromise 🤘
-03/16 22:54:35: Using the compiler: g++
-03/16 22:54:35: We are working with 1 file and 11 different types
-03/16 22:54:35: The expectation is 5 digits.
-03/16 22:54:35: a) Get a reference result with cadna (double)
+03/17 00:15:22: 🤘 cadnaPromise 🤘
+03/17 00:15:22: Using the compiler: g++
+03/17 00:15:22: We are working with 1 file and 11 different types
+03/17 00:15:22: The expectation is 1 digits.
+03/17 00:15:22: a) Get a reference result with cadna (double)

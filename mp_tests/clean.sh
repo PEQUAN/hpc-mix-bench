@@ -70,20 +70,19 @@ else
 fi
 
 # -------------------------------
-# 2. Remove debug folders
+# 2. Remove debug folders + logs
 # -------------------------------
 if op_enabled "d"; then
-    echo "Removing debug folders..."
+    echo "Removing debug folders (compileErrors, prec_*, logs)..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
-            \( -name "compileErrors" -o -name "*prec*" \) \
+            \( -name "compileErrors" -o -name "prec_*" -o -name "logs" \) \
             -print -exec rm -rf {} +
     done
     echo "Debug folders deleted."
 else
     echo "Skipping debug folder deletion."
 fi
-
 # -------------------------------
 # 3. Remove prec_setting_{k}.json
 # -------------------------------
