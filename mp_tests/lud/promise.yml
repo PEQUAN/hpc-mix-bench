@@ -1,0 +1,7 @@
+compile:
+- g++ lud.cpp  -frounding-math -m64 -o lud -lcadnaOpenmpC -fopenmp  -L$CADNA_PATH/lib -I$CADNA_PATH/include
+
+run: lud -s 1024 -n 16 -v
+files: lud.cpp
+log: lud.log
+output: debug/
