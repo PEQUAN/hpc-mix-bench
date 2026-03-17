@@ -1,0 +1,14 @@
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 1 file and 31 different types[0m
+[37mThe expectation is 9 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug custom(5, 10)/Single[0m
+[37me) Delta-Debug custom(4, 3)/custom(5, 10)[0m
+[34mThe final result contains 13x double, 2x float, 9x flx::floatx<5, 10> and 7x flx::floatx<4, 3>.[0m
+[34mIt tooks 559.04s[0m
+[34m👉 116 compilations (52 failed) for 185.49s[0m
+[34m👉 64 executions   (0 failed) for 319.15s[0m
