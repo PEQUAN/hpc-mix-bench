@@ -296,8 +296,8 @@ void benchmark(const std::string& label,
     bool ok = lu_fn(LU, piv, n);
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    __PROMISE__ elapsed_ms =
-        std::chrono::duration<__PROMISE__, std::milli>(t1 - t0).count();
+    double elapsed_ms =
+        std::chrono::duration<double, std::milli>(t1 - t0).count();
 
     if (!ok) {
         std::cout << label << " : factorization FAILED (singular matrix)\n";
@@ -310,16 +310,16 @@ void benchmark(const std::string& label,
 
     // ── Accuracy metrics ─────────────────────────────────────
     // 1) Relative residual  ||Ax - b||_2 / ||b||_2
-    __PROMISE__* Ax  = new __PROMISE__[n];
+    double * Ax  = new double[n];
     mat_vec(A_orig, x_computed, Ax, n);
-    __PROMISE__* res = new __PROMISE__[n];
+    double* res = new double[n];
     vec_sub(Ax, b, res, n);
-    __PROMISE__ rel_residual = norm2(res, n) / norm2(b, n);
+    double rel_residual = norm2(res, n) / norm2(b, n);
 
     // 2) Relative error  ||x - x_true||_2 / ||x_true||_2
-    __PROMISE__* err = new __PROMISE__[n];
+    double * err = new double[n];
     vec_sub(x_computed, x_true, err, n);
-    __PROMISE__ rel_error = norm2(err, n) / norm2(x_true, n);
+    double  rel_error = norm2(err, n) / norm2(x_true, n);
 
     // 3) Backward error  ||PA - LU||_F / ||A||_F
     __PROMISE__ *P_mat = nullptr, *L_mat = nullptr, *U_mat = nullptr;
@@ -331,7 +331,7 @@ void benchmark(const std::string& label,
     mat_mul(P_mat, A_orig, PA,   n);
     mat_mul(L_mat, U_mat,  LU_m, n);
     mat_sub(PA, LU_m, diff, n);
-    __PROMISE__ back_err = normF(diff, n) / normF(A_orig, n);
+    double back_err = normF(diff, n) / normF(A_orig, n);
 
     // ── Print results ────────────────────────────────────────
     std::cout << std::string(60, '=') << "\n";
@@ -365,7 +365,7 @@ void benchmark(const std::string& label,
 
 int main() {
     const int    N     = 500;
-    const __PROMISE__ KAPPA = 1e4;
+    const double KAPPA = 1e4;
 
     std::mt19937_64 rng(42);     
 
@@ -397,9 +397,9 @@ int main() {
     auto t0 = std::chrono::high_resolution_clock::now();
     lu_factorize(LU, piv, N);
     auto t1 = std::chrono::high_resolution_clock::now();
-    __PROMISE__ ms = std::chrono::duration<__PROMISE__, std::milli>(t1 - t0).count();
+    double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
 
-    __PROMISE__* x_comp = lu_solve(LU, piv, b, N);
+    double * x_comp = lu_solve(LU, piv, b, N);
 
     PROMISE_CHECK_ARRAY(x_comp, N);
     double* Ax     = new  double[N];

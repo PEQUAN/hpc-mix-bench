@@ -4,7 +4,6 @@
 #include <cstring>
 #include <algorithm>
 
-// ========== 稀疏矩阵数据结构 ==========
 
 struct COOMatrix {
     int rows, cols, nnz;
