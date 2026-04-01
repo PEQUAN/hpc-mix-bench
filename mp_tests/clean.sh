@@ -76,7 +76,7 @@ if op_enabled "d"; then
     echo "Removing debug folders (compileErrors, prec_*, logs)..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
-            \( -name "compileErrors" -o -name "prec_*" -o -name "logs" \) \
+            \( -name "compileErrors" -o -name "prec*" -o -name "logs" \) \
             -print -exec rm -rf {} +
     done
     echo "Debug folders deleted."

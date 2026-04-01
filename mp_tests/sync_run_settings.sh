@@ -25,7 +25,7 @@
 #
 # Options:
 #   --delete or -d: Execute Step 1 (delete files). Default: enabled if no options.
-#   --copy   or -c: Execute Step 2 (copy files).   Default: enabled if no options.
+#   --broadcast or -b: Execute Step 2 (copy files).   Default: enabled if no options.
 #
 # --optimal, -o       Enable broadcast for advanced folders
 #
@@ -38,10 +38,10 @@
 #   # Or short form
 #   bash sync_run_settings.sh -d
 #
-#   # Copy only
-#   bash sync_run_settings.sh --copy
+#   # Broadcast only
+#   bash sync_run_settings.sh --broadcast
 #   # Or short form
-#   bash sync_run_settings.sh -c
+#   bash sync_run_settings.sh -b
 #
 #   # Both explicitly (mix long/short forms)
 #   bash sync_run_settings.sh --delete -c
@@ -55,9 +55,10 @@
 # Author: Xinye Chen (xinyechenai@gmail.com)
 # Last Updated: November 16, 2025
 #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 DO_DELETE=false
-DO_COPY=false
+DO_BROADCAST=false
 DO_FP_COPY=false
 DO_FP_DELETE=false
 ADVANCED=false
@@ -66,20 +67,22 @@ usage() {
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --delete, -d        Delete run_setting_*.py"
-    echo "  --copy,   -c        Copy run_setting_*.py"
-    echo "  --fp,     -f        Copy fp.json"
+    echo "  --delete, -d        Delete run_setting_*.py and run_debug_*.sh"
+    echo "  --broadcast, -b     Broadcast run_setting_*.py and run_debug_*.sh"
+    echo "  --fp, -f            Copy fp.json"
     echo "  --fp-delete, -F     Delete fp.json"
-    echo "  --advanced, -a      Copy advanced/run_setting_*.py as well"
+    echo "  --advanced, -a      Include advanced/run_setting_*.py"
     echo ""
     echo "If no options are given, all operations run."
 }
 
-# parse args
+# ---------------------------------------
+# Parse args
+# ---------------------------------------
 while [[ $# -gt 0 ]]; do
     case $1 in
         --delete|-d) DO_DELETE=true ;;
-        --copy|-c) DO_COPY=true ;;
+        --broadcast|-b) DO_BROADCAST=true ;;
         --fp|-f) DO_FP_COPY=true ;;
         --fp-delete|-F) DO_FP_DELETE=true ;;
         --advanced|-a) ADVANCED=true ;;
@@ -89,21 +92,26 @@ while [[ $# -gt 0 ]]; do
 done
 
 # default everything
-if ! $DO_DELETE && ! $DO_COPY && ! $DO_FP_COPY && ! $DO_FP_DELETE; then
+if ! $DO_DELETE && ! $DO_BROADCAST && ! $DO_FP_COPY && ! $DO_FP_DELETE; then
     DO_DELETE=true
-    DO_COPY=true
+    DO_BROADCAST=true
     DO_FP_COPY=true
     DO_FP_DELETE=true
 fi
 
-# check run_settings
-if ( $DO_COPY || $DO_FP_COPY ) && [ ! -d "../run_settings" ]; then
+# ---------------------------------------
+# Check run_settings
+# ---------------------------------------
+if ( $DO_BROADCAST || $DO_FP_COPY ) && [ ! -d "../run_settings" ]; then
     echo "Error: ../run_settings folder missing."
     exit 1
 fi
 
-# benchmark folders
-subdirs=($(find . -maxdepth 1 -type d ! -name .))
+# ---------------------------------------
+# Collect subdirs
+# ---------------------------------------
+shopt -s nullglob
+subdirs=(*/)
 
 if [ ${#subdirs[@]} -eq 0 ]; then
     echo "No subfolders found."
@@ -111,12 +119,15 @@ if [ ${#subdirs[@]} -eq 0 ]; then
 fi
 
 #############################################
-# Step 1: Delete run_setting_*.py
+# Step 1: Delete files
 #############################################
 if $DO_DELETE; then
-    echo "Deleting run_setting_*.py..."
+    echo "Deleting run_setting_*.py and run_debug_*.sh..."
     for subdir in "${subdirs[@]}"; do
-        find "$subdir" -maxdepth 1 -name "run_setting_*.py" -delete
+        find "$subdir" -maxdepth 1 \( \
+            -name "run_setting_*.py" -o \
+            -name "run_debug_*.sh" \
+        \) -delete
         echo "Cleaned $subdir"
     done
 fi
@@ -133,29 +144,38 @@ if $DO_FP_DELETE; then
 fi
 
 #############################################
-# Step 3: Copy run_setting_*.py
+# Step 3: Broadcast files
 #############################################
-if $DO_COPY; then
-    echo "Copying run_setting_*.py..."
-    
-    # normal run_setting_*.py
-    files=(../run_settings/run_setting_*.py)
-    
+if $DO_BROADCAST; then
+    echo "Broadcasting run_setting_*.py and run_debug_*.sh..."
+
+    py_files=(../run_settings/run_setting_*.py)
+    sh_files=(../run_settings/run_debug_*.sh)
+
     for subdir in "${subdirs[@]}"; do
-        cp "${files[@]}" "$subdir/"
-        echo "Copied run_setting_*.py to $subdir"
+        # copy python files
+        if (( ${#py_files[@]} > 0 )); then
+            cp "${py_files[@]}" "$subdir/"
+        fi
+
+        # copy shell scripts
+        if (( ${#sh_files[@]} > 0 )); then
+            cp "${sh_files[@]}" "$subdir/"
+        fi
+
+        echo "Broadcasted scripts to $subdir"
     done
 
-    # advanced broadcast: copy source advanced/ files to all benchmark directories
+    # advanced python configs
     if $ADVANCED && [ -d "../run_settings/advanced" ]; then
         adv_files=(../run_settings/advanced/run_setting_*.py)
         if (( ${#adv_files[@]} > 0 )); then
             for subdir in "${subdirs[@]}"; do
                 cp "${adv_files[@]}" "$subdir/"
-                echo "Copied advanced/run_setting_*.py to $subdir"
+                echo "Broadcasted advanced configs to $subdir"
             done
         else
-            echo "No run_setting_*.py found in ../run_settings/advanced/"
+            echo "No run_setting_*.py found in advanced/"
         fi
     fi
 fi
@@ -166,7 +186,7 @@ fi
 if $DO_FP_COPY; then
     FP_SOURCE="../run_settings/fp.json"
     if [ ! -f "$FP_SOURCE" ]; then
-        echo "Warning: fp.json not found in ../run_settings/"
+        echo "Warning: fp.json not found."
     else
         for subdir in "${subdirs[@]}"; do
             cp "$FP_SOURCE" "$subdir/"
