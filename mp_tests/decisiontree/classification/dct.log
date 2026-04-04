@@ -1,7 +1,11 @@
-06/28 06:31:47: 🤘 cadnaPromise 🤘
-06/28 06:31:47: Using the compiler: g++
-06/28 06:31:47: We are working with 1 file and 38 different types
-06/28 06:31:47: The expectation is 10 digits.
-06/28 06:31:47: a) Get a reference result with cadna (double)
-06/28 06:31:50: b) Check with highest format (Double)
-06/28 06:31:51: You should lower your expectation, it doesn't work with Double
+04/03 09:26:40: 🤘 cadnaPromise 🤘
+04/03 09:26:40: Using the compiler: g++
+04/03 09:26:40: We are working with 1 file and 38 different types
+04/03 09:26:40: The expectation is 1 digits.
+04/03 09:26:40: a) Get a reference result with cadna (double)
+04/03 09:26:43: b) Check with highest format (Double)
+04/03 09:26:45: c) Delta-Debug Single/Double
+04/03 09:26:46: The format float is enough for your expectation
+04/03 09:26:46: d) Delta-Debug custom(5, 10)/Single
+04/03 09:26:48: The format flx::floatx<5, 10> is enough for your expectation
+04/03 09:26:48: e) Delta-Debug custom(5, 2)/custom(5, 10)

@@ -1,0 +1,50 @@
+======================================
+Job started      : 2026-04-03 09:39:10
+Node             : node03
+Workdir          : /home/xinye/hpc-mix-mlbench/mp_tests
+Python           : 
+Python 3.12.3
+SLURM_JOB_ID     : 80072
+SLURM_JOB_NAME   : benchmarks-mpi
+SLURM_NTASKS     : 7
+OMP_NUM_THREADS  : 1
+MKL_NUM_THREADS  : 1
+OPENBLAS_NUM_THREADS : 1
+======================================
+============================================================
+MPI benchmark runner started with 7 ranks
+Discovered 24 task(s)
+============================================================
+[DONE] rank=6 backprop/run_setting_1.py (930.7s)
+[DONE] rank=2 backprop/run_setting_3.py (934.2s)
+[DONE] rank=3 backprop/run_setting_4.py (1305.0s)
+[DONE] rank=1 backprop/run_setting_2.py (1322.2s)
+[DONE] rank=3 hotspot/run_setting_1.py (1016.1s)
+[DONE] rank=1 hotspot/run_setting_2.py (1293.7s)
+[DONE] rank=3 hotspot/run_setting_3.py (1003.5s)
+[DONE] rank=4 dense_lu/run_setting_1.py (3349.9s)
+[DONE] rank=5 dense_lu/run_setting_2.py (3686.1s)
+[DONE] rank=1 hotspot/run_setting_4.py (1267.7s)
+[DONE] rank=6 dense_lu/run_setting_3.py (3249.3s)
+[DONE] rank=2 dense_lu/run_setting_4.py (3634.8s)
+[DONE] rank=3 particle_filter/run_setting_1.py (1936.8s)
+[DONE] rank=5 particle_filter/run_setting_3.py (1858.5s)
+[DONE] rank=6 sparse_lu/run_setting_1.py (1782.4s)
+[DONE] rank=2 sparse_lu/run_setting_2.py (2233.7s)
+[DONE] rank=3 sparse_lu/run_setting_3.py (1778.8s)
+[DONE] rank=4 particle_filter/run_setting_2.py (4229.6s)
+[DONE] rank=5 sparse_lu/run_setting_4.py (2061.5s)
+[DONE] rank=1 particle_filter/run_setting_4.py (4190.1s)
+[DONE] rank=6 srad_v2/run_setting_1.py (3543.9s)
+[DONE] rank=3 srad_v2/run_setting_3.py (3962.2s)
+[DONE] rank=2 srad_v2/run_setting_2.py (6958.4s)
+[DONE] rank=4 srad_v2/run_setting_4.py (6571.3s)
+============================================================
+All tasks finished.
+Completed : 24
+Failed    : 0
+Elapsed   : 3h 55m 50s
+============================================================
+======================================
+Job finished     : 2026-04-03 13:35:02
+======================================

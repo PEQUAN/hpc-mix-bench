@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+
 
 # Usage:
 # ./clean.sh [operations] [folders...]
@@ -14,6 +14,7 @@ set -euo pipefail
 # If operations are omitted → all operations are enabled.
 # Remaining arguments = folders to target (optional)
 
+set -euo pipefail
 
 OPS=${1:-"cdprfj"}  # default: all operations
 shift $([ $# -gt 0 ] && echo 1 || echo 0)  # shift if first argument was operations
@@ -47,14 +48,12 @@ fi
 echo "Target directories:"
 printf ' - %s\n' "${TARGETS[@]}"
 
-
 # -------------------------------
 # Helper: check if operation is enabled
 # -------------------------------
 op_enabled() {
     [[ "$OPS" == *"$1"* ]]
 }
-
 
 # -------------------------------
 # 1. Remove *.csv
@@ -73,16 +72,28 @@ fi
 # 2. Remove debug folders + logs
 # -------------------------------
 if op_enabled "d"; then
-    echo "Removing debug folders (compileErrors, prec_*, logs)..."
+    echo "Removing top-level logs directory..."
+    if [ -d "logs" ]; then
+        rm -rf logs
+        echo "Removed ./logs/"
+    else
+        echo "No top-level logs/ found."
+    fi
+
+    echo "Removing debug folders and log.txt..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
             \( -name "compileErrors" -o -name "prec*" -o -name "logs" \) \
             -print -exec rm -rf {} +
+
+        find "$dir" -maxdepth 1 -type f -name "log.txt" \
+            -print -delete
     done
-    echo "Debug folders deleted."
+    echo "Debug folders and log.txt deleted."
 else
     echo "Skipping debug folder deletion."
 fi
+
 # -------------------------------
 # 3. Remove prec_setting_{k}.json
 # -------------------------------
