@@ -71,7 +71,7 @@ double run_test_avg(const string& name, int N) {
 }
 
 int main() {
-    vector<int> sizes = {500, 1000};
+    vector<int> sizes = {1000, 3000};
 
     ofstream outfile("results_bar.csv");
     outfile << "MatrixSize,Precision,AvgTime\n";

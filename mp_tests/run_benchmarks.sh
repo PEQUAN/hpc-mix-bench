@@ -39,17 +39,13 @@
 
 set -euo pipefail
 
-
 RUN_EXPERIMENTS=${1:-true}
 RUN_PLOTTING=${2:-true}
 RUN_DEBUG=${3:-false}
-
 shift 3 || true
 
 PARALLEL=false
 TARGET_FOLDERS=()
-
-# default jobs: use env JOBS if set, otherwise nproc, fallback 4
 JOBS=${JOBS:-$(nproc 2>/dev/null || echo 4)}
 
 while [[ $# -gt 0 ]]; do
@@ -59,10 +55,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --jobs)
-            if [[ $# -lt 2 ]]; then
-                echo "Error: --jobs requires an integer argument"
-                exit 1
-            fi
+            [[ $# -ge 2 ]] || { echo "Error: --jobs requires an integer argument"; exit 1; }
             JOBS="$2"
             shift 2
             ;;
@@ -78,10 +71,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 normalize_bool() {
-    case "$1" in
-        1|true|True|TRUE|y|Y|yes|Yes|YES) echo "true" ;;
-        0|false|False|FALSE|n|N|no|No|NO) echo "false" ;;
-        *) echo "true" ;;
+    case "${1,,}" in
+        1|true|y|yes) echo "true" ;;
+        0|false|n|no) echo "false" ;;
+        *)
+            echo "Error: invalid boolean value: $1" >&2
+            exit 1
+            ;;
     esac
 }
 
@@ -89,143 +85,18 @@ RUN_EXPERIMENTS=$(normalize_bool "$RUN_EXPERIMENTS")
 RUN_PLOTTING=$(normalize_bool "$RUN_PLOTTING")
 RUN_DEBUG=$(normalize_bool "$RUN_DEBUG")
 
-# validate jobs
 if ! [[ "$JOBS" =~ ^[0-9]+$ ]] || (( JOBS <= 0 )); then
     echo "Error: --jobs must be a positive integer"
     exit 1
 fi
 
-# avoid nested oversubscription from math libraries
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}
 export MKL_NUM_THREADS=${MKL_NUM_THREADS:-1}
 export OPENBLAS_NUM_THREADS=${OPENBLAS_NUM_THREADS:-1}
 
-# ------------------------------------------------------------
-# Resume detection
-# ------------------------------------------------------------
-experiment_already_done() {
-    dir="$1"
-
-    shopt -s nullglob
-    csvs=("$dir"/runtimes*.csv)
-    shopt -u nullglob
-
-    (( ${#csvs[@]} > 0 ))
-}
-
-# ------------------------------------------------------------
-# Run one task = run_setting_i.py + optional run_debug_i.sh
-# ------------------------------------------------------------
-run_task() {
-    input_dir="$1"
-    script_path="$2"
-
-    dir=$(cd "$input_dir" && pwd)
-    name=$(basename "$dir")
-    script_base=$(basename "$script_path")
-
-    mkdir -p logs
-    mkdir -p "logs/$name"
-
-    if [[ ! "$script_base" =~ run_setting_([0-9]+)\.py ]]; then
-        echo "[Skip] invalid script name: $script_base"
-        return
-    fi
-
-    i="${BASH_REMATCH[1]}"
-    debug_script="run_debug_${i}.sh"
-    logfile="logs/$name/run_${i}.log"
-
-    echo "================================================"
-    echo "Benchmark folder : $name"
-    echo "Task             : $script_base"
-    echo "Log              : $logfile"
-    echo "================================================"
-
-    if [[ ! -f "$dir/promise.yml" ]]; then
-        echo "[Skip] missing promise.yml in $dir"
-        return
-    fi
-
-    if [[ "$RUN_EXPERIMENTS" == "true" ]]; then
-        if experiment_already_done "$dir"; then
-            echo "[Resume] experiment results already exist in $name"
-        fi
-    fi
-
-    task_start=$(date +%s)
-
-    (
-        cd "$dir"
-        echo "[RUN] python3 $script_base $RUN_EXPERIMENTS $RUN_PLOTTING"
-        python3 "$script_base" "$RUN_EXPERIMENTS" "$RUN_PLOTTING"
-    ) >> "$logfile" 2>&1
-
-    if (( $? != 0 )); then
-        echo "[FAILED] $name / $script_base"
-        return 1
-    fi
-
-    if [[ "$RUN_DEBUG" == "true" ]]; then
-        if [[ -f "$dir/$debug_script" ]]; then
-            (
-                cd "$dir"
-                chmod +x "$debug_script"
-                echo "[RUN] ./$debug_script"
-                "./$debug_script"
-            ) >> "$logfile" 2>&1
-
-            if (( $? != 0 )); then
-                echo "[FAILED] $name / $debug_script"
-                return 1
-            fi
-        else
-            echo "[Skip] missing $debug_script in $name" | tee -a "$logfile"
-        fi
-    fi
-
-    task_end=$(date +%s)
-    elapsed=$((task_end - task_start))
-    h=$((elapsed / 3600))
-    m=$(((elapsed % 3600) / 60))
-    s=$((elapsed % 60))
-
-    echo "[DONE] $name / $script_base (${h}h ${m}m ${s}s)"
-}
-
-export -f run_task
-export -f experiment_already_done
-
-export RUN_EXPERIMENTS
-export RUN_PLOTTING
-export RUN_DEBUG
-export OMP_NUM_THREADS
-export MKL_NUM_THREADS
-export OPENBLAS_NUM_THREADS
-
-# ------------------------------------------------------------
-# Banner
-# ------------------------------------------------------------
-echo "======================================"
-echo "Run experiments : $RUN_EXPERIMENTS"
-echo "Run plotting    : $RUN_PLOTTING"
-echo "Run debug       : $RUN_DEBUG"
-echo "Parallel        : $PARALLEL"
-echo "Jobs            : $JOBS"
-echo "OMP threads     : $OMP_NUM_THREADS"
-echo "MKL threads     : $MKL_NUM_THREADS"
-echo "OPENBLAS thrds  : $OPENBLAS_NUM_THREADS"
-
-if (( ${#TARGET_FOLDERS[@]} == 0 )); then
-    echo "Folders         : auto detect"
-else
-    echo "Folders         : ${TARGET_FOLDERS[*]}"
-fi
-echo "======================================"
-
-# ------------------------------------------------------------
+# -----------------------------
 # Discover valid folders
-# ------------------------------------------------------------
+# -----------------------------
 valid_folders=()
 
 if (( ${#TARGET_FOLDERS[@]} == 0 )); then
@@ -241,6 +112,10 @@ else
             echo "Invalid folder: $folder"
             continue
         fi
+        if [[ ! -f "$folder/promise.yml" ]]; then
+            echo "Skip $folder: missing promise.yml"
+            continue
+        fi
         valid_folders+=("$folder")
     done
 fi
@@ -252,53 +127,185 @@ if (( ${#valid_folders[@]} == 0 )); then
     exit 0
 fi
 
-# ------------------------------------------------------------
-# Build task list: one line = folder + script
-# ------------------------------------------------------------
-TASK_FILE=$(mktemp)
+folder_to_logname() {
+    local dir="$1"
+    dir="${dir#./}"
+    echo "${dir//\//__}"
+}
+
+run_setting_task() {
+    local input_dir="$1"
+    local script_path="$2"
+    local dir name script_base i logfile
+
+    dir=$(cd "$input_dir" && pwd)
+    name=$(folder_to_logname "$input_dir")
+    script_base=$(basename "$script_path")
+
+    mkdir -p "logs/$name"
+
+    if [[ ! "$script_base" =~ run_setting_([0-9]+)\.py ]]; then
+        echo "[Skip] invalid script name: $script_base"
+        return 0
+    fi
+
+    i="${BASH_REMATCH[1]}"
+    logfile="logs/$name/run_${i}.log"
+
+    echo "================================================"
+    echo "Benchmark folder : $input_dir"
+    echo "Task             : $script_base"
+    echo "Log              : $logfile"
+    echo "================================================"
+
+    if [[ "$RUN_EXPERIMENTS" != "true" && "$RUN_PLOTTING" != "true" ]]; then
+        echo "[Skip] setting phase skipped" | tee -a "$logfile"
+        return 0
+    fi
+
+    if ! (
+        cd "$dir"
+        echo "[RUN] python3 $script_base $RUN_EXPERIMENTS $RUN_PLOTTING"
+        python3 "$script_base" "$RUN_EXPERIMENTS" "$RUN_PLOTTING"
+    ) >> "$logfile" 2>&1; then
+        echo "[FAILED] $input_dir / $script_base"
+        return 1
+    fi
+
+    echo "[DONE] $input_dir / $script_base"
+}
+
+run_debug_folder() {
+    local input_dir="$1"
+    local dir name debug_scripts=()
+    local debug_script base i logfile
+
+    dir=$(cd "$input_dir" && pwd)
+    name=$(folder_to_logname "$input_dir")
+
+    mkdir -p "logs/$name"
+
+    shopt -s nullglob
+    debug_scripts=("$dir"/run_debug_*.sh)
+    shopt -u nullglob
+
+    if (( ${#debug_scripts[@]} == 0 )); then
+        echo "[Skip] no debug scripts in $input_dir"
+        return 0
+    fi
+
+    mapfile -t debug_scripts < <(printf "%s\n" "${debug_scripts[@]}" | sort -V)
+
+    echo "------------------------------------------------"
+    echo "Debug folder     : $input_dir"
+    echo "Mode             : folder-level parallel, in-folder sequential"
+    echo "------------------------------------------------"
+
+    for debug_script in "${debug_scripts[@]}"; do
+        base=$(basename "$debug_script")
+
+        if [[ ! "$base" =~ run_debug_([0-9]+)\.sh ]]; then
+            echo "[Skip] invalid debug script name: $base"
+            continue
+        fi
+
+        i="${BASH_REMATCH[1]}"
+        logfile="logs/$name/run_${i}.log"
+
+        echo "[RUN-DEBUG] $input_dir / $base"
+
+        if ! (
+            cd "$dir"
+            chmod +x "$base"
+            echo "[RUN] ./$base"
+            "./$base"
+        ) >> "$logfile" 2>&1; then
+            echo "[FAILED] $input_dir / $base"
+            return 1
+        fi
+
+        echo "[DONE-DEBUG] $input_dir / $base"
+    done
+}
+
+export -f folder_to_logname
+export -f run_setting_task
+export -f run_debug_folder
+
+export RUN_EXPERIMENTS
+export RUN_PLOTTING
+export RUN_DEBUG
+export OMP_NUM_THREADS
+export MKL_NUM_THREADS
+export OPENBLAS_NUM_THREADS
+
+SETTING_TASK_FILE=$(mktemp)
+FOLDER_FILE=$(mktemp)
 
 for dir in "${valid_folders[@]}"; do
-    [[ -f "$dir/promise.yml" ]] || continue
+    printf '%s\n' "$dir" >> "$FOLDER_FILE"
 
     shopt -s nullglob
     scripts=("$dir"/run_setting_*.py)
     shopt -u nullglob
 
-    if (( ${#scripts[@]} == 0 )); then
-        continue
+    if (( ${#scripts[@]} > 0 )); then
+        mapfile -t sorted_scripts < <(printf "%s\n" "${scripts[@]}" | sort -V)
+        for script in "${sorted_scripts[@]}"; do
+            printf '%s\t%s\n' "$dir" "$script" >> "$SETTING_TASK_FILE"
+        done
     fi
-
-    mapfile -t sorted_scripts < <(printf "%s\n" "${scripts[@]}" | sort -V)
-
-    for script in "${sorted_scripts[@]}"; do
-        printf '%s\t%s\n' "$dir" "$script" >> "$TASK_FILE"
-    done
 done
-
-TASK_COUNT=$(wc -l < "$TASK_FILE" | tr -d ' ')
-
-if (( TASK_COUNT == 0 )); then
-    rm -f "$TASK_FILE"
-    echo "No runnable tasks found."
-    exit 0
-fi
-
-echo "Discovered $TASK_COUNT task(s)."
 
 START_TIME=$(date +%s)
 START_HUMAN=$(date '+%Y-%m-%d %H:%M:%S')
 
-# ------------------------------------------------------------
-# Run tasks
-# ------------------------------------------------------------
-if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null; then
-    echo "Running $TASK_COUNT tasks in parallel..."
-    parallel -j "$JOBS" --colsep '\t' --lb run_task {1} {2} :::: "$TASK_FILE"
+echo "======================================"
+echo "Run experiments : $RUN_EXPERIMENTS"
+echo "Run plotting    : $RUN_PLOTTING"
+echo "Run debug       : $RUN_DEBUG"
+echo "Parallel        : $PARALLEL"
+echo "Jobs            : $JOBS"
+echo "======================================"
+
+# -----------------------------
+# Phase 1: run settings
+# -----------------------------
+if [[ "$RUN_EXPERIMENTS" == "true" || "$RUN_PLOTTING" == "true" ]]; then
+    setting_count=$(wc -l < "$SETTING_TASK_FILE" | tr -d ' ')
+    echo "Discovered $setting_count setting task(s)."
+
+    if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null; then
+        echo "Running setting tasks in parallel..."
+        parallel -j "$JOBS" --colsep '\t' --lb run_setting_task {1} {2} :::: "$SETTING_TASK_FILE"
+    else
+        echo "Running setting tasks sequentially..."
+        while IFS=$'\t' read -r dir script; do
+            run_setting_task "$dir" "$script"
+        done < "$SETTING_TASK_FILE"
+    fi
 else
-    echo "Running sequentially..."
-    while IFS=$'\t' read -r dir script; do
-        run_task "$dir" "$script"
-    done < "$TASK_FILE"
+    echo "Setting phase skipped."
+fi
+
+# -----------------------------
+# Phase 2: run debug by folder
+# -----------------------------
+if [[ "$RUN_DEBUG" == "true" ]]; then
+    folder_count=$(wc -l < "$FOLDER_FILE" | tr -d ' ')
+    echo "Discovered $folder_count debug folder(s)."
+
+    if [[ "$PARALLEL" == "true" ]] && command -v parallel >/dev/null; then
+        echo "Running debug folders in parallel, one debug at a time per folder..."
+        parallel -j "$JOBS" --lb run_debug_folder {} :::: "$FOLDER_FILE"
+    else
+        echo "Running debug folders sequentially..."
+        while IFS= read -r dir; do
+            run_debug_folder "$dir"
+        done < "$FOLDER_FILE"
+    fi
+else
+    echo "Debug phase skipped."
 fi
 
 END_TIME=$(date +%s)
@@ -309,7 +316,7 @@ HOURS=$((ELAPSED / 3600))
 MINUTES=$(((ELAPSED % 3600) / 60))
 SECONDS=$((ELAPSED % 60))
 
-rm -f "$TASK_FILE"
+rm -f "$SETTING_TASK_FILE" "$FOLDER_FILE"
 
 echo "======================================"
 echo "All benchmark tasks finished."

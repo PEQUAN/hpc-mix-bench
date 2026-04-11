@@ -11,8 +11,8 @@ df = pd.read_csv("results_bar.csv")
 # Precision mapping
 # ============================
 precision_map = {
-    'c': 'E4M3',
     'w': 'E5M2',
+    'c': 'E4M3',
     'b': 'BF16',
     'p': 'FP16',
     's': 'FP32',
@@ -21,7 +21,7 @@ precision_map = {
 df['PrecisionLabel'] = df['Precision'].map(precision_map)
 
 matrix_sizes = sorted(df['MatrixSize'].unique())
-precisions = ['E4M3', 'E5M2', 'BF16', 'FP16', 'FP32', 'FP64']
+precisions = ['E5M2', 'E4M3', 'BF16', 'FP16', 'FP32', 'FP64']
 
 # ============================
 # Pivot table

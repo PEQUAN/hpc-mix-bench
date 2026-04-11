@@ -62,7 +62,7 @@ double run_test_average(int N) {
 }
 
 int main() {
-    vector<int> sizes = {500};
+    vector<int> sizes = {1000};
 
     ofstream outfile("results.csv");
     outfile << "MatrixSize,Type,ExpBits,SigBits,AvgTime\n";
@@ -77,31 +77,24 @@ int main() {
         vector<int> fixed_sigs = {3, 7};
 
         for (int s : fixed_sigs) {
-            for (int e = 4; e <= 20; e += 2) {
+            for (int e = 3; e <= 11; e += 2) {
                 double avg_time = 0.0;
 
                 if (s == 3) {
-                    if (e == 4) avg_time = run_test_average<floatx<4,3,double>>(N);
-                    else if (e == 6) avg_time = run_test_average<floatx<6,3,double>>(N);
-                    else if (e == 8) avg_time = run_test_average<floatx<8,3,double>>(N);
-                    else if (e == 10) avg_time = run_test_average<floatx<10,3,double>>(N);
-                    else if (e == 12) avg_time = run_test_average<floatx<12,3,double>>(N);
-                    else if (e == 14) avg_time = run_test_average<floatx<14,3,double>>(N);
-                    else if (e == 16) avg_time = run_test_average<floatx<16,3,double>>(N);
-                    else if (e == 18) avg_time = run_test_average<floatx<18,3,double>>(N);
-                    else if (e == 20) avg_time = run_test_average<floatx<20,3,double>>(N);
+                    if (e == 3) avg_time = run_test_average<floatx<3,3,double>>(N);
+                    else if (e == 5) avg_time = run_test_average<floatx<5,3,double>>(N);
+                    else if (e == 7) avg_time = run_test_average<floatx<7,3,double>>(N);
+                    else if (e == 9) avg_time = run_test_average<floatx<9,3,double>>(N);
+                    else if (e == 11) avg_time = run_test_average<floatx<11,3,double>>(N);
                 }
                 else if (s == 7) {
-                    if (e == 4) avg_time = run_test_average<floatx<4,7,double>>(N);
-                    else if (e == 6) avg_time = run_test_average<floatx<6,7,double>>(N);
-                    else if (e == 8) avg_time = run_test_average<floatx<8,7,double>>(N);
-                    else if (e == 10) avg_time = run_test_average<floatx<10,7,double>>(N);
-                    else if (e == 12) avg_time = run_test_average<floatx<12,7,double>>(N);
-                    else if (e == 14) avg_time = run_test_average<floatx<14,7,double>>(N);
-                    else if (e == 16) avg_time = run_test_average<floatx<16,7,double>>(N);
-                    else if (e == 18) avg_time = run_test_average<floatx<18,7,double>>(N);
-                    else if (e == 20) avg_time = run_test_average<floatx<20,7,double>>(N);
+                    if (e == 3) avg_time = run_test_average<floatx<3,7,double>>(N);
+                    else if (e == 5) avg_time = run_test_average<floatx<5,7,double>>(N);
+                    else if (e == 7) avg_time = run_test_average<floatx<7,7,double>>(N);
+                    else if (e == 9) avg_time = run_test_average<floatx<9,7,double>>(N);
+                    else if (e == 11) avg_time = run_test_average<floatx<11,7,double>>(N);
                 }
+
 
                 cout << "Exp sweep: (e=" << e << ", s=" << s
                      << "), AvgTime = " << avg_time << " sec\n";
@@ -110,6 +103,7 @@ int main() {
             }
         }
 
+
         /* ===============================
            Significand sweep
            fixed exponent = {3, 7}
@@ -117,30 +111,64 @@ int main() {
         vector<int> fixed_exps = {3, 7};
 
         for (int e : fixed_exps) {
-            for (int s = 4; s <= 20; s += 2) {
+            for (int s = 3; s <= 53; s += 2) {
                 double avg_time = 0.0;
 
                 if (e == 3) {
-                    if (s == 4) avg_time = run_test_average<floatx<3,4,double>>(N);
-                    else if (s == 6) avg_time = run_test_average<floatx<3,6,double>>(N);
-                    else if (s == 8) avg_time = run_test_average<floatx<3,8,double>>(N);
-                    else if (s == 10) avg_time = run_test_average<floatx<3,10,double>>(N);
-                    else if (s == 12) avg_time = run_test_average<floatx<3,12,double>>(N);
-                    else if (s == 14) avg_time = run_test_average<floatx<3,14,double>>(N);
-                    else if (s == 16) avg_time = run_test_average<floatx<3,16,double>>(N);
-                    else if (s == 18) avg_time = run_test_average<floatx<3,18,double>>(N);
-                    else if (s == 20) avg_time = run_test_average<floatx<3,20,double>>(N);
+                    if (s == 3) avg_time = run_test_average<floatx<3,3,double>>(N);
+                    else if (s == 5) avg_time = run_test_average<floatx<3,5,double>>(N);
+                    else if (s == 7) avg_time = run_test_average<floatx<3,7,double>>(N);
+                    else if (s == 9) avg_time = run_test_average<floatx<3,9,double>>(N);
+                    else if (s == 11) avg_time = run_test_average<floatx<3,11,double>>(N);
+                    else if (s == 13) avg_time = run_test_average<floatx<3,13,double>>(N);
+                    else if (s == 15) avg_time = run_test_average<floatx<3,15,double>>(N);
+                    else if (s == 17) avg_time = run_test_average<floatx<3,17,double>>(N);
+                    else if (s == 19) avg_time = run_test_average<floatx<3,19,double>>(N);
+                    else if (s == 21) avg_time = run_test_average<floatx<3,21,double>>(N);
+                    else if (s == 23) avg_time = run_test_average<floatx<3,23,double>>(N);
+                    else if (s == 25) avg_time = run_test_average<floatx<3,25,double>>(N);
+                    else if (s == 27) avg_time = run_test_average<floatx<3,27,double>>(N);
+                    else if (s == 29) avg_time = run_test_average<floatx<3,29,double>>(N);
+                    else if (s == 31) avg_time = run_test_average<floatx<3,31,double>>(N);
+                    else if (s == 33) avg_time = run_test_average<floatx<3,33,double>>(N);
+                    else if (s == 35) avg_time = run_test_average<floatx<3,35,double>>(N);
+                    else if (s == 37) avg_time = run_test_average<floatx<3,37,double>>(N);
+                    else if (s == 39) avg_time = run_test_average<floatx<3,39,double>>(N);
+                    else if (s == 41) avg_time = run_test_average<floatx<3,41,double>>(N);
+                    else if (s == 43) avg_time = run_test_average<floatx<3,43,double>>(N);
+                    else if (s == 45) avg_time = run_test_average<floatx<3,45,double>>(N);
+                    else if (s == 47) avg_time = run_test_average<floatx<3,47,double>>(N);
+                    else if (s == 49) avg_time = run_test_average<floatx<3,49,double>>(N);
+                    else if (s == 51) avg_time = run_test_average<floatx<3,51,double>>(N);
+                    else if (s == 53) avg_time = run_test_average<floatx<3,53,double>>(N);
                 }
                 else if (e == 7) {
-                    if (s == 4) avg_time = run_test_average<floatx<7,4,double>>(N);
-                    else if (s == 6) avg_time = run_test_average<floatx<7,6,double>>(N);
-                    else if (s == 8) avg_time = run_test_average<floatx<7,8,double>>(N);
-                    else if (s == 10) avg_time = run_test_average<floatx<7,10,double>>(N);
-                    else if (s == 12) avg_time = run_test_average<floatx<7,12,double>>(N);
-                    else if (s == 14) avg_time = run_test_average<floatx<7,14,double>>(N);
-                    else if (s == 16) avg_time = run_test_average<floatx<7,16,double>>(N);
-                    else if (s == 18) avg_time = run_test_average<floatx<7,18,double>>(N);
-                    else if (s == 20) avg_time = run_test_average<floatx<7,20,double>>(N);
+                    if (s == 3) avg_time = run_test_average<floatx<7,3,double>>(N);
+                    else if (s == 5) avg_time = run_test_average<floatx<7,5,double>>(N);
+                    else if (s == 7) avg_time = run_test_average<floatx<7,7,double>>(N);
+                    else if (s == 9) avg_time = run_test_average<floatx<7,9,double>>(N);
+                    else if (s == 11) avg_time = run_test_average<floatx<7,11,double>>(N);
+                    else if (s == 13) avg_time = run_test_average<floatx<7,13,double>>(N);
+                    else if (s == 15) avg_time = run_test_average<floatx<7,15,double>>(N);
+                    else if (s == 17) avg_time = run_test_average<floatx<7,17,double>>(N);
+                    else if (s == 19) avg_time = run_test_average<floatx<7,19,double>>(N);
+                    else if (s == 21) avg_time = run_test_average<floatx<7,21,double>>(N);
+                    else if (s == 23) avg_time = run_test_average<floatx<7,23,double>>(N);
+                    else if (s == 25) avg_time = run_test_average<floatx<7,25,double>>(N);
+                    else if (s == 27) avg_time = run_test_average<floatx<7,27,double>>(N);
+                    else if (s == 29) avg_time = run_test_average<floatx<7,29,double>>(N);
+                    else if (s == 31) avg_time = run_test_average<floatx<7,31,double>>(N);
+                    else if (s == 33) avg_time = run_test_average<floatx<7,33,double>>(N);
+                    else if (s == 35) avg_time = run_test_average<floatx<7,35,double>>(N);
+                    else if (s == 37) avg_time = run_test_average<floatx<7,37,double>>(N);
+                    else if (s == 39) avg_time = run_test_average<floatx<7,39,double>>(N);
+                    else if (s == 41) avg_time = run_test_average<floatx<7,41,double>>(N);
+                    else if (s == 43) avg_time = run_test_average<floatx<7,43,double>>(N);
+                    else if (s == 45) avg_time = run_test_average<floatx<7,45,double>>(N);
+                    else if (s == 47) avg_time = run_test_average<floatx<7,47,double>>(N);
+                    else if (s == 49) avg_time = run_test_average<floatx<7,49,double>>(N);
+                    else if (s == 51) avg_time = run_test_average<floatx<7,51,double>>(N);
+                    else if (s == 53) avg_time = run_test_average<floatx<7,53,double>>(N);
                 }
 
                 cout << "Sig sweep: (e=" << e << ", s=" << s

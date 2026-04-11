@@ -61,7 +61,7 @@ void run_test(const string& name, int N) {
 
 
 int main() {
-    vector<int> sizes = {500, 1000, 2000};
+    vector<int> sizes = {1000, 5000};
 
     for (int N : sizes) {
         cout << "\n=== Matrix size: " << N << " x " << N << " ===\n";

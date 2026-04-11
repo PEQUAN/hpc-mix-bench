@@ -1,0 +1,12 @@
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 1 file and 43 different types[0m
+[37mThe expectation is 1 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+[34mThe final result contains 22x double and 21x float.[0m
+[34mIt tooks 154.89s[0m
+[34m👉 113 compilations (102 failed) for 100.25s[0m
+[34m👉 11 executions   (0 failed) for 41.83s[0m
