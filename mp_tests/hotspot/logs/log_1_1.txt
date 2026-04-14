@@ -7,6 +7,6 @@ check compilers: g++
 [37mb) Check with highest format (Double)[0m
 [37mc) Delta-Debug Single/Double[0m
 [34mThe final result contains 13x double and 18x float.[0m
-[34mIt tooks 97.67s[0m
-[34m👉 60 compilations (52 failed) for 61.37s[0m
-[34m👉 8 executions   (0 failed) for 23.83s[0m
+[34mIt tooks 90.99s[0m
+[34m👉 60 compilations (52 failed) for 59.13s[0m
+[34m👉 8 executions   (0 failed) for 22.33s[0m

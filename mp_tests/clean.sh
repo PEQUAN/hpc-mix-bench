@@ -83,7 +83,7 @@ if op_enabled "d"; then
     echo "Removing debug folders and log.txt..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
-            \( -name "compileErrors" -o -name "prec*" -o -name "logs" \) \
+            \( -name "compileErrors" -o -name "digit*" -o -name "logs" \) \
             -print -exec rm -rf {} +
 
         find "$dir" -maxdepth 1 -type f -name "log.txt" \

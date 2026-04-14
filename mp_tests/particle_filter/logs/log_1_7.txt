@@ -6,3 +6,7 @@ check compilers: g++
 [37ma) Get a reference result with cadna (double)[0m
 [37mb) Check with highest format (Double)[0m
 [37mc) Delta-Debug Single/Double[0m
+[34mThe final result contains 25x double and 18x float.[0m
+[34mIt tooks 166.22s[0m
+[34m👉 123 compilations (103 failed) for 100.69s[0m
+[34m👉 20 executions   (0 failed) for 55.08s[0m

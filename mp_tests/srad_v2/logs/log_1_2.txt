@@ -8,6 +8,6 @@ check compilers: g++
 [37mc) Delta-Debug Single/Double[0m
 [37mThe format float is enough for your expectation[0m
 [34mThe final result contains 11x float.[0m
-[34mIt tooks 163.08s[0m
-[34m👉 3 compilations (0 failed) for 5.78s[0m
-[34m👉 3 executions   (0 failed) for 133.66s[0m
+[34mIt tooks 171.30s[0m
+[34m👉 3 compilations (0 failed) for 5.13s[0m
+[34m👉 3 executions   (0 failed) for 141.19s[0m

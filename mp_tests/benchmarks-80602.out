@@ -47,3 +47,5 @@ Mode             : folder-level parallel, in-folder sequential
 [FAILED] hotspot / run_debug_1.sh
 [FAILED] backprop / run_debug_1.sh
 [FAILED] dense_lu / run_debug_1.sh
+[FAILED] particle_filter / run_debug_1.sh
+[FAILED] srad_v2/ / run_debug_1.sh
