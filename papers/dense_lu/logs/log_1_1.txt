@@ -9,6 +9,6 @@ check compilers: g++
 [37md) Delta-Debug custom(5, 10)/Single[0m
 [37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
 [34mThe final result contains 55x double, 3x float, 1x flx::floatx<5, 10> and 11x flx::floatx<5, 2>.[0m
-[34mIt tooks 362.31s[0m
-[34m👉 312 compilations (286 failed) for 316.27s[0m
-[34m👉 26 executions   (0 failed) for 25.05s[0m
+[34mIt tooks 379.50s[0m
+[34m👉 312 compilations (286 failed) for 333.08s[0m
+[34m👉 26 executions   (0 failed) for 25.74s[0m

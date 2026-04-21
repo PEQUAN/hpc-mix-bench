@@ -1,662 +1,0 @@
-[RUN] ./run_debug_1.sh
-ls: cannot access 'digit_*/': No such file or directory
-[RUN] python3 run_setting_1.py true true
-Running experiments...
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 1 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[34mThe final result contains 11x float.[0m
-[34mIt tooks 219.96s[0m
-[34m👉 3 compilations (0 failed) for 7.23s[0m
-[34m👉 3 executions   (0 failed) for 180.47s[0m
-Results for 1 digits: {'float': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '1']}, Runtime: 219.9751 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 2 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[34mThe final result contains 11x float.[0m
-[34mIt tooks 218.54s[0m
-[34m👉 3 compilations (0 failed) for 6.70s[0m
-[34m👉 3 executions   (0 failed) for 179.76s[0m
-Results for 2 digits: {'float': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '1']}, Runtime: 218.5448 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 3 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[34mThe final result contains 11x float.[0m
-[34mIt tooks 217.63s[0m
-[34m👉 3 compilations (0 failed) for 7.06s[0m
-[34m👉 3 executions   (0 failed) for 178.89s[0m
-Results for 3 digits: {'float': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '1']}, Runtime: 217.6421 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 4 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[34mThe final result contains 11x float.[0m
-[34mIt tooks 217.49s[0m
-[34m👉 3 compilations (0 failed) for 7.03s[0m
-[34m👉 3 executions   (0 failed) for 177.40s[0m
-Results for 4 digits: {'float': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '1']}, Runtime: 217.4935 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 5 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [120.73s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [83.68s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [72.78s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [66.51s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [62.81s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [62.81s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 6x double and 5x float.[0m
-[34mIt tooks 496.79s[0m
-[34m👉 31 compilations (23 failed) for 32.30s[0m
-[34m👉 8 executions   (0 failed) for 394.23s[0m
-Results for 5 digits: {'double': [0, 1, 3, 5, '1', 8], 'float': [2, 4, 6, 7, 9]}, Runtime: 496.8026 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 6 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [107.72s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [76.10s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [67.90s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [58.47s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [54.09s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [54.09s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 6x double and 5x float.[0m
-[34mIt tooks 448.90s[0m
-[34m👉 31 compilations (23 failed) for 29.81s[0m
-[34m👉 8 executions   (0 failed) for 363.74s[0m
-Results for 6 digits: {'double': [0, 1, 3, 5, '1', 8], 'float': [2, 4, 6, 7, 9]}, Runtime: 448.9086 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 7 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [115.18s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [72.70s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [59.09s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👎[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [49.84s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [44.79s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [42.36s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 6 it. [42.36s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 7x double and 4x float.[0m
-[34mIt tooks 441.30s[0m
-[34m👉 32 compilations (23 failed) for 26.08s[0m
-[34m👉 9 executions   (0 failed) for 356.50s[0m
-Results for 7 digits: {'double': [0, 1, 3, 5, 7, '1', 8], 'float': [9, 2, 4, 6]}, Runtime: 441.3251 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 8 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [74.51s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [50.55s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [29.04s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.88s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.94s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [27.22s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [29.50s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.93s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.64s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.64s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 10x double and 1x float.[0m
-[34mIt tooks 370.43s[0m
-[34m👉 32 compilations (22 failed) for 22.62s[0m
-[34m👉 10 executions   (0 failed) for 301.78s[0m
-Results for 8 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'float': [6]}, Runtime: 370.4477 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 9 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [71.36s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.00s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [28.16s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.31s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.10s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [26.38s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [28.77s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.38s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.24s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.24s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 10x double and 1x float.[0m
-[34mIt tooks 360.90s[0m
-[34m👉 32 compilations (22 failed) for 21.97s[0m
-[34m👉 10 executions   (0 failed) for 293.75s[0m
-Results for 9 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'float': [6]}, Runtime: 360.9268 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 10 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [70.04s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [48.60s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [27.99s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.21s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.61s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [26.67s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [28.74s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.49s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.50s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.50s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 10x double and 1x float.[0m
-[34mIt tooks 361.01s[0m
-[34m👉 32 compilations (22 failed) for 22.37s[0m
-[34m👉 10 executions   (0 failed) for 293.38s[0m
-Results for 10 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'float': [6]}, Runtime: 361.0210 seconds
-Precision settings saved to prec_setting_1.json
-Runtimes saved to runtimes1.csv
-Experiments completed and saved.
-Loading data and generating plots...
-Digits: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-Runtimes: [219.9751, 218.5448, 217.6421, 217.4935, 496.8026, 448.9086, 441.3251, 370.4477, 360.9268, 361.021]
-Precision settings heights: {'float': [11, 11, 11, 11, 5, 5, 4, 1, 1, 1], 'double': [0, 0, 0, 0, 6, 6, 7, 10, 10, 10]}
-Using Matplotlib style: seaborn-v0_8
-Plot saved as precision1_with_runtime.jpg
-Plotting completed.
-[RUN] python3 run_setting_1.py true true
-Running experiments...
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 1 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [194.47s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▌                             [95m| 2 it. [134.58s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                            [95m| 3 it. [115.29s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▏                           [95m| 4 it. [105.61s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [97.34s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [97.34s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [175.28s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m███████▊                       [95m| 2 it. [124.00s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
-[95mDelta-Debug iterations:  38%|[34m███████████▋                   [95m| 3 it. [107.75s/it][39m[0m[A[95mWe test C=[4] 👍[39m
-[95mDelta-Debug iterations:  50%|[34m███████████████▌               [95m| 4 it. [102.50s/it][39m[0m[A[95mWe test C=[4, 6] 👍[39m
-[95mDelta-Debug iterations:  62%|[34m███████████████████▍           [95m| 5 it. [100.46s/it][39m[0m[A[95mWe test C=[4, 6, 7] 👎[39m
-[95mDelta-Debug iterations:  75%|[34m████████████████████████        [95m| 6 it. [98.68s/it][39m[0m[A[95mWe test C=[2, 4, 6] 👎[39m
-[95mDelta-Debug iterations:  88%|[34m████████████████████████████    [95m| 7 it. [97.67s/it][39m[0m[A
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 7 it. [97.67s/it][39m[0m[A[95m[39m                      [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 7x float, 2x flx::floatx<5, 10> and 2x flx::floatx<5, 2>.[0m
-[34mIt tooks 1530.65s[0m
-[34m👉 39 compilations (22 failed) for 49.40s[0m
-[34m👉 17 executions   (0 failed) for 1342.50s[0m
-Results for 1 digits: {'float': [0, 1, '1', 3, 5, 8, 9], 'flx::floatx<5, 10>': [2, 7], 'flx::floatx<5, 2>': [4, 6]}, Runtime: 1530.7734 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 2 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [180.67s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▌                             [95m| 2 it. [125.55s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                            [95m| 3 it. [104.72s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [84.09s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [70.35s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [70.35s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [103.73s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 2 it. [72.22s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
-[95mDelta-Debug iterations:  38%|[34m████████████                    [95m| 3 it. [62.77s/it][39m[0m[A[95mWe test C=[4] 👎[39m
-[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 4 it. [58.31s/it][39m[0m[A[95mWe test C=[6] 👍[39m
-[95mDelta-Debug iterations:  62%|[34m████████████████████            [95m| 5 it. [55.60s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m[95mWe test C=[2, 6] 👎[39m
-[95mDelta-Debug iterations:  88%|[34m████████████████████████████    [95m| 7 it. [39.80s/it][39m[0m[A[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [43.21s/it][39m[0m[A
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [43.21s/it][39m[0m[A[95m[39m                   [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 7x float, 3x flx::floatx<5, 10> and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 1098.40s[0m
-[34m👉 39 compilations (22 failed) for 40.70s[0m
-[34m👉 17 executions   (0 failed) for 961.63s[0m
-Results for 2 digits: {'float': [0, 1, '1', 3, 5, 8, 9], 'flx::floatx<5, 10>': [2, 4, 7], 'flx::floatx<5, 2>': [6]}, Runtime: 1098.4188 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 3 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [106.22s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [73.03s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [64.79s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [59.00s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [54.02s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [54.02s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:  12%|[34m████                            [95m| 1 it. [95.51s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 2 it. [67.65s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
-[95mDelta-Debug iterations:  38%|[34m████████████                    [95m| 3 it. [58.69s/it][39m[0m[A[95mWe test C=[4] 👎[39m
-[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 4 it. [54.62s/it][39m[0m[A[95mWe test C=[6] 👍[39m
-[95mDelta-Debug iterations:  62%|[34m████████████████████            [95m| 5 it. [52.60s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m[95mWe test C=[2, 6] 👎[39m
-[95mDelta-Debug iterations:  88%|[34m████████████████████████████    [95m| 7 it. [38.12s/it][39m[0m[A[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [40.85s/it][39m[0m[A
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [40.85s/it][39m[0m[A[95m[39m                   [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 7x float, 3x flx::floatx<5, 10> and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 817.57s[0m
-[34m👉 39 compilations (22 failed) for 28.57s[0m
-[34m👉 17 executions   (0 failed) for 719.62s[0m
-Results for 3 digits: {'float': [0, 1, '1', 3, 5, 8, 9], 'flx::floatx<5, 10>': [2, 4, 7], 'flx::floatx<5, 2>': [6]}, Runtime: 817.5792 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 4 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format float is enough for your expectation[0m
-[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [100.63s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [64.35s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [36.54s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [22.37s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [26.77s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [29.65s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [30.73s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [35.41s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [36.74s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [36.74s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 10x float and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 482.13s[0m
-[34m👉 34 compilations (22 failed) for 24.45s[0m
-[34m👉 12 executions   (0 failed) for 406.80s[0m
-Results for 4 digits: {'float': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'flx::floatx<5, 2>': [6]}, Runtime: 482.1374 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 5 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [71.67s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.37s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [44.05s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [39.84s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [37.61s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [37.61s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:   8%|[34m██▋                             [95m| 1 it. [92.19s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  17%|[34m█████▎                          [95m| 2 it. [57.25s/it][39m[0m[A[95mWe test C=[2] 👎[39m      
-[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 3 it. [50.99s/it][39m[0m[A[95mWe test C=[4] 👎[39m
-[95mDelta-Debug iterations:  33%|[34m██████████▋                     [95m| 4 it. [45.47s/it][39m[0m[A[95mWe test C=[6] 👍[39m
-[95mDelta-Debug iterations:  42%|[34m█████████████▎                  [95m| 5 it. [41.48s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m[95mWe test C=[2, 6] 👎[39m   
-[95mDelta-Debug iterations:  58%|[34m██████████████████▋             [95m| 7 it. [31.68s/it][39m[0m[A[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations:  67%|[34m█████████████████████▎          [95m| 8 it. [33.43s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  75%|[34m████████████████████████        [95m| 9 it. [33.57s/it][39m[0m[A[95mWe test C=[6, 9] 👎[39m
-[95mDelta-Debug iterations:  83%|[34m█████████████████████████▊     [95m| 10 it. [33.39s/it][39m[0m[A[95mWe test C=[2, 6] 👎[39m[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations: 100%|[34m███████████████████████████████[95m| 12 it. [33.39s/it][39m[0m[A[95m[39m                   [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 6x double, 4x float and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 721.01s[0m
-[34m👉 42 compilations (23 failed) for 29.56s[0m
-[34m👉 19 executions   (0 failed) for 612.43s[0m
-Results for 5 digits: {'double': [0, 1, '1', 3, 5, 8], 'float': [9, 2, 4, 7], 'flx::floatx<5, 2>': [6]}, Runtime: 721.0115 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 6 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [72.06s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.51s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [44.38s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [40.35s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [37.94s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [37.94s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:   8%|[34m██▋                             [95m| 1 it. [92.68s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  17%|[34m█████▎                          [95m| 2 it. [57.63s/it][39m[0m[A[95mWe test C=[2] 👎[39m      
-[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 3 it. [50.89s/it][39m[0m[A[95mWe test C=[4] 👎[39m
-[95mDelta-Debug iterations:  33%|[34m██████████▋                     [95m| 4 it. [45.52s/it][39m[0m[A[95mWe test C=[6] 👍[39m
-[95mDelta-Debug iterations:  42%|[34m█████████████▎                  [95m| 5 it. [41.48s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m[95mWe test C=[2, 6] 👎[39m   
-[95mDelta-Debug iterations:  58%|[34m██████████████████▋             [95m| 7 it. [31.71s/it][39m[0m[A[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations:  67%|[34m█████████████████████▎          [95m| 8 it. [33.37s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  75%|[34m████████████████████████        [95m| 9 it. [33.84s/it][39m[0m[A[95mWe test C=[6, 9] 👎[39m
-[95mDelta-Debug iterations:  83%|[34m█████████████████████████▊     [95m| 10 it. [33.63s/it][39m[0m[A[95mWe test C=[2, 6] 👎[39m[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations: 100%|[34m███████████████████████████████[95m| 12 it. [33.63s/it][39m[0m[A[95m[39m                   [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 6x double, 4x float and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 725.72s[0m
-[34m👉 42 compilations (23 failed) for 29.39s[0m
-[34m👉 19 executions   (0 failed) for 616.21s[0m
-Results for 6 digits: {'double': [0, 1, '1', 3, 5, 8], 'float': [9, 2, 4, 7], 'flx::floatx<5, 2>': [6]}, Runtime: 725.7294 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 7 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [71.35s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.67s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [44.08s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👎[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [40.32s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 9] 👍[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [38.13s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [37.36s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 6 it. [37.36s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:  12%|[34m████                            [95m| 1 it. [92.12s/it][39m[0m[A[95mWe test C=[6, 9] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 2 it. [57.20s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
-[95mDelta-Debug iterations:  38%|[34m████████████                    [95m| 3 it. [50.81s/it][39m[0m[A[95mWe test C=[4] 👎[39m
-[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 4 it. [45.55s/it][39m[0m[A[95mWe test C=[6] 👍[39m
-[95mDelta-Debug iterations:  62%|[34m████████████████████            [95m| 5 it. [41.73s/it][39m[0m[A[95mWe test C=[6, 9] 👎[39m[95mWe test C=[2, 6] 👎[39m
-[95mDelta-Debug iterations:  88%|[34m████████████████████████████    [95m| 7 it. [32.07s/it][39m[0m[A[95mWe test C=[4, 6] 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [33.72s/it][39m[0m[A
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [33.72s/it][39m[0m[A[95m[39m                   [95m[39m
-                                                                                [A
-[A
-[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 7x double, 3x float and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 691.03s[0m
-[34m👉 41 compilations (23 failed) for 29.14s[0m
-[34m👉 18 executions   (0 failed) for 583.82s[0m
-Results for 7 digits: {'double': [0, 1, '1', 3, 5, 7, 8], 'float': [9, 2, 4], 'flx::floatx<5, 2>': [6]}, Runtime: 691.0321 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 8 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [70.35s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [48.93s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [28.22s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.34s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.24s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [26.51s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [28.74s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.58s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.72s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.72s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 10> is enough for your expectation[0m
-[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 10x double and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 429.82s[0m
-[34m👉 34 compilations (22 failed) for 24.01s[0m
-[34m👉 12 executions   (0 failed) for 350.06s[0m
-Results for 8 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'flx::floatx<5, 2>': [6]}, Runtime: 429.8300 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 9 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [71.60s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.40s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [28.41s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.45s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.50s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [26.73s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [29.36s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.89s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.90s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.90s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 10> is enough for your expectation[0m
-[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 10x double and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 434.04s[0m
-[34m👉 34 compilations (22 failed) for 23.97s[0m
-[34m👉 12 executions   (0 failed) for 355.20s[0m
-Results for 9 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'flx::floatx<5, 2>': [6]}, Runtime: 434.0458 seconds
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 1 file and 11 different types[0m
-[37mThe expectation is 10 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[37mb) Check with highest format (Double)[0m
-[37mc) Delta-Debug Single/Double[0m
-
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [71.54s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [49.12s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👎[39m     
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [28.28s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4] 👎[39m     
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [17.38s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6] 👍[39m     
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [23.58s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7] 👎[39m  
-[95mDelta-Debug iterations:  15%|[34m████▉                           [95m| 6 it. [27.30s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 9] 👎[39m  
-[95mDelta-Debug iterations:  18%|[34m█████▋                          [95m| 7 it. [29.52s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 6] 👎[39m  
-[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 8 it. [30.94s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[4, 6] 👎[39m  
-[95mDelta-Debug iterations:  23%|[34m███████▍                        [95m| 9 it. [31.97s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 9 it. [31.97s/it][39m[0m[A[95m[39m                     [95m[39m
-                                                                                [A
-[A
-[A[37md) Delta-Debug custom(5, 10)/Single[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 10> is enough for your expectation[0m
-[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
-
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A[95m[39m
-                                                                                [A[95m[39m
-[95mDelta-Debug iterations: |[34m                                        [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
-[34mThe final result contains 10x double and 1x flx::floatx<5, 2>.[0m
-[34mIt tooks 435.40s[0m
-[34m👉 34 compilations (22 failed) for 24.17s[0m
-[34m👉 12 executions   (0 failed) for 357.31s[0m
-Results for 10 digits: {'double': [0, 1, 2, 3, 4, 5, 7, 8, 9, '1'], 'flx::floatx<5, 2>': [6]}, Runtime: 435.4086 seconds
-Precision settings saved to prec_setting_1.json
-Runtimes saved to runtimes1.csv
-Experiments completed and saved.
-Loading data and generating plots...
-Digits: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-Runtimes: [1530.7734, 1098.4188, 817.5792, 482.1374, 721.0115, 725.7294, 691.0321, 429.83, 434.0458, 435.4086]
-Precision settings heights: {'flx::floatx<5, 2>': [2, 1, 1, 1, 1, 1, 1, 1, 1, 1], 'flx::floatx<5, 10>': [2, 3, 3, 0, 0, 0, 0, 0, 0, 0], 'float': [7, 7, 7, 10, 4, 4, 3, 0, 0, 0], 'double': [0, 0, 0, 0, 6, 6, 7, 10, 10, 10]}
-Using Matplotlib style: seaborn-v0_8
-Plot saved as precision1_with_runtime.jpg
-Plotting completed.

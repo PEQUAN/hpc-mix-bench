@@ -1,7 +1,0 @@
-check compilers: g++
-[34m🤘 cadnaPromise 🤘[0m
-[34mUsing the compiler: g++[0m
-[37mWe are working with 5 files and 15 different types[0m
-[37mThe expectation is 10 digits.[0m
-[37ma) Get a reference result with cadna (double)[0m
-[31m('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable output_delta_check: expect 10 and found 7')[0m
