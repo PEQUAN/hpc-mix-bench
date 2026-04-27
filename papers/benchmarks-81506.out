@@ -1,0 +1,20 @@
+Node: node09
+Workdir: /home/xinye/hpc-mix-mlbench/papers
+Python: /home/xinye/.conda/envs/pytorch_env/bin/python
+Python 3.14.3
+JOBS=6
+======================================
+Run experiments : false
+Run plotting    : false
+Run debug       : true
+Parallel        : false
+Jobs            : 6
+======================================
+Setting phase skipped.
+Discovered 6 debug folder(s).
+Running debug folders sequentially...
+------------------------------------------------
+Debug folder     : backprop
+Mode             : folder-level parallel, in-folder sequential
+------------------------------------------------
+[RUN-DEBUG] backprop / run_debug_1.sh

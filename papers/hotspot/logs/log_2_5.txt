@@ -10,6 +10,6 @@ check compilers: g++
 [37mThe format flx::floatx<8, 7> is enough for your expectation[0m
 [37me) Delta-Debug custom(5, 2)/bfloat16[0m
 [34mThe final result contains 13x double, 1x flx::floatx<8, 7> and 17x flx::floatx<5, 2>.[0m
-[34mIt tooks 110.44s[0m
-[34m👉 68 compilations (52 failed) for 57.65s[0m
-[34m👉 16 executions   (0 failed) for 40.92s[0m
+[34mIt tooks 111.64s[0m
+[34m👉 68 compilations (52 failed) for 59.88s[0m
+[34m👉 16 executions   (0 failed) for 39.70s[0m

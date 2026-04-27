@@ -6,3 +6,9 @@ check compilers: g++
 [37ma) Get a reference result with cadna (double)[0m
 [37mb) Check with highest format (Double)[0m
 [37mc) Delta-Debug Single/Double[0m
+[37md) Delta-Debug custom(5, 10)/Single[0m
+[37me) Delta-Debug custom(4, 3)/custom(5, 10)[0m
+[34mThe final result contains 31x double, 1x float, 2x flx::floatx<5, 10> and 13x flx::floatx<4, 3>.[0m
+[34mIt tooks 209.15s[0m
+[34m👉 181 compilations (145 failed) for 187.37s[0m
+[34m👉 36 executions   (0 failed) for 0.86s[0m

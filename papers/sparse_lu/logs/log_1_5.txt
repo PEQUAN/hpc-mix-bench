@@ -10,6 +10,6 @@ check compilers: g++
 [37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
 [37mThe format flx::floatx<5, 2> is enough for your expectation[0m
 [34mThe final result contains 31x double, 5x float and 11x flx::floatx<5, 2>.[0m
-[34mIt tooks 245.25s[0m
-[34m👉 190 compilations (145 failed) for 231.31s[0m
-[34m👉 45 executions   (0 failed) for 1.17s[0m
+[34mIt tooks 246.43s[0m
+[34m👉 190 compilations (145 failed) for 228.33s[0m
+[34m👉 45 executions   (0 failed) for 1.09s[0m

@@ -7,3 +7,9 @@ check compilers: g++
 [37mb) Check with highest format (Double)[0m
 [37mc) Delta-Debug Single/Double[0m
 [37md) Delta-Debug bfloat16/Single[0m
+[37me) Delta-Debug custom(5, 2)/bfloat16[0m
+[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
+[34mThe final result contains 55x double, 4x float and 11x flx::floatx<5, 2>.[0m
+[34mIt tooks 335.56s[0m
+[34m👉 309 compilations (284 failed) for 288.06s[0m
+[34m👉 25 executions   (0 failed) for 19.69s[0m

@@ -13,18 +13,15 @@ cd "$SLURM_SUBMIT_DIR"
 source /software/python/anaconda3/etc/profile.d/conda.sh
 conda activate pytorch_env
 
-# 调试信息
 echo "Node: $(hostname)"
 echo "Workdir: $(pwd)"
 echo "Python: $(which python)"
 python3 --version
 
-# 并行任务数
 export JOBS=6
 echo "JOBS=$JOBS"
 
-# 运行 benchmark
-bash run_benchmarks.sh false false true --parallel \
+bash run_benchmarks.sh false false true \
     sparse_lu \
     dense_lu \
     backprop \
