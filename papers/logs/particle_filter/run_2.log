@@ -56,4 +56,14 @@ mkdir: cannot create directory ‘logs’: File exists
 [95mDelta-Debug iterations:  23%|[34m███████                        [95m| 16 it. [ 6.46s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 40, 41, 42] 👍[39m
 [95mDelta-Debug iterations:  24%|[34m███████▌                       [95m| 17 it. [ 6.33s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 22, 40, 41, 42] 👍[39m
 [95mDelta-Debug iterations:  26%|[34m███████▉                       [95m| 18 it. [ 6.30s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 22, 25, 40, 41, 42] 👎[39m
-[95mDelta-Debug iterations:  27%|[34m████████▍                      [95m| 19 it. [ 5.97s/it][39m[0m[A
+[95mDelta-Debug iterations:  27%|[34m████████▍                      [95m| 19 it. [ 5.97s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 22, 29, 40, 41, 42] 👍[39m
+[95mDelta-Debug iterations:  29%|[34m████████▊                      [95m| 20 it. [ 6.02s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 22, 29, 39, 40, 41, 42] 👎[39m
+[95mDelta-Debug iterations:  30%|[34m█████████▎                     [95m| 21 it. [ 5.93s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 15, 16, 19, 21, 22, 29, 40, 41, 42] 👎[39m
+[95mDelta-Debug iterations:  31%|[34m█████████▋                     [95m| 22 it. [ 6.57s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 13, 14, 16, 19, 21, 22, 25, 29, 40, 41, 42] 👎[39m
+[95mDelta-Debug iterations:  33%|[34m██████████▏                    [95m| 23 it. [ 6.17s/it][39m[0m[A
+[95mDelta-Debug iterations: 100%|[34m███████████████████████████████[95m| 23 it. [ 6.17s/it][39m[0m[A[95m[39m                                                                        [95m[39m
+                                                                                [A
+[A
+[A{'double': {1, 2, 3, 4, 5, 6, 7, 8, 9, 23, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38}, 'float': {24, 17, 18, 20}, 'flx::floatx<8, 7>': {25, 39, 15}, 'flx::floatx<5, 2>': {0, 40, 41, 10, 11, 12, 13, 14, 42, 16, 19, 21, 22, 29}}
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m

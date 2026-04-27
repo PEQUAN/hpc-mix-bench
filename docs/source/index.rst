@@ -4,10 +4,6 @@
 HPC-Mix-Bench: Mixed-Precision Benchmark Suite
 ===============================================
 
-.. image:: ../../workfloat.png
-   :width: 600
-   :align: center
-   :alt: HPC-Mix-Bench Workflow
 
 Welcome to **HPC-Mix-Bench**, a comprehensive benchmark suite for evaluating and optimizing mixed-precision configurations in high-performance computing applications using the PROMISE tool.
 
