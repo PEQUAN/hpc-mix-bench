@@ -79,17 +79,17 @@ Define floating-point format search space (or copy from another benchmark):
 
 .. code-block:: json
 
-   {
-     "formats": [
-       {"name": "E5M2", "bits": 8, "exponent": 5, "mantissa": 2},
-       {"name": "E4M3", "bits": 8, "exponent": 4, "mantissa": 3},
-       {"name": "FP16", "bits": 16, "exponent": 5, "mantissa": 10},
-       {"name": "BF16", "bits": 16, "exponent": 8, "mantissa": 7},
-       {"name": "FP32", "bits": 32, "exponent": 8, "mantissa": 23},
-       {"name": "FP64", "bits": 64, "exponent": 11, "mantissa": 52}
-     ],
-     "search_order": ["E5M2", "FP16", "FP32", "FP64"]
-   }
+    {   
+    "c": [4, 3],
+    "w": [5, 2],
+    "b": [8, 7],
+    "p": [5, 10],
+    "h": [5, 10],
+    "s": [8, 23],
+    "d": [11, 52],
+    "q": [15, 112],
+    "o": [19, 236]
+    }
 
 Step 5: Synchronize Settings
 -----------------------------
