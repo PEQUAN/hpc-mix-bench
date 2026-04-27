@@ -41,8 +41,9 @@ html_theme_options = {
     'titles_only': False
 }
 
-html_logo = '../../workfloat.png'
-html_favicon = '../../workfloat.png'
+# Remove logo configuration
+# html_logo = '../../workfloat.png'
+# html_favicon = '../../workfloat.png'
 
 # -- MathJax configuration ---------------------------------------------------
 mathjax3_config = {

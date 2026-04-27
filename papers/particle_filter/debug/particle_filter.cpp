@@ -69,7 +69,7 @@ namespace particle_filter {
         }
 
         double randn(int* seed, int index) {
-            float u = randu(seed, index);
+            double u = randu(seed, index);
             double v = randu(seed, index);
             double cosine = cos(2 * PI * v);
             double rt = -2 * log(u);
