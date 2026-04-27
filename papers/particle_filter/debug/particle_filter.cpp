@@ -9,7 +9,7 @@
 #include <limits>
 
 namespace particle_filter {
-    flx::floatx<5, 2> PI = 3.1415926535897932;
+    float PI = 3.1415926535897932;
     long M = 99999999;
     int A = 1103515245;
     int C = 12345;
@@ -45,7 +45,7 @@ namespace particle_filter {
             return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / (1000.0 * 1000.0);
         }
 
-        flx::floatx<5, 2> roundDouble(flx::floatx<5, 2> value) {
+        flx::floatx<5, 10> roundDouble(float value) {
             int newValue = static_cast<int>(value);
             return (value - newValue < 0.5) ? newValue : newValue + 1;
         }
@@ -62,16 +62,16 @@ namespace particle_filter {
             }
         }
 
-        flx::floatx<5, 2> randu(int* seed, int index) {
+        float randu(int* seed, int index) {
             int num = A * seed[index] + C;
             seed[index] = num % M;
             return abs(seed[index] / static_cast<float>(M));
         }
 
-        flx::floatx<5, 2> randn(int* seed, int index) {
+        float randn(int* seed, int index) {
             float u = randu(seed, index);
-            flx::floatx<5, 2> v = randu(seed, index);
-            flx::floatx<5, 2> cosine = cos(2 * PI * v);
+            float v = randu(seed, index);
+            float cosine = cos(2 * PI * v);
             float rt = -2 * log(u);
             return sqrt(rt) * cosine;
         }
@@ -183,7 +183,7 @@ namespace particle_filter {
         }
 
         flx::floatx<5, 2> calcLikelihoodSum(int* I, int* ind, int numOnes) {
-            float likelihoodSum = 0.0;
+            flx::floatx<5, 10> likelihoodSum = 0.0;
             double temp = 2.0;
             for (int y = 0; y < numOnes; ++y) {
                 likelihoodSum += (pow(static_cast<double>(I[ind[y]] - 100), temp) - 
@@ -192,7 +192,7 @@ namespace particle_filter {
             return likelihoodSum;
         }
 
-        int findIndex(double* CDF, int lengthCDF, flx::floatx<5, 2> value) {
+        int findIndex(double* CDF, int lengthCDF, float value) {
             for (int x = 0; x < lengthCDF; ++x) {
                 if (CDF[x] >= value) {
                     return x;
@@ -322,7 +322,7 @@ namespace particle_filter {
                 auto exponential = get_time();
                 std::cout << "TIME TO GET EXP TOOK: " << elapsed_time(likelihood_time, exponential) << "\n";
 
-                float sumWeights = 0.0;
+                double sumWeights = 0.0;
                 for (int x = 0; x < Nparticles; ++x) {
                     sumWeights += weights[x];
                 }
@@ -359,7 +359,7 @@ namespace particle_filter {
 
                 flx::floatx<5, 2> u1 = (1.0 / Nparticles) * randu(seed, 0);
                 for (int x = 0; x < Nparticles; ++x) {
-                    u[x] = u1 + x / static_cast<flx::floatx<5, 2>>(Nparticles);
+                    u[x] = u1 + x / static_cast<float>(Nparticles);
                 }
                 auto u_time = get_time();
                 std::cout << "TIME TO CALC U TOOK: " << elapsed_time(cum_sum, u_time) << "\n";

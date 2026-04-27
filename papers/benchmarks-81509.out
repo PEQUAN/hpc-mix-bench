@@ -43,3 +43,4 @@ Debug folder     : srad_v2/
 Mode             : folder-level parallel, in-folder sequential
 ------------------------------------------------
 [RUN-DEBUG] srad_v2/ / run_debug_1.sh
+[FAILED] backprop / run_debug_1.sh
