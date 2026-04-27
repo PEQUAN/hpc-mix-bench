@@ -168,5 +168,5 @@ Next Steps
 ==========
 
 * Learn about benchmark results in :doc:`benchmark_results`
-* Explore Rodinia benchmarks in detail: :doc:`rodinia_benchmarks`
-* Understand LU factorization results: :doc:`lu_factorization`
+* Explore the API reference: :doc:`api_reference`
+* View all benchmarks on GitHub: `mp_tests/ <https://github.com/PEQUAN/hpc-mix-bench/tree/main/mp_tests>`_

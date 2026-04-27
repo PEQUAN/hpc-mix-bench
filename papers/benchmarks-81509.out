@@ -47,3 +47,5 @@ Mode             : folder-level parallel, in-folder sequential
 [FAILED] hotspot / run_debug_1.sh
 [FAILED] sparse_lu / run_debug_1.sh
 [FAILED] dense_lu / run_debug_1.sh
+[DONE-DEBUG] particle_filter / run_debug_1.sh
+[RUN-DEBUG] particle_filter / run_debug_2.sh
