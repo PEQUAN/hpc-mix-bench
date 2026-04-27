@@ -7,3 +7,4 @@ check compilers: g++
 [37mb) Check with highest format (Double)[0m
 [37mc) Delta-Debug Single/Double[0m
 [37md) Delta-Debug custom(5, 10)/Single[0m
+[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m

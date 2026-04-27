@@ -194,7 +194,7 @@ bool lu_factorize_core(double* A, int* piv, int n) {
         }
 
         // Eliminate below diagonal
-        flx::floatx<5, 10> akk = M(A, k, k, n);
+        float akk = M(A, k, k, n);
         for (int i = k + 1; i < n; ++i) {
             M(A, i, k, n) /= akk;                            // multiplier → L
             float lik = M(A, i, k, n);

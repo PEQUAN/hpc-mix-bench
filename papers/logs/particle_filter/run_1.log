@@ -103,4 +103,17 @@ mv: cannot overwrite 'digit1_1/debug': File exists
 [95mDelta-Debug iterations:  43%|[34m█████████████▏                 [95m| 37 it. [ 2.67s/it][39m[0m[A[95mWe test C=[10, 11, 12, 21, 22, 24, 25, 40] 👍[39m
 [95mDelta-Debug iterations:  44%|[34m█████████████▌                 [95m| 38 it. [ 3.18s/it][39m[0m[A[95mWe test C=[10, 11, 12, 21, 22, 24, 25, 40, 41] 👍[39m
 [95mDelta-Debug iterations:  45%|[34m█████████████▉                 [95m| 39 it. [ 3.63s/it][39m[0m[A[95mWe test C=[10, 11, 12, 21, 22, 24, 25, 40, 41, 42] 👎[39m
-[95mDelta-Debug iterations:  46%|[34m██████████████▎                [95m| 40 it. [ 4.00s/it][39m[0m[A
+[95mDelta-Debug iterations:  46%|[34m██████████████▎                [95m| 40 it. [ 4.00s/it][39m[0m[A[95mWe test C=[0, 10, 11, 12, 21, 22, 24, 25, 40, 41] 👎[39m 
+[95mDelta-Debug iterations:  47%|[34m██████████████▌                [95m| 41 it. [ 4.46s/it][39m[0m[A[95mWe test C=[10, 11, 12, 13, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  48%|[34m██████████████▉                [95m| 42 it. [ 5.04s/it][39m[0m[A[95mWe test C=[10, 11, 12, 14, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  49%|[34m███████████████▎               [95m| 43 it. [ 5.24s/it][39m[0m[A[95mWe test C=[10, 11, 12, 15, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  51%|[34m███████████████▋               [95m| 44 it. [ 5.52s/it][39m[0m[A[95mWe test C=[10, 11, 12, 16, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  52%|[34m████████████████               [95m| 45 it. [ 5.45s/it][39m[0m[A[95mCompilation failed 👎[39m                                [95mCompilation failed 👎[39m[95mWe test C=[10, 11, 12, 18, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  53%|[34m████████████████▍              [95m| 46 it. [ 5.85s/it][39m[0m[A[95mWe test C=[10, 11, 12, 19, 21, 22, 24, 25, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  54%|[34m████████████████▋              [95m| 47 it. [ 5.80s/it][39m[0m[A[95mCompilation failed 👎[39m                                [95mCompilation failed 👎[39m[95mWe test C=[10, 11, 12, 21, 22, 24, 25, 29, 40, 41] 👎[39m
+[95mDelta-Debug iterations:  55%|[34m█████████████████              [95m| 48 it. [ 6.69s/it][39m[0m[A
+[95mDelta-Debug iterations: 100%|[34m███████████████████████████████[95m| 48 it. [ 6.69s/it][39m[0m[A[95m[39m                                                     [95m[39m
+                                                                                [A
+[A
+[A
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m

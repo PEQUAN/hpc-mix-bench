@@ -16,4 +16,5 @@ mkdir: cannot create directory ‘logs’: File exists
                                                                                 [A
 [A
 [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
+[95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [140.71s/it][39m[0m[A
