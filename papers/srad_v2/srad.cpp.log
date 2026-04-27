@@ -3,3 +3,8 @@
 04/27 23:01:46: We are working with 1 file and 11 different types
 04/27 23:01:46: The expectation is 1 digits.
 04/27 23:01:46: a) Get a reference result with cadna (double)
+04/27 23:02:57: b) Check with highest format (Double)
+04/27 23:03:46: c) Delta-Debug Single/Double
+04/27 23:04:30: The format float is enough for your expectation
+04/27 23:04:30: d) Delta-Debug custom(5, 10)/Single
+04/27 23:11:26: e) Delta-Debug custom(5, 2)/custom(5, 10)

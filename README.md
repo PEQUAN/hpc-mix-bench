@@ -11,7 +11,7 @@ see [cadnaPromise](cadnaPromise/) in detail.
 To add the code for benchmarking, add a project folder inside directory ``mp_tests`` including data aa well as executable code, and properly configured file ``promise.yml`` as well as floating point type format ``fp.json``. 
 
 
-To set up the results and plots, one can go the the folder ``run_setting``, and cutomized the plots and settings for the files  ``run_setting_{k}_py`` (you can copy multiple files there and will all be run). Once completed, go the folder  ``mp_tests``, and run the ``sync_run_setting.sh`` in ``mp_tests`` directory, then the ``run_setting_{k}_py`` in ``run_setting`` will be broadcasted to each subfolder. 
+To set up the results and plots, one can go the the folder ``run_setting``, and cutomized the plots and settings for the files  ``run_setting_{k}_py`` (you can copy multiple files there and will all be run). Once completed, copy the folder  ``mp_tests`` to ``my_tests`` and select your benchmark tests. Then go to the folder run the ``sync_run_setting.sh`` in ``my_tests`` directory, then the ``run_setting_{k}_py`` in ``run_setting`` will be broadcasted to each subfolder. 
 The script ``sync_run_setting.sh`` is useful for automating the synchronization of experiment or run settings files across multiple folders for benchmarking, the usage is below:
 
 ```bash
@@ -154,25 +154,26 @@ python json_counts_sum.py
 
 | 🖥️ **Command** | 📘 **Description** |
 |:----------------|:------------------|
-| `./run_benchmarks.sh` | 🧪 Run **experiments + plots** **sequential** in all valid folders *(default)* |
-| `./run_benchmarks.sh 1 0` | ⚙️ Run **only experiments** (skip plots) in all folders |
-| `./run_benchmarks.sh 0 1` | 📊 Run **only plots** (uses saved data) in all folders |
-| `./run_benchmarks.sh 1 1 setA setB` | 🎯 **Sequential:** run **both** in only `setA` and `setB` |
-| `./run_benchmarks.sh n y setA` | 🧩 Skip experiments, **plot only** in `setA` *(short form)* |
-| `./run_benchmarks.sh 0 1 --parallel` | ⚡ **Parallel:** runs **plots only** in all folders. |
-| `./run_benchmarks.sh 1 0 --parallel` | ⚡ **Parallel:** runs **experiments only** in all folders. |
-| `./run_benchmarks.sh 1 1 --parallel` | ⚡ **Parallel:** runs **experiments and plots** in all folders. |
-| `./run_benchmarks.sh 1 1 setA setB --parallel` | 🔀 **Parallel:** runs **experiments + plots** only in `setA` and `setB`. |
-
-
+| `./run_benchmarks.sh` | 🧪 Run **experiments + plots** (no debug), **sequential**, all folders *(default)* |
+| `./run_benchmarks.sh 1 0` | ⚙️ Run **only experiments** |
+| `./run_benchmarks.sh 0 1` | 📊 Run **only plots** (uses saved data) |
+| `./run_benchmarks.sh 1 1 1` | 🐞 Run **experiments + plots + debug scripts** |
+| `./run_benchmarks.sh 1 1 setA setB` | 🎯 Sequential on selected folders |
+| `./run_benchmarks.sh n y setA` | 📊 Plot only in `setA` *(short form)* |
+| `./run_benchmarks.sh 0 1 --parallel` | ⚡ Parallel (setting-level) plots |
+| `./run_benchmarks.sh 1 0 --parallel` | ⚡ Parallel experiments |
+| `./run_benchmarks.sh 1 1 --parallel` | ⚡ Parallel experiments + plots |
+| `./run_benchmarks.sh 1 1 setA setB --parallel` | 🔀 Parallel on selected folders |
+| `./run_benchmarks.sh 1 1 --parallel --jobs 4` | ⚡ Parallel with 4 workers |
 
 
 > 💡 **Tip:**  
-> - Arguments follow the pattern:  
->   `./run_benchmarks.sh [run_experiments] [run_plots] [optional_folder_names...]`  
-> - Accepted values:  
->   `1 / true / y` = yes | `0 / false / n` = no
-
+> - Usage:  
+>   `./run_benchmarks.sh <run_exp> <run_plot> <run_debug> [folders...] [--parallel] [--jobs N]`  
+> - Boolean arguments accept:  
+>   `1 / 0`, `true / false`, `yes / no` (case-insensitive)  
+> - If no folders are specified, all valid benchmark folders are automatically discovered.  
+> - `--parallel` enables task-level parallelism; `--jobs N` controls the number of workers.  
 
 
 
