@@ -4,7 +4,6 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=64G
-#SBATCH --gpus=a100_3g.40gb:1
 #SBATCH --time=72:00:00
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
@@ -17,16 +16,13 @@ conda activate pytorch_env
 echo "Node: $(hostname)"
 echo "Workdir: $(pwd)"
 echo "Python: $(which python)"
-python --version
-echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
-nvidia-smi -L
+python3 --version
 
-export JOBS=1
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
+export JOBS=6
+echo "JOBS=$JOBS"
 
-bash run_benchmarks.sh true true false --parallel \
+
+bash run_benchmarks.sh true true false --parallel\
     sparse_lu \
     dense_lu \
     backprop \

@@ -3,7 +3,7 @@
 #SBATCH --partition=convergence
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 #SBATCH --time=72:00:00
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
@@ -21,7 +21,7 @@ python3 --version
 export JOBS=6
 echo "JOBS=$JOBS"
 
-bash run_benchmarks.sh false false true \
+bash run_benchmarks.sh false false true --parallel\
     sparse_lu \
     dense_lu \
     backprop \

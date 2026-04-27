@@ -1,16 +1,14 @@
-Node: node08
+Node: node09
 Workdir: /home/xinye/hpc-mix-mlbench/papers
 Python: /home/xinye/.conda/envs/pytorch_env/bin/python
 Python 3.14.3
-CUDA_VISIBLE_DEVICES=0
-GPU 0: NVIDIA A100 80GB PCIe (UUID: GPU-fe80cceb-5ff2-e822-754f-cedc88c64f2d)
-  MIG 3g.40gb     Device  0: (UUID: MIG-47486d6b-84a8-5306-926f-d0eca7dd4a3a)
+JOBS=6
 ======================================
 Run experiments : true
 Run plotting    : true
 Run debug       : false
 Parallel        : true
-Jobs            : 1
+Jobs            : 6
 ======================================
 Discovered 24 setting task(s).
 Running setting tasks in parallel...
@@ -19,142 +17,142 @@ Benchmark folder : backprop
 Task             : run_setting_1.py
 Log              : logs/backprop/run_1.log
 ================================================
-[FAILED] backprop / run_setting_1.py
 ================================================
 Benchmark folder : backprop
 Task             : run_setting_2.py
 Log              : logs/backprop/run_2.log
 ================================================
-[FAILED] backprop / run_setting_2.py
 ================================================
 Benchmark folder : backprop
 Task             : run_setting_3.py
 Log              : logs/backprop/run_3.log
 ================================================
-[FAILED] backprop / run_setting_3.py
 ================================================
 Benchmark folder : backprop
 Task             : run_setting_4.py
 Log              : logs/backprop/run_4.log
 ================================================
-[FAILED] backprop / run_setting_4.py
 ================================================
 Benchmark folder : dense_lu
 Task             : run_setting_1.py
 Log              : logs/dense_lu/run_1.log
 ================================================
-[FAILED] dense_lu / run_setting_1.py
 ================================================
 Benchmark folder : dense_lu
 Task             : run_setting_2.py
 Log              : logs/dense_lu/run_2.log
 ================================================
 [FAILED] dense_lu / run_setting_2.py
+[FAILED] backprop / run_setting_1.py
+[FAILED] backprop / run_setting_2.py
+[FAILED] backprop / run_setting_3.py
+[FAILED] backprop / run_setting_4.py
+[FAILED] dense_lu / run_setting_1.py
 ================================================
 Benchmark folder : dense_lu
 Task             : run_setting_3.py
 Log              : logs/dense_lu/run_3.log
 ================================================
-[FAILED] dense_lu / run_setting_3.py
-================================================
-Benchmark folder : dense_lu
-Task             : run_setting_4.py
-Log              : logs/dense_lu/run_4.log
-================================================
-[FAILED] dense_lu / run_setting_4.py
 ================================================
 Benchmark folder : hotspot
 Task             : run_setting_1.py
 Log              : logs/hotspot/run_1.log
 ================================================
-[FAILED] hotspot / run_setting_1.py
+================================================
+Benchmark folder : dense_lu
+Task             : run_setting_4.py
+Log              : logs/dense_lu/run_4.log
+================================================
 ================================================
 Benchmark folder : hotspot
 Task             : run_setting_2.py
 Log              : logs/hotspot/run_2.log
 ================================================
-[FAILED] hotspot / run_setting_2.py
 ================================================
 Benchmark folder : hotspot
 Task             : run_setting_3.py
 Log              : logs/hotspot/run_3.log
 ================================================
-[FAILED] hotspot / run_setting_3.py
 ================================================
 Benchmark folder : hotspot
 Task             : run_setting_4.py
 Log              : logs/hotspot/run_4.log
 ================================================
-[FAILED] hotspot / run_setting_4.py
+[FAILED] dense_lu / run_setting_3.py
 ================================================
 Benchmark folder : particle_filter
 Task             : run_setting_1.py
 Log              : logs/particle_filter/run_1.log
 ================================================
-[FAILED] particle_filter / run_setting_1.py
+[FAILED] hotspot / run_setting_4.py
 ================================================
 Benchmark folder : particle_filter
 Task             : run_setting_2.py
 Log              : logs/particle_filter/run_2.log
 ================================================
-[FAILED] particle_filter / run_setting_2.py
+[FAILED] dense_lu / run_setting_4.py
 ================================================
 Benchmark folder : particle_filter
 Task             : run_setting_3.py
 Log              : logs/particle_filter/run_3.log
 ================================================
-[FAILED] particle_filter / run_setting_3.py
+[FAILED] hotspot / run_setting_2.py
 ================================================
 Benchmark folder : particle_filter
 Task             : run_setting_4.py
 Log              : logs/particle_filter/run_4.log
 ================================================
-[FAILED] particle_filter / run_setting_4.py
+[FAILED] hotspot / run_setting_1.py
 ================================================
 Benchmark folder : sparse_lu
 Task             : run_setting_1.py
 Log              : logs/sparse_lu/run_1.log
 ================================================
-[FAILED] sparse_lu / run_setting_1.py
+[FAILED] hotspot / run_setting_3.py
 ================================================
 Benchmark folder : sparse_lu
 Task             : run_setting_2.py
 Log              : logs/sparse_lu/run_2.log
 ================================================
-[FAILED] sparse_lu / run_setting_2.py
+[FAILED] particle_filter / run_setting_1.py
 ================================================
 Benchmark folder : sparse_lu
 Task             : run_setting_3.py
 Log              : logs/sparse_lu/run_3.log
 ================================================
-[FAILED] sparse_lu / run_setting_3.py
+[FAILED] particle_filter / run_setting_2.py
 ================================================
 Benchmark folder : sparse_lu
 Task             : run_setting_4.py
 Log              : logs/sparse_lu/run_4.log
 ================================================
-[FAILED] sparse_lu / run_setting_4.py
+[FAILED] particle_filter / run_setting_3.py
 ================================================
 Benchmark folder : srad_v2
 Task             : run_setting_1.py
 Log              : logs/srad_v2/run_1.log
 ================================================
-[FAILED] srad_v2 / run_setting_1.py
+[FAILED] sparse_lu / run_setting_1.py
+[FAILED] particle_filter / run_setting_4.py
 ================================================
 Benchmark folder : srad_v2
 Task             : run_setting_2.py
 Log              : logs/srad_v2/run_2.log
 ================================================
-[FAILED] srad_v2 / run_setting_2.py
 ================================================
 Benchmark folder : srad_v2
 Task             : run_setting_3.py
 Log              : logs/srad_v2/run_3.log
 ================================================
-[FAILED] srad_v2 / run_setting_3.py
+[FAILED] sparse_lu / run_setting_2.py
 ================================================
 Benchmark folder : srad_v2
 Task             : run_setting_4.py
 Log              : logs/srad_v2/run_4.log
 ================================================
+[FAILED] sparse_lu / run_setting_4.py
+[FAILED] sparse_lu / run_setting_3.py
+[FAILED] srad_v2 / run_setting_3.py
+[FAILED] srad_v2 / run_setting_1.py
 [FAILED] srad_v2 / run_setting_4.py
+[FAILED] srad_v2 / run_setting_2.py
