@@ -149,4 +149,7 @@ mv: cannot overwrite 'digit1_4/debug': File exists
                                                                                 [A
 [A
 [A
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
+[95mDelta-Debug iterations:   8%|[34m██▋                             [95m| 1 it. [88.81s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m
+[95mDelta-Debug iterations:  17%|[34m█████▎                          [95m| 2 it. [55.16s/it][39m[0m[A[95mWe test C=[2] 👎[39m      
+[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 3 it. [48.87s/it][39m[0m[A

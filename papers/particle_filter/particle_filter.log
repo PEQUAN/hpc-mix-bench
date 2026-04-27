@@ -5,3 +5,4 @@
 04/28 00:13:40: a) Get a reference result with cadna (double)
 04/28 00:13:56: b) Check with highest format (Double)
 04/28 00:13:59: c) Delta-Debug Single/Double
+04/28 00:15:39: d) Delta-Debug bfloat16/Single
