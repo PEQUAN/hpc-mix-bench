@@ -3,3 +3,5 @@
 04/27 23:26:00: We are working with 1 file and 47 different types
 04/27 23:26:00: The expectation is 7 digits.
 04/27 23:26:00: a) Get a reference result with cadna (double)
+04/27 23:26:06: b) Check with highest format (Double)
+04/27 23:26:08: c) Delta-Debug Single/Double

@@ -197,7 +197,7 @@ bool lu_factorize_core(double* A, int* piv, int n) {
         float akk = M(A, k, k, n);
         for (int i = k + 1; i < n; ++i) {
             M(A, i, k, n) /= akk;                            // multiplier → L
-            float lik = M(A, i, k, n);
+            double lik = M(A, i, k, n);
             for (int j = k + 1; j < n; ++j)
                 M(A, i, j, n) -= lik * M(A, k, j, n);       // Schur complement
         }
