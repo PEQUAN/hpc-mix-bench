@@ -44,3 +44,6 @@ Mode             : folder-level parallel, in-folder sequential
 ------------------------------------------------
 [RUN-DEBUG] srad_v2/ / run_debug_1.sh
 [FAILED] backprop / run_debug_1.sh
+[FAILED] hotspot / run_debug_1.sh
+[FAILED] sparse_lu / run_debug_1.sh
+[FAILED] dense_lu / run_debug_1.sh

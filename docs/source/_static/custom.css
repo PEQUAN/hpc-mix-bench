@@ -1,0 +1,101 @@
+/* Custom CSS for HPC-Mix-Bench documentation */
+
+/* Improve code block readability */
+.highlight {
+    background-color: #f8f8f8;
+    border: 1px solid #e1e4e5;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Better table styling */
+table.docutils {
+    border-collapse: collapse;
+    border: 2px solid #e1e4e5;
+    margin-bottom: 20px;
+}
+
+table.docutils th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #e1e4e5;
+}
+
+table.docutils td {
+    padding: 8px;
+    border: 1px solid #e1e4e5;
+}
+
+/* Image captions */
+.figure {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.figure img {
+    border: 1px solid #e1e4e5;
+    border-radius: 4px;
+    max-width: 100%;
+}
+
+/* Math formula styling */
+.math {
+    font-size: 110%;
+    margin: 10px 0;
+}
+
+/* Admonition boxes */
+.admonition {
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.admonition.note {
+    background-color: #e7f3fe;
+    border-left: 4px solid #2196F3;
+}
+
+.admonition.warning {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+}
+
+.admonition.tip {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+/* Improve link visibility */
+a.reference {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+a.reference:hover {
+    color: #3091d1;
+    text-decoration: underline;
+}
+
+/* Section headers */
+h1, h2, h3, h4 {
+    color: #2c3e50;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+/* Sidebar improvements */
+.wy-side-nav-search {
+    background-color: #2c3e50;
+}
+
+.wy-side-nav-search input[type="text"] {
+    border-radius: 4px;
+}
+
+/* Footer */
+.rst-footer-buttons {
+    margin-top: 30px;
+}
