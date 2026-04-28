@@ -126,7 +126,7 @@ void compute_tran_temp(double* result, int num_iterations,
     flx::floatx<5, 2> Rz = t_chip / (K_SI * grid_height * grid_width);
 
     flx::floatx<5, 2> max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
-    flx::floatx<5, 2> step = PRECISION / max_slope / 1000.0;
+    float step = PRECISION / max_slope / 1000.0;
 
     flx::floatx<5, 2> Rx_1 = 1.0 / Rx;
     flx::floatx<5, 2> Ry_1 = 1.0 / Ry;

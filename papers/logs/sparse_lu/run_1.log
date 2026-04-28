@@ -6,3 +6,5 @@
 [RUN] promise --precs=wpsd --nbDigits=3
 [FAILED] promise nbDigits=3, see logs/log_1_3.txt
 [RUN] promise --precs=wpsd --nbDigits=4
+[FAILED] promise nbDigits=4, see logs/log_1_4.txt
+[RUN] promise --precs=wpsd --nbDigits=5

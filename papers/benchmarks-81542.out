@@ -43,3 +43,21 @@ Benchmark folder : backprop
 Task             : run_setting_4.py
 Log              : logs/backprop/run_4.log
 ================================================
+[DONE] backprop / run_setting_4.py
+================================================
+Benchmark folder : dense_lu
+Task             : run_setting_3.py
+Log              : logs/dense_lu/run_3.log
+================================================
+[DONE] backprop / run_setting_2.py
+================================================
+Benchmark folder : dense_lu
+Task             : run_setting_4.py
+Log              : logs/dense_lu/run_4.log
+================================================
+[DONE] backprop / run_setting_3.py
+================================================
+Benchmark folder : hotspot
+Task             : run_setting_1.py
+Log              : logs/hotspot/run_1.log
+================================================

@@ -26,4 +26,6 @@ check compilers: g++
 
 [95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
 [95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [147.61s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m███████▊                       [95m| 2 it. [101.32s/it][39m[0m[A
+[95mDelta-Debug iterations:  25%|[34m███████▊                       [95m| 2 it. [101.32s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
+[95mDelta-Debug iterations:  38%|[34m████████████                    [95m| 3 it. [85.99s/it][39m[0m[A[95mWe test C=[4] 👍[39m
+[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 4 it. [79.10s/it][39m[0m[A

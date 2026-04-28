@@ -219,7 +219,7 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
      #pragma omp parallel for reduction(+:errsum) num_threads(NUM_THREAD)
      for (int j = 1; j <= nj; j++) {
         flx::floatx<5, 10> o = output[j];
-        flx::floatx<5, 10> t = target[j];
+        float t = target[j];
          delta[j] = o * (1.0f - o) * (t - o);
          errsum += ABS(delta[j]);
      }

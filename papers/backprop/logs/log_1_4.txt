@@ -34,4 +34,14 @@ check compilers: g++
 [95mDelta-Debug iterations:   6%|[34m██                              [95m| 1 it. [ 6.36s/it][39m[0m[A[95mWe test C=[6, 7, 8] 👍[39m
 [95mDelta-Debug iterations:  12%|[34m████                            [95m| 2 it. [ 5.02s/it][39m[0m[A[95mWe test C=[0, 1, 3, 6, 7, 8] 👎[39m[95mWe test C=[0, 6, 7, 8] 👎[39m      
 [95mDelta-Debug iterations:  25%|[34m████████                        [95m| 4 it. [ 3.21s/it][39m[0m[A[95mWe test C=[1, 3, 6, 7, 8] 👎[39m
-[95mDelta-Debug iterations:  31%|[34m██████████                      [95m| 5 it. [ 3.41s/it][39m[0m[A[95mWe test C=[0, 6, 7, 8] 👎[39m   
+[95mDelta-Debug iterations:  31%|[34m██████████                      [95m| 5 it. [ 3.41s/it][39m[0m[A[95mWe test C=[0, 6, 7, 8] 👎[39m   [95mWe test C=[1, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  44%|[34m██████████████                  [95m| 7 it. [ 2.84s/it][39m[0m[A[95mWe test C=[3, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 8 it. [ 2.92s/it][39m[0m[A
+[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 8 it. [ 2.92s/it][39m[0m[A[95m[39m                         [95m[39m
+                                                                                [A
+[A
+[A[34mThe final result contains 6x double, 3x float, 3x flx::floatx<5, 10> and 3x flx::floatx<5, 2>.[0m
+[34mIt tooks 196.92s[0m
+[34m👉 56 compilations (36 failed) for 187.26s[0m
+[34m👉 20 executions   (0 failed) for 4.85s[0m
+{'double': {'6', '5', '2', '1', '3', '4'}, 'float': {2, 4, 5}, 'flx::floatx<5, 10>': {0, 1, 3}, 'flx::floatx<5, 2>': {8, 6, 7}}

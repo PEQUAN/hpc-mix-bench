@@ -1,0 +1,23 @@
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 5 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0] 👍[39m     
+[95mDelta-Debug iterations:   2%|[34m▌                               [95m| 1 it. [24.61s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0, 2, 3] 👍[39m
+[95mDelta-Debug iterations:   3%|[34m█                               [95m| 2 it. [16.31s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[0, 2, 3, 5, 6] 👍[39m
+[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 3 it. [11.58s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0, 2, 3, 5, 6, 7] 👍[39m
+[95mDelta-Debug iterations:   7%|[34m██▏                             [95m| 4 it. [14.76s/it][39m[0m[A[95mCompilation failed 👎[39m          [95mCompilation failed 👎[39m[95mWe test C=[0, 2, 3, 5, 6, 7, 8] 👍[39m
+[95mDelta-Debug iterations:   8%|[34m██▋                             [95m| 5 it. [11.73s/it][39m[0m[A[95mCompilation failed 👎[39m             [95mCompilation failed 👎[39m[95mWe test C=[0, 1, 2, 3, 5, 6, 7, 8] 👍[39m
+[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 6 it. [10.26s/it][39m[0m[A[95mCompilation failed 👎[39m                [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0, 1, 2, 3, 4, 5, 6, 7, 8] 👍[39m
+[95mDelta-Debug iterations:  12%|[34m███▊                            [95m| 7 it. [10.88s/it][39m[0m[A[95mCompilation failed 👎[39m                   [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
+[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 7 it. [10.88s/it][39m[0m[A[95m[39m                     [95m[39m
+                                                                                [A
+[A
+[A[37md) Delta-Debug custom(5, 10)/Single[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
