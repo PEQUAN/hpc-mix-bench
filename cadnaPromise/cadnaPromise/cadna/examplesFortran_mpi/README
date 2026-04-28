@@ -1,0 +1,10 @@
+exampleMPI1SendRecv.f90 is the Fortran conversion of ../examplesC_mpi/exampleMPI1.c
+exampleMPI1SendRecv_cad.f90 is the Fortran conversion of ../examplesC_mpi/exampleMPI1_cad.cc
+exampleMPI1Reduce_cad.f90 performs the same computation using MPI_Reduce
+
+make clean
+make
+mpirun -np 4 ./exampleMPI1SendRecv
+mpirun -np 4 ./exampleMPI1SendRecv_cad
+mpirun -np 4 ./exampleMPI1Reduce_cad
+

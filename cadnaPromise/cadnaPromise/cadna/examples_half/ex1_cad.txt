@@ -1,0 +1,25 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+------------------------------------------
+|  Polynomial function of two variables  |
+|  with CADNA                            |
+------------------------------------------
+res= @.0
+Exact result: -0.82739605994682...
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+No instability detected
+
+BE CAREFUL: over range values have been detected.
+The results are NOT guaranteed.
+31 OVERFLOW(S) IS(ARE) DETECTED
+
+----------------------------------------------------------------

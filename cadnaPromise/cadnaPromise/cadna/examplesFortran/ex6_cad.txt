@@ -1,0 +1,22 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+ Solving a linear system using Gaussian elimination
+ with partial pivoting, with CADNA:
+x_sol(1) =  0.100E+001           (exact solution:  0.1000000E+001  )
+x_sol(2) =  0.100E+001           (exact solution:  0.1000000E+001  )
+x_sol(3) =  0.100000E-007        (exact solution:  0.1000000E-007  )
+x_sol(4) =  0.100000E+001        (exact solution:  0.1000000E+001  )
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+There are 2 numerical instabilities
+1 UNSTABLE BRANCHING(S)
+1 LOSS(ES) OF ACCURACY DUE TO CANCELLATION(S)
+----------------------------------------------------------------

@@ -1,0 +1,50 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+ A second order recurrent sequence with CADNA:
+U( 3) = 0.55901639344262E+001 
+U( 4) = 0.5633431085044E+001  
+U( 5) = 0.567464862051E+001   
+U( 6) = 0.57133290524E+001    
+U( 7) = 0.574912092E+001      
+U( 8) = 0.57818109E+001       
+U( 9) = 0.5811314E+001        
+U(10) = 0.583765E+001         
+U(11) = 0.5860E+001           
+U(12) = 0.588E+001            
+U(13) = 0.59E+001             
+U(14) = 0.6E+001              
+U(15) = @.0                   
+U(16) = @.0                   
+U(17) = @.0                   
+U(18) = 0.9E+002              
+U(19) = 0.99E+002             
+U(20) = 0.999E+002            
+U(21) = 0.99999E+002          
+U(22) = 0.999999E+002         
+U(23) = 0.9999999E+002        
+U(24) = 0.99999999E+002       
+U(25) = 0.999999999E+002      
+U(26) = 0.99999999999E+002    
+U(27) = 0.999999999999E+002   
+U(28) = 0.9999999999999E+002  
+U(29) = 0.99999999999999E+002 
+U(30) = 0.100000000000000E+003
+ The exact limit is 6.
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+
+CRITICAL WARNING: the self-validation detects major problem(s).
+The results are NOT guaranteed.
+
+There are 9 numerical instabilities
+7 UNSTABLE DIVISION(S)
+2 UNSTABLE MULTIPLICATION(S)
+----------------------------------------------------------------

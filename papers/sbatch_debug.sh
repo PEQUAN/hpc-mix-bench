@@ -10,13 +10,12 @@
 
 cd "$SLURM_SUBMIT_DIR"
 
-source /software/python/anaconda3/etc/profile.d/conda.sh
-conda activate pytorch_env
-
 echo "Node: $(hostname)"
 echo "Workdir: $(pwd)"
 echo "Python: $(which python)"
 python3 --version
+
+python3 -c "import cadnaPromise; print('cadnaPromise OK')"
 
 export JOBS=6
 echo "JOBS=$JOBS"

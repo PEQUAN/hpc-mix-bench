@@ -1,0 +1,19 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+ Second order equation with CADNA:
+ d =  @.0                                                            
+Discriminant is zero.
+The double solution is  0.3499999E+001
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+There is  1 numerical instability
+1 LOSS(ES) OF ACCURACY DUE TO CANCELLATION(S)
+----------------------------------------------------------------

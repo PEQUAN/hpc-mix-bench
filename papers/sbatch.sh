@@ -4,25 +4,25 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=64G
-#SBATCH --time=72:00:00
+#SBATCH --time=100:00:00
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 
+set -euo pipefail
+
 cd "$SLURM_SUBMIT_DIR"
 
-source /software/python/anaconda3/etc/profile.d/conda.sh
-conda activate pytorch_env
 
 echo "Node: $(hostname)"
 echo "Workdir: $(pwd)"
 echo "Python: $(which python)"
 python3 --version
+python3 -c "import cadnaPromise; print('cadnaPromise OK')"
 
 export JOBS=6
 echo "JOBS=$JOBS"
 
-
-bash run_benchmarks.sh true true false --parallel\
+bash run_benchmarks.sh true true false --parallel \
     sparse_lu \
     dense_lu \
     backprop \

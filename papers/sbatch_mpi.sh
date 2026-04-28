@@ -13,8 +13,11 @@ set -euo pipefail
 
 cd "$SLURM_SUBMIT_DIR"
 
-source /software/python/anaconda3/etc/profile.d/conda.sh
-conda activate pytorch_env
+echo "Node: $(hostname)"
+echo "Workdir: $(pwd)"
+echo "Python: $(which python)"
+python3 --version
+python3 -c "import cadnaPromise; print('cadnaPromise OK')"
 
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1

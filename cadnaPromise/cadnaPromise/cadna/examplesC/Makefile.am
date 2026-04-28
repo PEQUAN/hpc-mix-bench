@@ -1,0 +1,56 @@
+bin_PROGRAMS=ex1 ex1_cad ex2 ex2_cad ex3 ex3_cad ex4 ex4_cad \
+             ex5 ex5_cad ex5_cad_opt ex6 ex6_cad ex7 ex7_cad 
+
+
+
+LDFLAGSCADNA=-L${libdir} -lcadnaCdebug -lm
+AM_CXXFLAGS+= -I${includedir} -D__CADNA_DEBUG__    $(CXXCADNADEBUGFLAGS) $(CXXFLAGS) 
+   
+
+
+ex1_SOURCES=ex1.c
+ex2_SOURCES=ex2.c
+ex3_SOURCES=ex3.cc
+ex4_SOURCES=ex4.c
+ex5_SOURCES=ex5.c
+ex6_SOURCES=ex6.c
+ex7_SOURCES=ex7.cc
+
+
+ex1_CFLAGS=$(CXXCADNACOMMONFLAGS)  
+ex2_CFLAGS=$(CXXCADNACOMMONFLAGS)
+ex3_CXXFLAGS=$(CXXCADNACOMMONFLAGS)
+ex4_CFLAGS=$(CXXCADNACOMMONFLAGS)
+ex5_CFLAGS=$(CXXCADNACOMMONFLAGS)
+ex6_CFLAGS=$(CXXCADNACOMMONFLAGS)
+ex7_CXXFLAGS=$(CXXCADNACOMMONFLAGS)
+
+
+ex1_cad_SOURCES=ex1_cad.cc
+ex2_cad_SOURCES=ex2_cad.cc
+ex3_cad_SOURCES=ex3_cad.cc
+ex4_cad_SOURCES=ex4_cad.cc
+ex5_cad_SOURCES=ex5_cad.cc
+ex5_cad_opt_SOURCES=ex5_cad_opt.cc
+ex6_cad_SOURCES=ex6_cad.cc
+ex7_cad_SOURCES=ex7_cad.cc
+
+
+ex1_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex2_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex3_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex4_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex5_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex5_cad_opt_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex6_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+ex7_cad_LDADD=$(LDFLAGSCADNA) $(CADNA_CXX_LIB)
+
+
+ex1_LDADD=-lm
+ex2_LDADD=-lm
+ex3_LDADD=-lm
+ex4_LDADD=-lm
+ex5_LDADD=-lm
+ex6_LDADD=-lm
+ex7_LDADD=-lm
+

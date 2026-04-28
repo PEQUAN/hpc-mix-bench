@@ -1,0 +1,10 @@
+exampleMPI1.c and exampleMPI2.cc do the same computation.
+exampleMPI1 is a C version
+exampleMPI2 is a C++ version
+
+make clean
+make
+mpirun -np 4 ./exampleMPI1
+mpirun -np 4 ./exampleMPI1_cad
+mpirun -np 4 ./exampleMPI2
+mpirun -np 4 ./exampleMPI2_cad

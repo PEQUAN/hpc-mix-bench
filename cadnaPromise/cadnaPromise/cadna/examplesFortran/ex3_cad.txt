@@ -1,0 +1,28 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+ Computation of the determinant of Hilbert matrix
+ using Gaussian elimination with CADNA:
+Pivot number  1  =  0.100000000000000E+001
+Pivot number  2  =  0.833333333333333E-001
+Pivot number  3  =  0.55555555555556E-002 
+Pivot number  4  =  0.3571428571428E-003  
+Pivot number  5  =  0.226757369614E-004   
+Pivot number  6  =  0.1431549050E-005     
+Pivot number  7  =  0.90097492E-007       
+Pivot number  8  =  0.5659970E-008        
+Pivot number  9  =  0.35513E-009          
+Pivot number 10  =  0.2226E-010           
+Pivot number 11  =  0.13E-011             
+Determinant      =  0.30E-064             
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.12 software
+No instability detected
+----------------------------------------------------------------

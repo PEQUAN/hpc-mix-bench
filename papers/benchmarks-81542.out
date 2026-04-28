@@ -1,0 +1,45 @@
+Node: node09
+Workdir: /home/xinye/hpc-mix-mlbench/papers
+Python: /software/python/anaconda3/bin/python
+Python 3.12.11
+cadnaPromise OK
+JOBS=6
+======================================
+Run experiments : true
+Run plotting    : true
+Run debug       : false
+Parallel        : true
+Jobs            : 6
+======================================
+Discovered 24 setting task(s).
+Running setting tasks in parallel...
+================================================
+Benchmark folder : backprop
+Task             : run_setting_2.py
+Log              : logs/backprop/run_2.log
+================================================
+================================================
+Benchmark folder : backprop
+Task             : run_setting_1.py
+Log              : logs/backprop/run_1.log
+================================================
+================================================
+Benchmark folder : dense_lu
+Task             : run_setting_1.py
+Log              : logs/dense_lu/run_1.log
+================================================
+================================================
+Benchmark folder : backprop
+Task             : run_setting_3.py
+Log              : logs/backprop/run_3.log
+================================================
+================================================
+Benchmark folder : dense_lu
+Task             : run_setting_2.py
+Log              : logs/dense_lu/run_2.log
+================================================
+================================================
+Benchmark folder : backprop
+Task             : run_setting_4.py
+Log              : logs/backprop/run_4.log
+================================================

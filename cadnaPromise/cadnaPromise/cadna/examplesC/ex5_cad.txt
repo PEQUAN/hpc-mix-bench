@@ -1,0 +1,24 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.11 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+-------------------------------------------------------------
+|  Computation of a root of a polynomial by Newton's method |
+|  with CADNA                                               |
+-------------------------------------------------------------
+x( 23) =  0.42857143E+000
+x( 24) =  0.42857143E+000
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.11 software
+There are 46 numerical instabilities
+1 UNSTABLE BRANCHING(S)
+45 LOSS(ES) OF ACCURACY DUE TO CANCELLATION(S)
+----------------------------------------------------------------
+Remark: because of the instabilities detected by CADNA, a multiple root is suspected
+

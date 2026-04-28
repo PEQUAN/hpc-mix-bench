@@ -1,5 +1,0 @@
-[RUN] python3 run_setting_4.py true true
-Traceback (most recent call last):
-  File "/home/xinye/hpc-mix-mlbench/papers/dense_lu/run_setting_4.py", line 7, in <module>
-    from cadnaPromise.run import runPromise
-ModuleNotFoundError: No module named 'cadnaPromise'

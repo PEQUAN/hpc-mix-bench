@@ -1,0 +1,257 @@
+Sorbonne Université
+LIP6 Laboratory
+PEQUAN Team
+
+	CADNA_C library ChangeLog file
+
+2024/01/29
+	modification of approx_digit, insertion of:
+	if (std::isinf(xx) || std::isnan(xx)) accuracy=0;
+	
+2024/01/29
+	modifications in cadna_to.h
+	previously: accuracy affected to the maximum accuracy
+	when, for instance, a float_st is affected to a double.
+	it generated a pb when the float_st is infinity and is printed
+	same pb for half_st.
+	instructions such as:
+	TO_ST(half_st,double_st,half,(a.accuracy>=4?3:a.accuracy))
+	TO_ST(half_st,float_st,half,(a.accuracy>=4?3:a.accuracy))
+	are now:
+	TO_ST(half_st,double_st,half,DIGIT_NOT_COMPUTED)
+	TO_ST(half_st,float_st,half,DIGIT_NOT_COMPUTED)
+	
+2023/12/15
+	modif of cadna_complex.m4 to avoid an error with clang++
+
+2023/03/09
+	modification of m4/ax_mpi.m4
+	pb when running autoconf: The macro `AC_TRY_COMPILE' is obsolete.
+	AC_TRY_COMPILE([#include <mpi.h>],[],[AC_MSG_RESULT(yes)], [MPILIBS=""
+		AC_MSG_RESULT(no)])
+	replaced by
+	AC_COMPILE_IFELSE(
+            [AC_LANG_PROGRAM([[#include <mpi.h>]],
+               [[]])],
+            [AC_MSG_RESULT(yes)],
+            [MPILIBS=""
+		AC_MSG_RESULT(no)])
+2022/09/12
+	modification of cadna_fma.m4 and cadna_comp.m4:
+	__CADNA_INLINE__ replaced by inline
+	otherwise error with the debug version of CADNA used in examplesC directory 
+2022/04/09
+	insertion of cadna_fma.m4 (FMA) and cadna_comp.m4 (compensated methods)
+2021/09/17
+	initialization of _cadna_recurrence modified in cadna_type.cc
+	to take into account the fact that cadna_init might be called several times
+	//  _cadna_recurrence+=seed; //modif Sept. 2021
+	_cadna_recurrence=seed; 
+	
+2020/06/08
+	-Wformat  added in cadna_check_compiler[_c]_flag.m4   for debian package 
+	
+2020/05/11
+	Correction in the computation of accuracy that is now slightly more pessimistic.
+	
+2020/04/28
+	Correction to enable one to use CADNA in Fortran codes even if MPI is not installed:
+	modification in configure.ac
+	
+2020/04/24
+	Correction in cadna_ne.m4:
+	return ~res.computedzero();
+	replaced by:
+	return !(res.computedzero());
+
+2020/04/22
+	in cadna.h, insertion of:
+	friend float_st  erf(const float_st&);
+	friend float_st  erfc(const float_st&); 
+	
+2020/04/15
+	Correction of "numericalnoise" to avoid nan if the input is zero
+	
+2020/03/06
+	correction of compiler FLAGS for Arch Linux (Alexei Colin, isi.edu)
+	
+2019/12/09
+	Modification in configure.ac : -m64 is removed.  Compilers are supposed to be 64-bit compilers 
+
+2019/12/04
+	Modification in cadna.h: cast from double_st to float_st
+	>8 replaced by >=8
+	
+2017-2019
+	Creation of one archive for both C/C++ or Fortran (sequential or parallel) codes
+	
+2017/12/22
+	suppression of UPMC when running CADNA
+
+2017/12/15
+	correction of operators *=,/=,+=,-= that provided @.0
+	when the same stochastic variable was used twice (ex: x*=x;)
+	(same correction as in cadnac/branches/eberhartp/sources_generateur/m4
+	done on 24 Nov. 2017)
+
+	verification that following correction already done:
+	"in cadna_math_gnu.m4 and cadna_math_other.m4:
+	correction of fmax and fmaxf with 2 stochastic operands"
+	(correction in cadnac/branches/eberhartp/sources_generateur/m4
+	done on 30 Nov. 2017)
+	
+2017/11/30
+	insertion of "using namespace std;" in cadna_math_*.m4
+2017/07/04
+	modifications in cadna_str.m4:
+	 insertion of #include <fenv.h>
+	in str function :
+	  fesetround(FE_TONEAREST);
+	  fesetround(FE_UPWARD);
+2017/06/12
+	modif calcul max dans branche Pacôme
+2017/06/06
+	changed configure.ac:
+	lib math for icc and xlc (lib math gnu for all compilers)
+2017/03/08
+	add getaccuracy in cadna.h
+	modification of cadna_to.h 
+2015/01/30
+	add i686-pc-mingw32 in configure.ac
+	
+2014/04/16
+	change in abs math function in cadna_intr.dcc for better instability detection  
+2014/04/14
+	add configuration for i386-apple-darwin.12.* and  x86_64-apple-darwin13.* 
+	in configure.ac
+	
+2013/12/06
+	suppression of a call to sqrt in nb_significant_digit() 
+	in cadna_digitnumber.dcc
+	
+2013/07/14
+        insertion of new math functions
+2013/02/26
+	suppression of rounding mode restore in cadna_computedzero.dcc,
+	cadna_convert.dcc, cadna_digitnumber.dcc, cadna_numericalnoise.dcc,
+	cadna_str.dcc.
+	
+2013/02/21
+	a new function approx_digit which returns 0 if a stochastic
+	number is non significant and RELIABLE_RESULT otherwise.
+	This is to avoid the function log call in the 
+	nb_significant_digit function
+	
+	change in cadna_convert.dcc:
+	in data_st switch absolute/relative error
+	
+        change in cadna_to.dcc:
+	if a double_st variable is assigned from a float,
+        it is pertubred with the relative error 1.E-7.
+	
+2013/01/30
+	in sources_generateur:
+        changes in cadna_math_gnu.dcc
+	simplification: rnd_arr called before computation 
+	and rnd_plinf called after computation, no more test 
+	to recover the previous rounding mode.
+	
+2012/07/05
+	in sources_generateur:
+	creation of cadna_complex.dcc
+	
+2012/06/12
+	in sources_generateur:
+	change in cadna_to.dcc to enable assignments float_st <-> double_st
+
+2012/06/11
+	in cadna_unstab.cc, suppression of:
+        extern FILE *unit_stability;
+
+2012/06/08
+	in sources_generateur:
+        creation of cadna_numericalnoise.dcc
+        and modification of Makefile, 
+	cadna_ge.dcc, cadna_gt.dcc,
+	cadna_le.dcc, cadna_lt.dcc
+	
+2012/04/04
+        modification in user.tex (doc)
+	
+2012/04/03
+        modification in cadna_computedzero
+	
+2012/02/16 
+	tiny modification in cadna_type.cc
+
+2012/02/08
+	adding of the PC-cygwin system
+	
+2012/02/07
+in cadna_ge.cc
+in int operator>=(const double_st& a, const double_st& b)
+  int r=res.nb_significant_digit()==0;
+replaced by:
+  int r=res.computedzero(); 
+and also for other >= overloadings
+same modification in cadna_gt.cc, cadna_le.cc and cadna_gt.cc.
+all modifications done in *.dcc files in sources_generateur
+	
+2012/01/25
+	correction in examples/Makefile.in 
+LDFLAGS= @LDFLAGS@ -lm
+becomes:
+LDFLAGS= @LDFLAGS@
+LDLIBS= -lm
+	
+2011/09/14
+	corrections in documentation (user.tex modified)
+
+2011/03/17
+	cadna_type.cc:
+	
+void cadna_enable(unsigned int tag)
+{
+  if (_cadna_max_instability==0) {
+
+	changed into:
+	
+	void cadna_enable(unsigned int tag)
+{
+  if (_cadna_max_instability==-2) {
+
+		
+2011/03/17	
+      cadna_unstab.cc:
+    _cadna_max_instability=-2; inserted at the end	
+	
+
+2011/03/17
+	cadna_type.cc:
+
+  if (_cadna_div_change & _cadna_mul_change & _cadna_power_change) 
+
+		changed into:
+
+  if (_cadna_div_tag & _cadna_mul_tag & _cadna_power_tag) 
+	
+	
+2010/07/21 
+	Modification to correct a behaviour bug in cadna_type function. In case
+	of cadna_init(0) no instability is detected and a message is given
+	in the end of the run.
+	
+2010/07/07
+	Modification in cadna_type
+	
+2010/05/01
+	Modification to take into account bugs of the mathematical functions
+	in the math library provided by GNU with the roounding mode 
+	+inf and -inf
+	
+2010/02/05
+	cadna_to : the correct precision is set inside the function.
+	data_st : data_st() is included in Robodoc
+	
+2010/01/21
+	add configuration for x86_64

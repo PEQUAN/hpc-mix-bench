@@ -1,0 +1,1 @@
+#define CADNA_HALF_EMULATION

@@ -1,0 +1,123 @@
+SUBDIRS = srcC srcC_mpi srcFortran srcFortran_mpi 
+  
+EXTRA_DIST= \
+examples_half/ex1.cc \
+examples_half/ex1_cad.cc \
+examples_half/ex2.cc \
+examples_half/ex2_cad.cc \
+examples_half/Makefile.in \
+examples_half/Makefile.am \
+examples_half/ex1_cad.txt \
+examples_half/ex2_cad.txt \
+examples_half/run_tests.sh \
+examplesC/ex1.c \
+examplesC/ex1_cad.cc \
+examplesC/ex2.c \
+examplesC/ex2_cad.cc \
+examplesC/ex3.cc \
+examplesC/ex3_cad.cc \
+examplesC/ex4.c \
+examplesC/ex4_cad.cc \
+examplesC/ex5.c \
+examplesC/ex5_cad.cc \
+examplesC/ex5_cad_opt.cc \
+examplesC/ex6.c \
+examplesC/ex6_cad.cc \
+examplesC/ex7.cc \
+examplesC/ex7_cad.cc \
+examplesC/ex1_cad.txt \
+examplesC/ex2_cad.txt \
+examplesC/ex3_cad.txt \
+examplesC/ex4_cad.txt \
+examplesC/ex5_cad.txt \
+examplesC/ex6_cad.txt \
+examplesC/ex7_cad.txt \
+examplesC/ex7_cad.input \
+examplesC/run_tests.sh \
+examplesC/Makefile.in \
+examplesC/Makefile.am \
+./examplesC/README \
+examplesC_mpi/Makefile.am \
+examplesC_mpi/Makefile.in \
+examplesC_mpi/exampleMPI1.c \
+examplesC_mpi/exampleMPI1_cad.cc \
+examplesC_mpi/exampleMPI1_float.c \
+examplesC_mpi/exampleMPI1_float_cad.cc \
+examplesC_mpi/exampleMPI2.cc \
+examplesC_mpi/exampleMPI2_cad.cc \
+examplesC_mpi/exampleMPI2_float.cc \
+examplesC_mpi/exampleMPI2_float_cad.cc \
+examplesC_mpi/Makefile.am \
+examplesC_mpi/Makefile.in \
+examplesC_mpi/exampleMPI1_cad.cc \
+examplesC_mpi/exampleMPI1.c \
+examplesC_mpi/exampleMPI2_cad.cc \
+examplesC_mpi/exampleMPI2.cc \
+examplesC_mpi/README \
+examplesC_mpi/exampleMPI1_cad.txt \
+examplesC_mpi/exampleMPI2_cad.txt \
+examplesC_mpi/exampleMPI1_float_cad.txt \
+examplesC_mpi/exampleMPI2_float_cad.txt \
+examplesC_mpi/run_tests.sh \
+examplesC_omp/Makefile.am\
+examplesC_omp/Makefile.in \
+examplesC_omp/exampleOPENMP1_cad.cc \
+examplesC_omp/exampleOPENMP1.c \
+examplesC_omp/exampleOPENMP1_cad.txt \
+examplesC_omp/run_tests.sh \
+examplesC_mpiomp/Makefile.am \
+examplesC_mpiomp/Makefile.in \
+examplesC_mpiomp/exampleMPI_OMP1.c \
+examplesC_mpiomp/exampleMPI_OMP1_cad.cc \
+examplesC_mpiomp/README \
+examplesC_mpiomp/exampleMPI_OMP1_cad.txt \
+examplesC_mpiomp/run_tests.sh \
+examplesFortran/Makefile.in \
+examplesFortran/Makefile.am \
+examplesFortran/ex1.f90	\
+examplesFortran/ex3_cad.f90 \
+examplesFortran/ex5_cad_opt.f90 \
+examplesFortran/ex1_cad.f90 	\
+examplesFortran/ex4.f90		\
+examplesFortran/ex6.f90 \
+examplesFortran/ex2.f90		\
+examplesFortran/ex4_cad.f90	\
+examplesFortran/ex6_cad.f90\
+examplesFortran/ex2_cad.f90	\
+examplesFortran/ex5.f90		\
+examplesFortran/ex7.f90 \
+examplesFortran/ex3.f90		\
+examplesFortran/ex5_cad.f90	\
+examplesFortran/ex7_cad.f90 \
+./examplesFortran/README \
+./examplesFortran/ex1_cad.txt \
+./examplesFortran/ex2_cad.txt \
+./examplesFortran/ex3_cad.txt \
+./examplesFortran/ex4_cad.txt \
+./examplesFortran/ex5_cad.txt \
+./examplesFortran/ex6_cad.txt \
+./examplesFortran/ex7_cad.txt \
+./examplesFortran/ex7_cad.input \
+./examplesFortran/run_tests.sh \
+examplesFortran_mpi/Makefile.am \
+examplesFortran_mpi/Makefile.in  \
+examplesFortran_mpi/exampleMPI1Reduce_cad.f90 \
+examplesFortran_mpi/exampleMPI1Reduce_float_cad.f90 \
+examplesFortran_mpi/exampleMPI1SendRecv.f90  \
+examplesFortran_mpi/exampleMPI1SendRecv_cad.f90 \
+examplesFortran_mpi/exampleMPI1SendRecv_float.f90  \
+examplesFortran_mpi/exampleMPI1SendRecv_float_cad.f90 \
+./examplesFortran_mpi/README \
+./examplesFortran_mpi/exampleMPI1Reduce_cad.txt \
+./examplesFortran_mpi/exampleMPI1Reduce_float_cad.txt \
+./examplesFortran_mpi/exampleMPI1SendRecv_cad.txt    \
+./examplesFortran_mpi/exampleMPI1SendRecv_float_cad.txt \
+./examplesFortran_mpi/run_tests.sh \
+doc/ug_cadna_C.pdf \
+doc/ug_cadna_Fortran.pdf 
+
+# Build rule when using FMA
+FMA:
+	(echo "#define CADNA_FMA"; cat cadna.h) > cadna.h
+
+CLEANFILES = lib/* include/*

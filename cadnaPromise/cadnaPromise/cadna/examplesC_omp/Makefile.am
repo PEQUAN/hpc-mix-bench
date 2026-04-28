@@ -1,0 +1,18 @@
+
+
+
+AM_CXXFLAGS+= -I${includedir}  $(OPENMP_CXXFLAGS)  $(CXXCADNACOMMONFLAGS)  $(CXXCADNADEBUGFLAGS)
+
+AM_CFLAGS= $(OPENMP_CFLAGS) -g 
+AM_LDFLAGS=$(OPENMP_LDFLAGS)
+
+bin_PROGRAMS=exampleOPENMP1 exampleOPENMP1_cad
+
+exampleOPENMP1_SOURCES=exampleOPENMP1.c
+
+
+
+
+exampleOPENMP1_cad_SOURCES=exampleOPENMP1_cad.cc
+exampleOPENMP1_cad_CXXFLAGS=$(AM_CXXFLAGS) 
+exampleOPENMP1_cad_LDADD= -L${libdir} -lcadnaOpenmpCdebug $(OPENMP_LDFLAGS) $(CADNA_CXX_LIB)

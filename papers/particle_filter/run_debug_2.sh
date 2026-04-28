@@ -1,30 +1,29 @@
 #!/bin/bash
-ls -d digit_*/
+set -u
+
 shopt -s nullglob
-dirs=(digit_*/)
+dirs=(digit2_*/)
 if [ ${#dirs[@]} -gt 0 ]; then
-    rm -r "${dirs[@]}"
+    rm -rf "${dirs[@]}"
 fi
+shopt -u nullglob
 
-mkdir logs
+mkdir -p logs
 
-promise --precs=wbsd --nbDigits=1 > logs/log_2_1.txt
-mv debug digit2_1
-promise --precs=wbsd --nbDigits=2 > logs/log_2_2.txt
-mv debug digit2_2
-promise --precs=wbsd --nbDigits=3 > logs/log_2_3.txt
-mv debug digit2_3
-promise --precs=wbsd --nbDigits=4 > logs/log_2_4.txt
-mv debug digit2_4
-promise --precs=wbsd --nbDigits=5 > logs/log_2_5.txt
-mv debug digit2_5
-promise --precs=wbsd --nbDigits=6 > logs/log_2_6.txt
-mv debug digit2_6
-promise --precs=wbsd --nbDigits=7 > logs/log_2_7.txt
-mv debug digit2_7
-promise --precs=wbsd --nbDigits=8 > logs/log_2_8.txt
-mv debug digit2_8
-promise --precs=wbsd --nbDigits=9 > logs/log_2_9.txt
-mv debug digit2_9
-promise --precs=wbsd --nbDigits=10 > logs/log_2_10.txt
-mv debug digit2_10
+for n in {1..10}; do
+    echo "[RUN] promise --precs=wpsd --nbDigits=$n"
+
+    if ! promise --precs=wpsd --nbDigits="$n" > "logs/log_2_${n}.txt" 2>&1; then
+        echo "[FAILED] promise nbDigits=$n, see logs/log_2_${n}.txt"
+        continue
+    fi
+
+    if [ ! -d debug ]; then
+        echo "[FAILED] no debug/ generated for nbDigits=$n, see logs/log_2_${n}.txt"
+        continue
+    fi
+
+    rm -rf "digit2_${n}"
+    mv debug "digit2_${n}"
+    echo "[DONE] digit2_${n}"
+done

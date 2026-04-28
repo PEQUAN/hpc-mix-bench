@@ -1,0 +1,22 @@
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.11 software
+Self-validation detection: ON
+Mathematical instabilities detection: ON
+Branching instabilities detection: ON
+Intrinsic instabilities detection: ON
+Cancellation instabilities detection: ON
+Overflow detection for half-precision: ON
+Underflow detection for half-precision: ON
+----------------------------------------------------------------
+Example created on purpose to make CADNA fail
+The same result r is computed for a number of iterations
+chosen by the user.
+The exact result is 1.4E-10.
+But in 1 case out of 4, CADNA estimates an incorrect accuracy.
+Enter the number of iterations: Last value of r:  @.0
+Number of iterations when CADNA estimates an incorrect accuracy: 3
+----------------------------------------------------------------
+CADNA_C_HALF 3.1.11 software
+There are 30 numerical instabilities
+30 LOSS(ES) OF ACCURACY DUE TO CANCELLATION(S)
+----------------------------------------------------------------

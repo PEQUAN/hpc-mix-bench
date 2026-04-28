@@ -1,0 +1,4 @@
+make clean
+make
+mpirun -np 4 ./exampleMPI_OMP1
+mpirun -np 4 ./exampleMPI_OMP1_cad
