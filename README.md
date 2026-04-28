@@ -1,5 +1,9 @@
 # HPC-MIX benchmarks
 
+[![Docs](https://readthedocs.org/projects/hpc-mix-bench/badge/?version=latest)](https://hpc-mix-bench.readthedocs.io/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/github/license/PEQUAN/hpc-mix-bench)](https://github.com/PEQUAN/hpc-mix-bench)
+
 ## Setup
 
 To properly use the benchmark tool, one would need to install ``cadnaPromise`` in advance. To install, use:
