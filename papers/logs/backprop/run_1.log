@@ -343,3 +343,12 @@ Plot saved as precision1_with_runtime.jpg
 Plotting completed.
 [FAILED] promise nbDigits=5, see logs/log_1_5.txt
 [RUN] promise --precs=wpsd --nbDigits=6
+[FAILED] promise nbDigits=6, see logs/log_1_6.txt
+[RUN] promise --precs=wpsd --nbDigits=7
+[DONE] digit1_7
+[RUN] promise --precs=wpsd --nbDigits=8
+[FAILED] no debug/ generated for nbDigits=8, see logs/log_1_8.txt
+[RUN] promise --precs=wpsd --nbDigits=9
+[FAILED] no debug/ generated for nbDigits=9, see logs/log_1_9.txt
+[RUN] promise --precs=wpsd --nbDigits=10
+[FAILED] no debug/ generated for nbDigits=10, see logs/log_1_10.txt

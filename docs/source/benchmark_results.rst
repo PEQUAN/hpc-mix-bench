@@ -46,9 +46,9 @@ All benchmarks are evaluated across four precision combinations:
 Methodology
 ===========
 
-PROMISE is evaluated across four precision combinations (I–IV) to examine the number of variables of each type in the transformed codes it provided. Here, we refer to high precision as FP64, and low precision as the floating-point formats E5M2, E4M3, BF16, and FP16. In our experiments the number of required digits in the results ranges from 1 to 10.
+PROMISE is evaluated across four precision combinations (I–IV) to examine the number of variables of each type in the transformed codes it provided. In our experiments the number of required digits in the results ranges from 1 to 10.
 
-The following figures also present the computation time of PROMISE in seconds for each required accuracy, including the time to compute the reference result and the time to apply the delta debugging algorithm several times, compiling and executing the code with the tested distribution each time. For each digit, the total computation time of PROMISE (including compilations and executions) is depicted in the red curve of each figure as follows, and the variations indicate the variations in the number of total compilations and executions of the code in the delta debugging process.
+The following figures also present the computation time of PROMISE in seconds for each required accuracy, including the time to compute the reference result and the time to apply the delta debugging algorithm several times, compiling and executing the code with the tested distribution each time. For each target accuracy level, the total computation time of PROMISE (including compilation and execution) is represented by the red curve in each figure as follows, and the variations indicate the variations in the number of total compilations and executions of the code in the delta debugging process.
 
 Benchmark Code Availability
 ----------------------------

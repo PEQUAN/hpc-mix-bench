@@ -9,7 +9,7 @@
 #include <limits>
 
 namespace particle_filter {
-    float PI = 3.1415926535897932;
+    double PI = 3.1415926535897932;
     long M = 99999999;
     int A = 1103515245;
     int C = 12345;
@@ -62,17 +62,17 @@ namespace particle_filter {
             }
         }
 
-        float randu(int* seed, int index) {
+        double randu(int* seed, int index) {
             int num = A * seed[index] + C;
             seed[index] = num % M;
-            return abs(seed[index] / static_cast<float>(M));
+            return abs(seed[index] / static_cast<double>(M));
         }
 
-        float randn(int* seed, int index) {
-            float u = randu(seed, index);
-            float v = randu(seed, index);
-            float cosine = cos(2 * PI * v);
-            float rt = -2 * log(u);
+        double randn(int* seed, int index) {
+            double u = randu(seed, index);
+            double v = randu(seed, index);
+            double cosine = cos(2 * PI * v);
+            double rt = -2 * log(u);
             return sqrt(rt) * cosine;
         }
 

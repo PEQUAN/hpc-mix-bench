@@ -67,3 +67,101 @@ Benchmark folder : hotspot
 Task             : run_setting_2.py
 Log              : logs/hotspot/run_2.log
 ================================================
+[DONE] hotspot / run_setting_1.py
+================================================
+Benchmark folder : hotspot
+Task             : run_setting_3.py
+Log              : logs/hotspot/run_3.log
+================================================
+[DONE] hotspot / run_setting_2.py
+================================================
+Benchmark folder : hotspot
+Task             : run_setting_4.py
+Log              : logs/hotspot/run_4.log
+================================================
+[DONE] dense_lu / run_setting_2.py
+================================================
+Benchmark folder : particle_filter
+Task             : run_setting_1.py
+Log              : logs/particle_filter/run_1.log
+================================================
+[DONE] dense_lu / run_setting_1.py
+================================================
+Benchmark folder : particle_filter
+Task             : run_setting_2.py
+Log              : logs/particle_filter/run_2.log
+================================================
+[DONE] dense_lu / run_setting_3.py
+================================================
+Benchmark folder : particle_filter
+Task             : run_setting_3.py
+Log              : logs/particle_filter/run_3.log
+================================================
+[DONE] dense_lu / run_setting_4.py
+================================================
+Benchmark folder : particle_filter
+Task             : run_setting_4.py
+Log              : logs/particle_filter/run_4.log
+================================================
+[DONE] hotspot / run_setting_4.py
+================================================
+Benchmark folder : sparse_lu
+Task             : run_setting_1.py
+Log              : logs/sparse_lu/run_1.log
+================================================
+[DONE] hotspot / run_setting_3.py
+================================================
+Benchmark folder : sparse_lu
+Task             : run_setting_2.py
+Log              : logs/sparse_lu/run_2.log
+================================================
+[DONE] sparse_lu / run_setting_1.py
+================================================
+Benchmark folder : sparse_lu
+Task             : run_setting_3.py
+Log              : logs/sparse_lu/run_3.log
+================================================
+[DONE] sparse_lu / run_setting_2.py
+================================================
+Benchmark folder : sparse_lu
+Task             : run_setting_4.py
+Log              : logs/sparse_lu/run_4.log
+================================================
+[DONE] particle_filter / run_setting_1.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_1.py
+Log              : logs/srad_v2/run_1.log
+================================================
+[DONE] particle_filter / run_setting_2.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_2.py
+Log              : logs/srad_v2/run_2.log
+================================================
+[DONE] sparse_lu / run_setting_4.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_3.py
+Log              : logs/srad_v2/run_3.log
+================================================
+[DONE] sparse_lu / run_setting_3.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_4.py
+Log              : logs/srad_v2/run_4.log
+================================================
+[DONE] particle_filter / run_setting_3.py
+[DONE] particle_filter / run_setting_4.py
+[DONE] srad_v2 / run_setting_1.py
+[DONE] srad_v2 / run_setting_2.py
+[DONE] srad_v2 / run_setting_4.py
+[DONE] srad_v2 / run_setting_3.py
+Debug phase skipped.
+======================================
+All benchmark tasks finished.
+Logs in ./logs/
+Started at      : 2026-04-28 09:27:16
+Finished at     : 2026-04-28 13:05:36
+Total elapsed   : 3h 38m 20s
+======================================
