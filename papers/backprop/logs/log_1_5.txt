@@ -20,4 +20,25 @@ check compilers: g++
 [A
 [A[37md) Delta-Debug custom(5, 10)/Single[0m
 
-[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0, 1] 👎[39m  
+[95mDelta-Debug iterations:   3%|[34m█                               [95m| 1 it. [14.76s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[6, 7, 8] 👍[39m
+[95mDelta-Debug iterations:   7%|[34m██▏                             [95m| 2 it. [12.45s/it][39m[0m[A[95mWe test C=[0, 1, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 3 it. [ 8.54s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[0, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  14%|[34m████▍                           [95m| 4 it. [ 9.05s/it][39m[0m[A[95mWe test C=[1, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  17%|[34m█████▌                          [95m| 5 it. [ 7.04s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[3, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  21%|[34m██████▌                         [95m| 6 it. [ 7.05s/it][39m[0m[A[95mWe test C=[4, 6, 7, 8] 👎[39m
+[95mDelta-Debug iterations:  24%|[34m███████▋                        [95m| 7 it. [ 5.98s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m
+[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 7 it. [ 5.98s/it][39m[0m[A[95m[39m                     [95m[39m
+                                                                                [A
+[A
+[A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+                                                                                [A[95m[39m
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A
+                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
+[34mThe final result contains 6x double, 6x float and 3x flx::floatx<5, 2>.[0m
+[34mIt tooks 183.96s[0m
+[34m👉 52 compilations (35 failed) for 174.95s[0m
+[34m👉 17 executions   (0 failed) for 4.34s[0m
+{'double': {'1', '6', '2', '5', '3', '4'}, 'float': {0, 1, 2, 3, 4, 5}, 'flx::floatx<5, 2>': {8, 6, 7}}

@@ -292,4 +292,54 @@ check compilers: g++
 [95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
                                                                                 [A[95m[39m
 [95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A
-                                                                                [A
+                                                                                [A[37mThe format flx::floatx<5, 2> is enough for your expectation[0m
+[34mThe final result contains 6x double, 6x float and 3x flx::floatx<5, 2>.[0m
+[34mIt tooks 145.58s[0m
+[34m👉 52 compilations (35 failed) for 138.14s[0m
+[34m👉 17 executions   (0 failed) for 2.74s[0m
+Results for 6 digits: {'double': ['5', '1', '2', '3', '6', '4'], 'float': [0, 1, 2, 3, 4, 5], 'flx::floatx<5, 2>': [8, 6, 7]}, Runtime: 145.5920 seconds
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 7 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[31mYou should lower your expectation, it doesn't work with Double[0m
+Warning: No valid result for 7 digits
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 8 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[31m('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable output_delta_check: expect 8 and found 7')[0m
+Warning: No valid result for 8 digits
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 9 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[31m('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable output_delta_check: expect 9 and found 7')[0m
+Warning: No valid result for 9 digits
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 10 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[31m('The number of significant digits found with Cadna is lower than the expectation: ', 'Variable output_delta_check: expect 10 and found 7')[0m
+Warning: No valid result for 10 digits
+Precision settings saved to prec_setting_1.json
+Runtimes saved to runtimes1.csv
+Experiments completed and saved.
+Loading data and generating plots...
+Digits: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Runtimes: [138.456, 183.0104, 183.2066, 156.5538, 145.0265, 145.592, 0.0, 0.0, 0.0, 0.0]
+Precision settings heights: {'flx::floatx<5, 2>': [7, 3, 3, 3, 3, 3, 0, 0, 0, 0], 'flx::floatx<5, 10>': [0, 4, 4, 3, 0, 0, 0, 0, 0, 0], 'float': [2, 2, 2, 3, 6, 6, 0, 0, 0, 0], 'double': [6, 6, 6, 6, 6, 6, 0, 0, 0, 0]}
+Using Matplotlib style: seaborn-v0_8
+Plot saved as precision1_with_runtime.jpg
+Plotting completed.
+[FAILED] promise nbDigits=5, see logs/log_1_5.txt
+[RUN] promise --precs=wpsd --nbDigits=6

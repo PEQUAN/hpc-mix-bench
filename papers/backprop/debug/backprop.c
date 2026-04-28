@@ -45,7 +45,7 @@ static void init_rng(unsigned int seed) {
  
  
  /* Sigmoid activation function */
- static flx::floatx<5, 10> squash(flx::floatx<5, 10> x) {
+ static float squash(float x) {
      return 1.0f / (1.0f + expf(-x));
  }
  
@@ -218,7 +218,7 @@ static void bpnn_randomize_weights(double** w, int m, int n) {
     float errsum = 0.0f;
      #pragma omp parallel for reduction(+:errsum) num_threads(NUM_THREAD)
      for (int j = 1; j <= nj; j++) {
-        flx::floatx<5, 10> o = output[j];
+        float o = output[j];
         float t = target[j];
          delta[j] = o * (1.0f - o) * (t - o);
          errsum += ABS(delta[j]);

@@ -61,3 +61,9 @@ Benchmark folder : hotspot
 Task             : run_setting_1.py
 Log              : logs/hotspot/run_1.log
 ================================================
+[DONE] backprop / run_setting_1.py
+================================================
+Benchmark folder : hotspot
+Task             : run_setting_2.py
+Log              : logs/hotspot/run_2.log
+================================================
