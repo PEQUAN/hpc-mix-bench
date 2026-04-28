@@ -1,7 +1,8 @@
-04/28 16:12:24: 🤘 cadnaPromise 🤘
-04/28 16:12:25: Using the compiler: g++
-04/28 16:12:25: We are working with 1 file and 47 different types
-04/28 16:12:25: The expectation is 4 digits.
-04/28 16:12:25: a) Get a reference result with cadna (double)
-04/28 16:12:32: b) Check with highest format (Double)
-04/28 16:12:34: c) Delta-Debug Single/Double
+04/28 16:16:36: 🤘 cadnaPromise 🤘
+04/28 16:16:36: Using the compiler: g++
+04/28 16:16:36: We are working with 1 file and 47 different types
+04/28 16:16:36: The expectation is 5 digits.
+04/28 16:16:36: a) Get a reference result with cadna (double)
+04/28 16:16:43: b) Check with highest format (Double)
+04/28 16:16:46: c) Delta-Debug Single/Double
+04/28 16:19:36: d) Delta-Debug custom(5, 10)/Single

@@ -16,12 +16,17 @@ Running setting tasks in parallel...
 ================================================
 Benchmark folder : backprop
 Task             : run_setting_1.py
-Log              : logs/backprop/run_1.log
-================================================
 ================================================
 Benchmark folder : backprop
 Task             : run_setting_2.py
 Log              : logs/backprop/run_2.log
+================================================
+Log              : logs/backprop/run_1.log
+================================================
+================================================
+Benchmark folder : backprop
+Task             : run_setting_4.py
+Log              : logs/backprop/run_4.log
 ================================================
 ================================================
 Benchmark folder : backprop
@@ -37,9 +42,4 @@ Log              : logs/dense_lu/run_2.log
 Benchmark folder : dense_lu
 Task             : run_setting_1.py
 Log              : logs/dense_lu/run_1.log
-================================================
-================================================
-Benchmark folder : backprop
-Task             : run_setting_4.py
-Log              : logs/backprop/run_4.log
 ================================================

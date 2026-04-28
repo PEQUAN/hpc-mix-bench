@@ -20,7 +20,7 @@ python3 -c "import cadnaPromise; print('cadnaPromise OK')"
 export JOBS=6
 echo "JOBS=$JOBS"
 
-bash run_benchmarks.sh false false true --parallel\
+bash run_benchmarks.sh false false true\
     sparse_lu \
     dense_lu \
     backprop \

@@ -35,11 +35,11 @@ void usage(int argc, char **argv) {
 int main(int argc, char *argv[]) {
     int rows, cols, size_I, size_R, niter = 10, iter, k;
     double *I, *J, q0sqr, sum, sum2, tmp, meanROI, varROI;
-    float Jc, G2, L, num, den, qsqr;
+    double Jc, G2, L, num, den, qsqr;
     int *iN, *iS, *jE, *jW;
     double *dN, *dS, *dW, *dE;
     int r1, r2, c1, c2;
-    float cN, cS, cW, cE;
+    double cN, cS, cW, cE;
     double *c, D;
     flx::floatx<5, 2> lambda;
     int i, j;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
     random_matrix(I, rows, cols);
 
     for (k = 0; k < size_I; k++) {
-        J[k] = (float) exp(I[k]);
+        J[k] = (double) exp(I[k]);
     }
 
     printf("Start the SRAD main loop\n");
@@ -224,7 +224,7 @@ void random_matrix(double *I, int rows, int cols) {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            I[i * cols + j] = rand() / (float) RAND_MAX;
+            I[i * cols + j] = rand() / (double) RAND_MAX;
 #ifdef OUTPUT
 // printf("%g ", I[i * cols + j]);
 #endif

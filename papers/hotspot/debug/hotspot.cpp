@@ -34,7 +34,7 @@ long long get_time() {
 void single_iteration(double* result, const double* temp, 
                      const double* power, int row, int col,
                      flx::floatx<5, 2> Cap_1, flx::floatx<5, 2> Rx_1, flx::floatx<5, 2> Ry_1, flx::floatx<5, 2> Rz_1, flx::floatx<5, 2> step) {
-    flx::floatx<5, 2> delta;
+    flx::floatx<5, 10> delta;
     int num_chunk = row * col / (BLOCK_SIZE_R * BLOCK_SIZE_C);
     int chunks_in_row = col / BLOCK_SIZE_C;
     int chunks_in_col = row / BLOCK_SIZE_R;
@@ -125,8 +125,8 @@ void compute_tran_temp(double* result, int num_iterations,
     flx::floatx<5, 2> Ry = grid_height / (2.0 * K_SI * t_chip * grid_width);
     flx::floatx<5, 2> Rz = t_chip / (K_SI * grid_height * grid_width);
 
-    flx::floatx<5, 2> max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
-    flx::floatx<5, 2> step = PRECISION / max_slope / 1000.0;
+    flx::floatx<5, 10> max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
+    float step = PRECISION / max_slope / 1000.0;
 
     flx::floatx<5, 2> Rx_1 = 1.0 / Rx;
     flx::floatx<5, 2> Ry_1 = 1.0 / Ry;
