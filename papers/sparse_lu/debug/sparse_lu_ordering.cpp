@@ -263,7 +263,7 @@ struct DynamicSparseRow {
         }
     }
     
-    void append(int col, double val) {
+    void append(int col, flx::floatx<5, 10> val) {
         if (count >= capacity) {
             reserve(capacity == 0 ? 16 : capacity * 2);
         }
@@ -593,7 +593,7 @@ void permuteCSR(const CSRMatrix& A, const int* rperm, const int* cperm, CSRMatri
                     P.col_indices[j] = P.col_indices[k];
                     P.col_indices[k] = tc;
                     
-                    double tv = P.values[j];
+                    flx::floatx<5, 10> tv = P.values[j];
                     P.values[j] = P.values[k];
                     P.values[k] = tv;
                 }
@@ -627,8 +627,8 @@ void backwardSubstitution(const CSRMatrix& U, const double* y, double* x) {
     for (int i = 0; i < U.rows; i++) x[i] = 0.0;
     
     for (int i = U.rows - 1; i >= 0; i--) {
-        double sum = 0.0;
-        double diag = 0.0;
+        float sum = 0.0;
+        flx::floatx<5, 10> diag = 0.0;
         
         for (int p = U.row_ptr[i]; p < U.row_ptr[i + 1]; p++) {
             int col = U.col_indices[p];

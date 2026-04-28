@@ -14,29 +14,16 @@ check compilers: g++
 [37md) Delta-Debug custom(5, 10)/Single[0m
 
 [95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
-[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [140.06s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
-[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [97.97s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
-[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [87.58s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
-[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [81.43s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
-[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [74.77s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [74.77s/it][39m[0m[A[95m[39m                     [95m[39m
+[95mDelta-Debug iterations:   3%|[34m▊                              [95m| 1 it. [136.97s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
+[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [96.68s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
+[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [86.77s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
+[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [81.17s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👎[39m
+[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [74.38s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
+[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [74.38s/it][39m[0m[A[95m[39m                     [95m[39m
                                                                                 [A
 [A
 [A[37me) Delta-Debug custom(5, 2)/custom(5, 10)[0m
 
 [95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
-[95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [147.61s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
-[95mDelta-Debug iterations:  25%|[34m███████▊                       [95m| 2 it. [101.32s/it][39m[0m[A[95mWe test C=[2] 👎[39m   
-[95mDelta-Debug iterations:  38%|[34m████████████                    [95m| 3 it. [85.99s/it][39m[0m[A[95mWe test C=[4] 👍[39m
-[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 4 it. [79.10s/it][39m[0m[A[95mWe test C=[4, 6] 👍[39m
-[95mDelta-Debug iterations:  62%|[34m████████████████████            [95m| 5 it. [74.74s/it][39m[0m[A[95mWe test C=[4, 6, 7] 👎[39m
-[95mDelta-Debug iterations:  75%|[34m████████████████████████        [95m| 6 it. [72.08s/it][39m[0m[A[95mWe test C=[2, 4, 6] 👎[39m
-[95mDelta-Debug iterations:  88%|[34m████████████████████████████    [95m| 7 it. [70.35s/it][39m[0m[A
-[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 7 it. [70.35s/it][39m[0m[A[95m[39m                      [95m[39m
-                                                                                [A
-[A
-[A[34mThe final result contains 7x float, 2x flx::floatx<5, 10> and 2x flx::floatx<5, 2>.[0m
-[34mIt tooks 1143.65s[0m
-[34m👉 39 compilations (22 failed) for 37.41s[0m
-[34m👉 17 executions   (0 failed) for 1001.24s[0m
-{'float': {0, 1, 3, 5, 8, 9, '1'}, 'flx::floatx<5, 10>': {2, 7}, 'flx::floatx<5, 2>': {4, 6}}
+[95mDelta-Debug iterations:  12%|[34m███▉                           [95m| 1 it. [141.92s/it][39m[0m[A[95mWe test C=[6, 7] 👎[39m
+[95mDelta-Debug iterations:  25%|[34m███████▊                       [95m| 2 it. [101.26s/it][39m[0m[A

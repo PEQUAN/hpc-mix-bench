@@ -13,7 +13,7 @@
 #include <string.h>
 #include <math.h>
 
-void random_matrix(float *I, int rows, int cols);
+void random_matrix(double *I, int rows, int cols);
 
 void usage(int argc, char **argv) {
     fprintf(stderr, "Usage: %s <rows> <cols> <y1> <y2> <x1> <x2> <no. of "
@@ -34,13 +34,13 @@ void usage(int argc, char **argv) {
 
 int main(int argc, char *argv[]) {
     int rows, cols, size_I, size_R, niter = 10, iter, k;
-    float *I, *J, q0sqr, sum, sum2, tmp, meanROI, varROI;
-    flx::floatx<5, 10> Jc, G2, L, num, den, qsqr;
+    double *I, *J, q0sqr, sum, sum2, tmp, meanROI, varROI;
+    float Jc, G2, L, num, den, qsqr;
     int *iN, *iS, *jE, *jW;
-    float *dN, *dS, *dW, *dE;
+    double *dN, *dS, *dW, *dE;
     int r1, r2, c1, c2;
-    flx::floatx<5, 10> cN, cS, cW, cE;
-    float *c, D;
+    float cN, cS, cW, cE;
+    double *c, D;
     flx::floatx<5, 2> lambda;
     int i, j;
     int nthreads;
@@ -67,9 +67,9 @@ int main(int argc, char *argv[]) {
     size_I = cols * rows;
     size_R = (r2 - r1 + 1) * (c2 - c1 + 1);
 
-    I = (float *)malloc(size_I * sizeof(float));
-    J = (float *)malloc(size_I * sizeof(float));
-    c = (float *)malloc(sizeof(float) * size_I);
+    I = (double *)malloc(size_I * sizeof(double));
+    J = (double *)malloc(size_I * sizeof(double));
+    c = (double *)malloc(sizeof(double) * size_I);
 
     iN = (int *)malloc(sizeof(int) * rows);
     iS = (int *)malloc(sizeof(int) * rows);
@@ -77,10 +77,10 @@ int main(int argc, char *argv[]) {
     jE = (int *)malloc(sizeof(int) * cols);
 
 
-    dN = (float *)malloc(sizeof(float) * size_I);
-    dS = (float *)malloc(sizeof(float) * size_I);
-    dW = (float *)malloc(sizeof(float) * size_I);
-    dE = (float *)malloc(sizeof(float) * size_I);
+    dN = (double *)malloc(sizeof(double) * size_I);
+    dS = (double *)malloc(sizeof(double) * size_I);
+    dW = (double *)malloc(sizeof(double) * size_I);
+    dE = (double *)malloc(sizeof(double) * size_I);
 
 
     for (int i = 0; i < rows; i++) {
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
     random_matrix(I, rows, cols);
 
     for (k = 0; k < size_I; k++) {
-        J[k] = (flx::floatx<5, 10>) exp(I[k]);
+        J[k] = (float) exp(I[k]);
     }
 
     printf("Start the SRAD main loop\n");
@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
 }
 
 
-void random_matrix(float *I, int rows, int cols) {
+void random_matrix(double *I, int rows, int cols) {
 
     srand(7);
 
