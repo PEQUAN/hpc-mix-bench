@@ -1,0 +1,2 @@
+[RUN] ./run_debug_1.sh
+[RUN] promise --precs=wpsd --nbDigits=1
