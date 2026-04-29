@@ -1,0 +1,47 @@
+[RUN] ./run_debug_2.sh
+[RUN] promise --precs=wpsd --nbDigits=1
+Done nbDigits=1, see logs/log_2_1.txt
+[DONE] digit2_1
+[RUN] promise --precs=wpsd --nbDigits=2
+Done nbDigits=2, see logs/log_2_2.txt
+[DONE] digit2_2
+[RUN] promise --precs=wpsd --nbDigits=3
+Done nbDigits=3, see logs/log_2_3.txt
+[DONE] digit2_3
+[RUN] promise --precs=wpsd --nbDigits=4
+Done nbDigits=4, see logs/log_2_4.txt
+[DONE] digit2_4
+[RUN] promise --precs=wpsd --nbDigits=5
+Done nbDigits=5, see logs/log_2_5.txt
+[DONE] digit2_5
+[RUN] promise --precs=wpsd --nbDigits=6
+Done nbDigits=6, see logs/log_2_6.txt
+[DONE] digit2_6
+[RUN] promise --precs=wpsd --nbDigits=7
+Done nbDigits=7, see logs/log_2_7.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit2_7
+[RUN] promise --precs=wpsd --nbDigits=8
+Done nbDigits=8, see logs/log_2_8.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit2_8
+[RUN] promise --precs=wpsd --nbDigits=9
+Done nbDigits=9, see logs/log_2_9.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit2_9
+[RUN] promise --precs=wpsd --nbDigits=10
+Done nbDigits=10, see logs/log_2_10.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit2_10
+[RUN] python3 run_setting_2.py true true
+Running experiments...
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 5 files and 15 different types[0m
+[37mThe expectation is 1 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m

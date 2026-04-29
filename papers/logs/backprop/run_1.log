@@ -1,2 +1,36 @@
 [RUN] ./run_debug_1.sh
 [RUN] promise --precs=wpsd --nbDigits=1
+Done nbDigits=1, see logs/log_1_1.txt
+[DONE] digit1_1
+[RUN] promise --precs=wpsd --nbDigits=2
+Done nbDigits=2, see logs/log_1_2.txt
+[DONE] digit1_2
+[RUN] promise --precs=wpsd --nbDigits=3
+Done nbDigits=3, see logs/log_1_3.txt
+[DONE] digit1_3
+[RUN] promise --precs=wpsd --nbDigits=4
+Done nbDigits=4, see logs/log_1_4.txt
+[DONE] digit1_4
+[RUN] promise --precs=wpsd --nbDigits=5
+Done nbDigits=5, see logs/log_1_5.txt
+[DONE] digit1_5
+[RUN] promise --precs=wpsd --nbDigits=6
+Done nbDigits=6, see logs/log_1_6.txt
+[DONE] digit1_6
+[RUN] promise --precs=wpsd --nbDigits=7
+Done nbDigits=7, see logs/log_1_7.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit1_7
+[RUN] promise --precs=wpsd --nbDigits=8
+Done nbDigits=8, see logs/log_1_8.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit1_8
+[RUN] promise --precs=wpsd --nbDigits=9
+Done nbDigits=9, see logs/log_1_9.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit1_9
+[RUN] promise --precs=wpsd --nbDigits=10
+Done nbDigits=10, see logs/log_1_10.txt
+mv: cannot stat 'debug': No such file or directory
+[DONE] digit1_10
+[RUN] python3 run_setting_1.py true true
