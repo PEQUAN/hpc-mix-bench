@@ -127,3 +127,27 @@ Benchmark folder : sparse_lu
 Task             : run_setting_4.py
 Log              : logs/sparse_lu/run_4.log
 ================================================
+[DONE] particle_filter / run_setting_1.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_1.py
+Log              : logs/srad_v2/run_1.log
+================================================
+[DONE] particle_filter / run_setting_2.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_2.py
+Log              : logs/srad_v2/run_2.log
+================================================
+[DONE] sparse_lu / run_setting_4.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_3.py
+Log              : logs/srad_v2/run_3.log
+================================================
+[DONE] sparse_lu / run_setting_3.py
+================================================
+Benchmark folder : srad_v2
+Task             : run_setting_4.py
+Log              : logs/srad_v2/run_4.log
+================================================

@@ -1,0 +1,42 @@
+[RUN] python3 run_setting_2.py true true
+Running experiments...
+check compilers: g++
+[34m🤘 cadnaPromise 🤘[0m
+[34mUsing the compiler: g++[0m
+[37mWe are working with 1 file and 11 different types[0m
+[37mThe expectation is 1 digits.[0m
+[37ma) Get a reference result with cadna (double)[0m
+[37mb) Check with highest format (Double)[0m
+[37mc) Delta-Debug Single/Double[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+                                                                                [A
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m
+                                                                                [A[37mThe format float is enough for your expectation[0m
+[37md) Delta-Debug bfloat16/Single[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2] 👍[39m     
+[95mDelta-Debug iterations:   3%|[34m▊                               [95m| 1 it. [99.74s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4] 👍[39m  
+[95mDelta-Debug iterations:   5%|[34m█▋                              [95m| 2 it. [70.25s/it][39m[0m[A[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6] 👍[39m
+[95mDelta-Debug iterations:   8%|[34m██▍                             [95m| 3 it. [62.94s/it][39m[0m[A[95mCompilation failed 👎[39m [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7] 👍[39m
+[95mDelta-Debug iterations:  10%|[34m███▎                            [95m| 4 it. [57.33s/it][39m[0m[A[95mCompilation failed 👎[39m    [95mCompilation failed 👎[39m[95mWe test C=[2, 4, 6, 7, 9] 👍[39m
+[95mDelta-Debug iterations:  13%|[34m████                            [95m| 5 it. [54.93s/it][39m[0m[A[95mCompilation failed 👎[39m       [95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m[95mCompilation failed 👎[39m
+[95mDelta-Debug iterations: 100%|[34m████████████████████████████████[95m| 5 it. [54.93s/it][39m[0m[A[95m[39m                     [95m[39m
+                                                                                [A
+[A
+[A[37me) Delta-Debug custom(5, 2)/bfloat16[0m
+
+[95mDelta-Debug iterations:   0%|[34m                                    [95m| 0 it. [?it/s][39m[0m[A[95m[39m[95mWe test C=[2, 4] 👎[39m
+[95mDelta-Debug iterations:   8%|[34m██▋                             [95m| 1 it. [91.99s/it][39m[0m[A[95mWe test C=[6, 7, 9] 👎[39m
+[95mDelta-Debug iterations:  17%|[34m█████▎                          [95m| 2 it. [64.04s/it][39m[0m[A[95mWe test C=[2] 👎[39m      
+[95mDelta-Debug iterations:  25%|[34m████████                        [95m| 3 it. [56.53s/it][39m[0m[A[95mWe test C=[4] 👍[39m
+[95mDelta-Debug iterations:  33%|[34m██████████▋                     [95m| 4 it. [53.39s/it][39m[0m[A[95mWe test C=[4, 6] 👍[39m
+[95mDelta-Debug iterations:  42%|[34m█████████████▎                  [95m| 5 it. [51.71s/it][39m[0m[A[95mWe test C=[4, 6, 7, 9] 👎[39m
+[95mDelta-Debug iterations:  50%|[34m████████████████                [95m| 6 it. [49.02s/it][39m[0m[A[95mWe test C=[2, 4, 6] 👎[39m   
+[95mDelta-Debug iterations:  58%|[34m██████████████████▋             [95m| 7 it. [49.18s/it][39m[0m[A[95mWe test C=[4, 6, 7] 👎[39m
+[95mDelta-Debug iterations:  67%|[34m█████████████████████▎          [95m| 8 it. [48.97s/it][39m[0m[A[95mWe test C=[4, 6, 9] 👎[39m
+[95mDelta-Debug iterations:  75%|[34m████████████████████████        [95m| 9 it. [47.37s/it][39m[0m[A[95mWe test C=[2, 4, 6] 👎[39m
+[95mDelta-Debug iterations: 100%|[34m███████████████████████████████[95m| 10 it. [47.37s/it][39m[0m[A[95m[39m                      [95m[39m
+                                                                                [A
+[A
+[A
