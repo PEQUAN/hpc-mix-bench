@@ -151,3 +151,17 @@ Benchmark folder : srad_v2
 Task             : run_setting_4.py
 Log              : logs/srad_v2/run_4.log
 ================================================
+[DONE] particle_filter / run_setting_3.py
+[DONE] particle_filter / run_setting_4.py
+[DONE] srad_v2 / run_setting_1.py
+[DONE] srad_v2 / run_setting_2.py
+[DONE] srad_v2 / run_setting_4.py
+[DONE] srad_v2 / run_setting_3.py
+Debug phase skipped.
+======================================
+All benchmark tasks finished.
+Logs in ./logs/
+Started at      : 2026-04-29 07:57:51
+Finished at     : 2026-04-29 11:38:23
+Total elapsed   : 3h 40m 32s
+======================================
