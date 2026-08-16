@@ -144,7 +144,7 @@ def getFPM(args):
 	fpfmt_reference	= { 'b': [8, 7],
 						'h': [5, 10],
 						's': [8, 23],
-						'd': [11, 32],
+						'd': [11, 52],
 						'q': [15, 112],
 						'o': [19, 236]
 						}
@@ -159,19 +159,21 @@ def getFPM(args):
 			if i not in fpfmt_reference:
 				fpfmt_reference[i] = fpfmt[i]
 
+		def sort_key(item):
+			k, v = item
+			sig = v[1]          # significand bits（主排序键）
+			exp = v[0]          # exponent bits（次排序键）
+			# s 和 d 特殊处理：相同 significand 时，让自定义格式排在它们前面
+			priority = 1 if k in ('s', 'd') else 0
+			return (sig, priority, exp)
+
 		fpfmt_reference = {k: v for k, v in sorted(
-			fpfmt_reference.items(), key=lambda item: item[1][1])}
+			fpfmt_reference.items(), key=sort_key)}
 	
 	except FileNotFoundError:
-		#import logging
-		#logging.basicConfig()
-		#log = logging.getLogger(__file__)
-
-		# logger.message("File for customized precision formats is lacking.")
 		pass
 
 	return fpfmt_reference
-
 
 
 def sort_precs(method, fpfmt):

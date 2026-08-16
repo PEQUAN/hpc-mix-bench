@@ -1,0 +1,12 @@
+NVCC ?= nvcc
+CUDA_ARCH ?= sm_90
+TARGET ?= dense_lu_cuda
+
+.PHONY: all clean
+all: $(TARGET)
+
+$(TARGET): dense_lu_cuda.cu ../cuda_dense_lu_h100.cuh ../../cuda_common/h100_mixed_precision.cuh
+	$(NVCC) -O3 -std=c++17 -arch=$(CUDA_ARCH) dense_lu_cuda.cu -o $(TARGET)
+
+clean:
+	$(RM) $(TARGET)

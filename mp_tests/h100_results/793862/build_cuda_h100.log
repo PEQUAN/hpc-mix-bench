@@ -1,0 +1,164 @@
+==> building hotspot double-precision baseline
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot'
+nvcc -O3 -std=c++17 -arch=sm_90 double_precision_cuda.cu -o hotspot_cuda_double
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot'
+==> building hotspot/digit1_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_1'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_1'
+==> building hotspot/digit1_10
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_10'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_10'
+==> building hotspot/digit1_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_2'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_2'
+==> building hotspot/digit1_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_3'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_3'
+==> building hotspot/digit1_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_4'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_4'
+==> building hotspot/digit1_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_5'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_5'
+==> building hotspot/digit1_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_6'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_6'
+==> building hotspot/digit1_7
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_7'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_7'
+==> building hotspot/digit1_8
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_8'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_8'
+==> building hotspot/digit1_9
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_9'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit1_9'
+==> building hotspot/digit2_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_1'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_1'
+==> building hotspot/digit2_10
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_10'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_10'
+==> building hotspot/digit2_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_2'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_2'
+==> building hotspot/digit2_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_3'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_3'
+==> building hotspot/digit2_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_4'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_4'
+==> building hotspot/digit2_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_5'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_5'
+==> building hotspot/digit2_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_6'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_6'
+==> building hotspot/digit2_7
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_7'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_7'
+==> building hotspot/digit2_8
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_8'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_8'
+==> building hotspot/digit2_9
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_9'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit2_9'
+==> building hotspot/digit3_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_1'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_1'
+==> building hotspot/digit3_10
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_10'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_10'
+==> building hotspot/digit3_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_2'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_2'
+==> building hotspot/digit3_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_3'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_3'
+==> building hotspot/digit3_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_4'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_4'
+==> building hotspot/digit3_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_5'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_5'
+==> building hotspot/digit3_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_6'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_6'
+==> building hotspot/digit3_7
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_7'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_7'
+==> building hotspot/digit3_8
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_8'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_8'
+==> building hotspot/digit3_9
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_9'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit3_9'
+==> building hotspot/digit4_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_1'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_1'
+==> building hotspot/digit4_10
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_10'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_10'
+==> building hotspot/digit4_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_2'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_2'
+==> building hotspot/digit4_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_3'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_3'
+==> building hotspot/digit4_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_4'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_4'
+==> building hotspot/digit4_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_5'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_5'
+==> building hotspot/digit4_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_6'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_6'
+==> building hotspot/digit4_7
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_7'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_7'
+==> building hotspot/digit4_8
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_8'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_8'
+==> building hotspot/digit4_9
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_9'
+nvcc -O3 -std=c++17 -arch=sm_90 hotspot_cuda.cu -o hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/mp_tests/hotspot/digit4_9'

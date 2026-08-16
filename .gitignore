@@ -1,22 +1,2 @@
-# Data CSVs
-/data/classification/*.csv
-/data/clustering/*.csv
-/data/query/*.csv
-/data/regression/*.csv
-
-# SuiteSparse matrices
-/data/suitesparse/*.mtx
-
-# Results
-/data/results/kmeans/*.csv
-
-# Parameter study
-param_study/trash/
-param_study/param_plots/*.jpg
-
-# All mp_tests data: recursively ignore .csv and .mtx
-mp_tests/**/*.csv
-mp_tests/**/*.mtx
-
-# Ignore plots folder in mp_tests
-mp_tests/plots/
+__pycache__/
+*.py[cod]

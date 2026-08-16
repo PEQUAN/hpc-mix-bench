@@ -1,36 +1,70 @@
 #!/usr/bin/env bash
 
 # ------------------------------------------------------------
-# Usage:
-#   ./run_benchmarks.sh <run_exp> <run_plot> <run_debug> [folder1 folder2 ...] [--parallel] [--jobs N]
+# Purpose:
+#   Run PROMISE mixed-precision benchmark experiments, plotting, and optional
+#   debug scripts for benchmark folders in this directory.
 #
-# Arguments:
-#   • run_exp   : 1|true|y → run experiments
-#   • run_plot  : 1|true|y → run plotting
-#   • run_debug : 1|true|y → run matching run_debug_i.sh after run_setting_i.py
+# Usage:
+#   cd mp_tests
+#   ./run_benchmarks.sh [run_exp] [run_plot] [run_debug] [folder1 folder2 ...] [--parallel] [--jobs N]
+#
+# Positional arguments:
+#   • run_exp
+#       Whether to execute each run_setting_i.py experiment phase.
+#       Accepted true values: 1, true, y, yes
+#       Accepted false values: 0, false, n, no
+#       Default: true
+#
+#   • run_plot
+#       Whether to execute each run_setting_i.py plotting phase.
+#       Uses existing result files if run_exp=false.
+#       Accepted values: same as run_exp
+#       Default: true
+#
+#   • run_debug
+#       Whether to execute run_debug_i.sh after the matching run_setting_i.py.
+#       run_debug_i.sh is matched to run_setting_i.py by numeric suffix i.
+#       Missing debug scripts are skipped without failing the whole run.
+#       Accepted values: same as run_exp
+#       Default: false
+#
+#   • folder1 folder2 ...
+#       Optional benchmark folders to run. If omitted, the script auto-detects
+#       all folders up to two levels deep that contain both promise.yml and at
+#       least one run_setting_*.py.
+#
+#       Example: run only hotspot and dense_lu, with experiments and plots on
+#       and debug off:
+#         ./run_benchmarks.sh true true false hotspot dense_lu
 #
 # Options:
-#   • folders    : optional target folders; if omitted, auto-detect all valid folders
-#   • --parallel : run tasks in parallel (requires GNU parallel)
-#   • --jobs N   : number of parallel jobs/processes
-#                  also supports: --jobs=N
+#   • --parallel
+#       Run benchmark setting/debug tasks in parallel instead of sequentially.
+#       Requires GNU parallel to be installed. Default: disabled.
+#
+#   • --jobs N or --jobs=N
+#       Number of parallel jobs when --parallel is enabled.
+#       Default: $JOBS if set, otherwise nproc if available, otherwise 4.
+#
+# Defaults when no arguments are provided:
+#   ./run_benchmarks.sh true true false
+#   This runs experiments and plots for every auto-detected valid benchmark
+#   folder, skips debug scripts, runs sequentially, and writes logs under logs/.
+#
+# Output/log files:
+#   • Setting logs: logs/<folder>/run_<i>.log
+#   • Debug output is appended to the matching logs/<folder>/run_<i>.log
+#   • Benchmark outputs/plots are produced by each benchmark's run_setting_i.py.
 #
 # Folder requirements:
-#   Each folder must contain:
+#   Each runnable benchmark folder must contain:
 #     - promise.yml
-#     - run_setting_*.py
+#     - one or more run_setting_*.py files
 #
-# Optional files:
-#   • run_debug_{i}.sh
-#       - Executed only if run_debug=true
-#       - Matched to run_setting_{i}.py by index
-#
-# Notes:
-#   • Boolean arguments accept: 1/0, true/false, yes/no (case-insensitive)
-#   • Logs are saved to: logs/<folder>/run_<i>.log
-#   • Missing run_debug_i.sh will be skipped gracefully
-#   • If --jobs is not provided, default is:
-#         JOBS environment variable, otherwise nproc, otherwise 4
+# Runtime environment defaults:
+#   OMP_NUM_THREADS, MKL_NUM_THREADS, and OPENBLAS_NUM_THREADS default to 1
+#   unless already set in the environment before launching this script.
 # ------------------------------------------------------------
 # Author: Xinye Chen (xinyechenai@gmail.com)
 # Last Updated: November 18, 2025

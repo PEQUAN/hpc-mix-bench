@@ -1,0 +1,1 @@
+backprop (10 digits): max variables assigned to custom precision were 0 in the significand sweep and 0 in the exponent sweep; saturation at t=3, e=3.

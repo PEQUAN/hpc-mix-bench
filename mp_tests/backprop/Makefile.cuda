@@ -1,0 +1,14 @@
+NVCC ?= nvcc
+CUDA_ARCH ?= sm_90
+NVCCFLAGS ?= -O3 -std=c++17
+TARGET ?= backprop_cuda_double
+
+all: $(TARGET)
+
+$(TARGET): double_precision_cuda.cu cuda_backprop_h100.cuh ../cuda_common/h100_mixed_precision.cuh
+	$(NVCC) $(NVCCFLAGS) -arch=$(CUDA_ARCH) double_precision_cuda.cu -o $(TARGET)
+
+clean:
+	rm -f $(TARGET)
+
+.PHONY: all clean

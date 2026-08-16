@@ -1,53 +1,159 @@
-07/04 22:18:26: 🤘 cadnaPromise 🤘
-07/04 22:18:26: Using the compiler: g++
-07/04 22:18:26: We are working with 1 file and 7 different types
-07/04 22:18:26: The expectation is 1 digits.
-07/04 22:18:26: a) Get a reference result with cadna (double)
-07/04 22:18:29: euler3d_cpu.cpp: In function ‘int main(int, char**)’:
-euler3d_cpu.cpp:567:41: error: cannot convert ‘double*’ to ‘double_st*’ in initialization
-  567 |     double_st *variables = alloc<double>(nelr * NVAR);
-      |                            ~~~~~~~~~~~~~^~~~~~~~~~~~~
-      |                                         |
-      |                                         double*
-euler3d_cpu.cpp:570:45: error: cannot convert ‘double*’ to ‘double_st*’ in initialization
-  570 |     double_st *old_variables = alloc<double>(nelr * NVAR);
-      |                                ~~~~~~~~~~~~~^~~~~~~~~~~~~
-      |                                             |
-      |                                             double*
-euler3d_cpu.cpp:571:38: error: cannot convert ‘double*’ to ‘double_st*’ in initialization
-  571 |     double_st *fluxes = alloc<double>(nelr * NVAR);
-      |                         ~~~~~~~~~~~~~^~~~~~~~~~~~~
-      |                                      |
-      |                                      double*
-euler3d_cpu.cpp:572:44: error: cannot convert ‘double*’ to ‘double_st*’ in initialization
-  572 |     double_st *step_factors = alloc<double>(nelr);
-      |                               ~~~~~~~~~~~~~^~~~~~
-      |                                            |
-      |                                            double*
-euler3d_cpu.cpp:596:21: error: no matching function for call to ‘copy<double>(double_st*&, double_st*&, int)’
-  596 |         copy<double>(old_variables, variables, nelr * NVAR);
-      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-euler3d_cpu.cpp:68:28: note: candidate: ‘void copy(T*, T*, int) [with T = double]’
-   68 | template <typename T> void copy(T *dst, T *src, int N) {
-      |                            ^~~~
-euler3d_cpu.cpp:68:36: note:   no known conversion for argument 1 from ‘double_st*’ to ‘double*’
-   68 | template <typename T> void copy(T *dst, T *src, int N) {
-      |                                 ~~~^~~
+08/01 08:18:43: 🤘 cadnaPromise 🤘
+08/01 08:18:43: Using the compiler: g++
+08/01 08:18:43: We are working with 1 file and 0 different types
+08/01 08:18:43: The expectation is 10 digits.
+08/01 08:18:43: a) Get a reference result with cadna (double)
+08/01 08:18:46: euler3d_cpu.cpp:28:10: error: #error "you need to define block_length"
+   28 |         #error "you need to define block_length"
+      |          ^~~~~
+euler3d_cpu.cpp: In function ‘float_st compute_speed_of_sound(float_st&, float_st&)’:
+euler3d_cpu.cpp:175:25: error: call of overloaded ‘sqrt(float_st)’ is ambiguous
+  175 |         return std::sqrt(float(GAMMA)*pressure/density);
+      |                ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/features.h:502,
+                 from /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h:39,
+                 from /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h:679,
+                 from /usr/include/c++/13/bits/requires_hosted.h:31,
+                 from /usr/include/c++/13/iostream:38,
+                 from /home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/cadna.h:26,
+                 from euler3d_cpu.cpp:1:
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+In file included from /home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/cadna.h:27:
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp: In function ‘void compute_step_factor(int, float_st*, float_st*, float_st*)’:
+euler3d_cpu.cpp:182:37: error: ‘block_length’ was not declared in this scope
+  182 |         for(int blk = 0; blk < nelr/block_length; ++blk)
+      |                                     ^~~~~~~~~~~~
+euler3d_cpu.cpp:203:59: error: call of overloaded ‘sqrt(float_st&)’ is ambiguous
+  203 |                 step_factors[i] = float(0.5f) / (std::sqrt(areas[i]) * (std::sqrt(speed_sqd) + speed_of_sound));
+      |                                                  ~~~~~~~~~^~~~~~~~~~
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp:203:82: error: call of overloaded ‘sqrt(float_st&)’ is ambiguous
+  203 |                 step_factors[i] = float(0.5f) / (std::sqrt(areas[i]) * (std::sqrt(speed_sqd) + speed_of_sound));
+      |                                                                         ~~~~~~~~~^~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp:182:9: error: invalid controlling predicate
+  182 |         for(int blk = 0; blk < nelr/block_length; ++blk)
+      |         ^~~
+euler3d_cpu.cpp: In function ‘void compute_flux(int, int*, float_st*, float_st*, float_st*, float_st*, float3, float3, float3, float3)’:
+euler3d_cpu.cpp:219:37: error: ‘block_length’ was not declared in this scope
+  219 |         for(int blk = 0; blk < nelr/block_length; ++blk)
+      |                                     ^~~~~~~~~~~~
+euler3d_cpu.cpp:236:74: error: call of overloaded ‘sqrt(float_st&)’ is ambiguous
+  236 |                 float_st speed_i                              = std::sqrt(speed_sqd_i);
+      |                                                                 ~~~~~~~~~^~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp:266:47: error: call of overloaded ‘sqrt(float_st)’ is ambiguous
+  266 |                         normal_len = std::sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
+      |                                      ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp:282:108: error: call of overloaded ‘sqrt(float_st&)’ is ambiguous
+  282 |                                 factor = -normal_len*smoothing_coefficient*float(0.5f)*(speed_i + std::sqrt(speed_sqd_nb) + speed_of_sound_i + speed_of_sound_nb);
+      |                                                                                                   ~~~~~~~~~^~~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:143:1: note: candidate: ‘double sqrt(double)’
+  143 | __MATHCALL (sqrt,, (_Mdouble_ __x));
+      | ^~~~~~~~~~
+/usr/include/c++/13/cmath:438:3: note: candidate: ‘constexpr float std::sqrt(float)’
+  438 |   sqrt(float __x)
+      |   ^~~~
+/usr/include/c++/13/cmath:442:3: note: candidate: ‘constexpr long double std::sqrt(long double)’
+  442 |   sqrt(long double __x)
+      |   ^~~~
+euler3d_cpu.cpp:219:9: error: invalid controlling predicate
+  219 |         for(int blk = 0; blk < nelr/block_length; ++blk)
+      |         ^~~
+euler3d_cpu.cpp: In function ‘void time_step(int, int, float_st*, float_st*, float_st*, float_st*)’:
+euler3d_cpu.cpp:355:33: error: ‘block_length’ was not declared in this scope
+  355 |     for(int blk = 0; blk < nelr/block_length; ++blk)
+      |                                 ^~~~~~~~~~~~
+euler3d_cpu.cpp:355:5: error: invalid controlling predicate
+  355 |     for(int blk = 0; blk < nelr/block_length; ++blk)
+      |     ^~~
+euler3d_cpu.cpp: In function ‘int main(int, char**)’:
+euler3d_cpu.cpp:432:24: error: ‘block_length’ was not declared in this scope
+  432 |                 nelr = block_length*((nel / block_length )+ std::min(1, nel % block_length));
+      |                        ^~~~~~~~~~~~
+euler3d_cpu.cpp:471:43: error: cannot convert ‘float*’ to ‘float_st*’ in initialization
+  471 |         float_st* variables = alloc<float>(nelr*NVAR);
+      |                               ~~~~~~~~~~~~^~~~~~~~~~~
+      |                                           |
+      |                                           float*
+euler3d_cpu.cpp:474:47: error: cannot convert ‘float*’ to ‘float_st*’ in initialization
+  474 |         float_st* old_variables = alloc<float>(nelr*NVAR);
+      |                                   ~~~~~~~~~~~~^~~~~~~~~~~
+      |                                               |
+      |                                               float*
+euler3d_cpu.cpp:475:40: error: cannot convert ‘float*’ to ‘float_st*’ in initialization
+  475 |         float_st* fluxes = alloc<float>(nelr*NVAR);
+      |                            ~~~~~~~~~~~~^~~~~~~~~~~
+      |                                        |
+      |                                        float*
+euler3d_cpu.cpp:476:46: error: cannot convert ‘float*’ to ‘float_st*’ in initialization
+  476 |         float_st* step_factors = alloc<float>(nelr);
+      |                                  ~~~~~~~~~~~~^~~~~~
+      |                                              |
+      |                                              float*
+euler3d_cpu.cpp:489:28: error: no matching function for call to ‘copy<float>(float_st*&, float_st*&, int)’
+  489 |                 copy<float>(old_variables, variables, nelr*NVAR);
+      |                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+euler3d_cpu.cpp:82:6: note: candidate: ‘void copy(T*, T*, int) [with T = float]’
+   82 | void copy(T* dst, T* src, int N)
+      |      ^~~~
+euler3d_cpu.cpp:82:14: note:   no known conversion for argument 1 from ‘float_st*’ to ‘float*’
+   82 | void copy(T* dst, T* src, int N)
+      |           ~~~^~~
 In file included from /usr/include/c++/13/string:51,
                  from /usr/include/c++/13/bits/locale_classes.h:40,
                  from /usr/include/c++/13/bits/ios_base.h:41,
                  from /usr/include/c++/13/ios:44,
                  from /usr/include/c++/13/ostream:40,
-                 from /usr/include/c++/13/iostream:41,
-                 from /home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/cadna.h:26,
-                 from euler3d_cpu.cpp:1:
+                 from /usr/include/c++/13/iostream:41:
 /usr/include/c++/13/bits/stl_algobase.h:624:5: note: candidate: ‘template<class _II, class _OI> _OI std::copy(_II, _II, _OI)’
   624 |     copy(_II __first, _II __last, _OI __result)
       |     ^~~~
 /usr/include/c++/13/bits/stl_algobase.h:624:5: note:   template argument deduction/substitution failed:
-euler3d_cpu.cpp:596:22: note:   cannot convert ‘old_variables’ (type ‘double_st*’) to type ‘double’
-  596 |         copy<double>(old_variables, variables, nelr * NVAR);
-      |                      ^~~~~~~~~~~~~
+euler3d_cpu.cpp:489:29: note:   cannot convert ‘old_variables’ (type ‘float_st*’) to type ‘float’
+  489 |                 copy<float>(old_variables, variables, nelr*NVAR);
+      |                             ^~~~~~~~~~~~~
 In file included from /usr/include/c++/13/bits/locale_facets.h:48,
                  from /usr/include/c++/13/bits/basic_ios.h:37,
                  from /usr/include/c++/13/ios:46:
@@ -55,9 +161,9 @@ In file included from /usr/include/c++/13/bits/locale_facets.h:48,
   339 |     copy(istreambuf_iterator<_CharT> __first,
       |     ^~~~
 /usr/include/c++/13/bits/streambuf_iterator.h:339:5: note:   template argument deduction/substitution failed:
-/usr/include/c++/13/bits/streambuf_iterator.h: In substitution of ‘template<class _CharT> typename __gnu_cxx::__enable_if<std::__is_char<_Tp>::__value, std::ostreambuf_iterator<_CharT> >::__type std::copy(istreambuf_iterator<_CharT>, istreambuf_iterator<_CharT>, ostreambuf_iterator<_CharT>) [with _CharT = double]’:
-euler3d_cpu.cpp:596:21:   required from here
-/usr/include/c++/13/bits/streambuf_iterator.h:339:5: error: no type named ‘__type’ in ‘struct __gnu_cxx::__enable_if<false, std::ostreambuf_iterator<double, std::char_traits<double> > >’
+/usr/include/c++/13/bits/streambuf_iterator.h: In substitution of ‘template<class _CharT> typename __gnu_cxx::__enable_if<std::__is_char<_Tp>::__value, std::ostreambuf_iterator<_CharT> >::__type std::copy(istreambuf_iterator<_CharT>, istreambuf_iterator<_CharT>, ostreambuf_iterator<_CharT>) [with _CharT = float]’:
+euler3d_cpu.cpp:489:28:   required from here
+/usr/include/c++/13/bits/streambuf_iterator.h:339:5: error: no type named ‘__type’ in ‘struct __gnu_cxx::__enable_if<false, std::ostreambuf_iterator<float, std::char_traits<float> > >’
 In file included from /usr/include/c++/13/algorithm:73,
                  from /home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/half.hpp:245,
                  from /home/xinye/.local/lib/python3.12/site-packages/cadnaPromise/cadna//include/cadna.h:35:
@@ -65,54 +171,54 @@ In file included from /usr/include/c++/13/algorithm:73,
   134 | copy(_ExecutionPolicy&& __exec, _ForwardIterator1 __first, _ForwardIterator1 __last, _ForwardIterator2 __result);
       | ^~~~
 /usr/include/c++/13/pstl/glue_algorithm_defs.h:134:1: note:   candidate expects 4 arguments, 3 provided
-euler3d_cpu.cpp:626:21: error: cannot convert ‘double_st*’ to ‘double*’
-  626 |     dealloc<double>(areas);
-      |                     ^~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
-euler3d_cpu.cpp:628:21: error: cannot convert ‘double_st*’ to ‘double*’
-  628 |     dealloc<double>(normals);
-      |                     ^~~~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
-euler3d_cpu.cpp:630:21: error: cannot convert ‘double_st*’ to ‘double*’
-  630 |     dealloc<double>(variables);
-      |                     ^~~~~~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
-euler3d_cpu.cpp:631:21: error: cannot convert ‘double_st*’ to ‘double*’
-  631 |     dealloc<double>(old_variables);
-      |                     ^~~~~~~~~~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
-euler3d_cpu.cpp:632:21: error: cannot convert ‘double_st*’ to ‘double*’
-  632 |     dealloc<double>(fluxes);
-      |                     ^~~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
-euler3d_cpu.cpp:633:21: error: cannot convert ‘double_st*’ to ‘double*’
-  633 |     dealloc<double>(step_factors);
-      |                     ^~~~~~~~~~~~
-      |                     |
-      |                     double_st*
-euler3d_cpu.cpp:63:39: note:   initializing argument 1 of ‘void dealloc(T*) [with T = double]’
-   63 | template <typename T> void dealloc(T *array) { delete[] array; }
-      |                                    ~~~^~~~~
+euler3d_cpu.cpp:513:24: error: cannot convert ‘float_st*’ to ‘float*’
+  513 |         dealloc<float>(areas);
+      |                        ^~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
+euler3d_cpu.cpp:515:24: error: cannot convert ‘float_st*’ to ‘float*’
+  515 |         dealloc<float>(normals);
+      |                        ^~~~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
+euler3d_cpu.cpp:517:24: error: cannot convert ‘float_st*’ to ‘float*’
+  517 |         dealloc<float>(variables);
+      |                        ^~~~~~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
+euler3d_cpu.cpp:518:24: error: cannot convert ‘float_st*’ to ‘float*’
+  518 |         dealloc<float>(old_variables);
+      |                        ^~~~~~~~~~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
+euler3d_cpu.cpp:519:24: error: cannot convert ‘float_st*’ to ‘float*’
+  519 |         dealloc<float>(fluxes);
+      |                        ^~~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
+euler3d_cpu.cpp:520:24: error: cannot convert ‘float_st*’ to ‘float*’
+  520 |         dealloc<float>(step_factors);
+      |                        ^~~~~~~~~~~~
+      |                        |
+      |                        float_st*
+euler3d_cpu.cpp:73:17: note:   initializing argument 1 of ‘void dealloc(T*) [with T = float]’
+   73 | void dealloc(T* array)
+      |              ~~~^~~~~
 
-07/04 22:18:29: Compilation failed
+08/01 08:18:46: Compilation failed
 Is Cadna installed? Did you link your cade with Cadna with `-lcadnac`, `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?
