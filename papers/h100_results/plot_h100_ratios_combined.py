@@ -440,7 +440,7 @@ def plot_error_lines(
     }
     metric_specs = [
         (first_series, metric_labels[0], "o", "-"),
-        (second_series, metric_labels[1], "D", (0, (2, 1))),
+        (second_series, metric_labels[1], "s", (0, (2, 1))),
     ]
     for metric_series, _, marker, metric_linestyle in metric_specs:
         for combo in combinations:
@@ -459,10 +459,10 @@ def plot_error_lines(
                 color=COLORS.get(combo, "0.25"),
                 linestyle=metric_linestyle,
                 marker=marker,
-                markerfacecolor=COLORS.get(combo, "0.25"),
+                markerfacecolor="white",
                 markeredgecolor=COLORS.get(combo, "0.25"),
-                markeredgewidth=0.9,
-                markersize=4.7,
+                markeredgewidth=1.15,
+                markersize=5.8,
                 linewidth=1.65,
                 alpha=0.9,
                 zorder=3,
@@ -576,22 +576,24 @@ def plot_ratio_error_benchmark(
             color="0.22",
             linestyle="-",
             marker="o",
-            markerfacecolor="0.22",
+            markerfacecolor="white",
             markeredgecolor="0.22",
+            markeredgewidth=1.15,
             linewidth=1.65,
-            markersize=4.7,
+            markersize=5.8,
             label=accuracy[0][1],
         ),
         Line2D(
             [0],
             [0],
             color="0.22",
-            linestyle=(0, (5, 2.4)),
-            marker="D",
-            markerfacecolor="0.22",
+            linestyle=(0, (2, 1)),
+            marker="s",
+            markerfacecolor="white",
             markeredgecolor="0.22",
+            markeredgewidth=1.15,
             linewidth=1.65,
-            markersize=4.7,
+            markersize=5.8,
             label=accuracy[1][1],
         ),
     ]
