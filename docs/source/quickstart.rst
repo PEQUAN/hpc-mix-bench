@@ -134,35 +134,87 @@ Parallel execution:
 
    ./run_benchmarks.sh 1 1 --parallel --jobs 4
 
+Worked Example: dense_lu
+------------------------
+
+``mp_tests/dense_lu`` is a real, ready-to-run benchmark. Its ``promise.yml``
+compiles ``lu.cpp`` with CADNA instrumentation:
+
+.. code-block:: yaml
+
+   compile:
+   - g++ -O3 lu.cpp -frounding-math -m64 -o lu.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
+   run: lu.out
+   files: lu.cpp
+   log: lu.log
+   output: debug/
+
+After ``sync_settings.sh --broadcast`` copies ``run_setting_1.py`` through
+``run_setting_4.py`` and ``fp.json`` from ``run_settings/`` into
+``mp_tests/dense_lu/``, run just this benchmark:
+
+.. code-block:: bash
+
+   cd mp_tests
+   ./run_benchmarks.sh 1 1 dense_lu
+
+This produces, inside ``mp_tests/dense_lu/``:
+
+* ``prec_setting_1.json`` ... ``prec_setting_4.json`` — one PROMISE precision
+  assignment per combination (I-IV), giving the floating-point format chosen
+  for each instrumented variable at each required accuracy (1-10 correct
+  digits).
+* ``precision1_with_runtime.jpg`` ... ``precision4_with_runtime.jpg`` —
+  stacked bar charts of precision usage versus required accuracy, with
+  PROMISE runtime overlaid.
+* ``logs/dense_lu/run_1.log`` ... ``run_4.log`` (relative to ``mp_tests/``) —
+  the PROMISE console output for each combination.
+
+Summarize the pivoting-heavy dense LU results together with another
+benchmark:
+
+.. code-block:: bash
+
+   python3 calculate_stats.py dense_lu hotspot
+
 Output Files
 ============
 
 After running benchmarks, each directory will contain:
 
 * ``prec_setting_1.json`` through ``prec_setting_4.json``: PROMISE-generated precision configurations
-* ``*.png``: Visualization plots
-* ``plots/``: Organized plot directory
+* ``precision1_with_runtime.jpg`` through ``precision4_with_runtime.jpg``: Visualization plots
+* ``debug/``: Instrumented/transformed PROMISE source code (when debug scripts are run)
 
 Organizing Plots
 ----------------
 
-Collect all plots into a central location:
+Collect all plots into a central ``plots/`` directory. ``organize_plots.sh`` lives in ``papers/``, and
+takes the benchmark folders to collect as arguments (paths are relative to the current directory):
 
 .. code-block:: bash
 
-   cd mp_tests
+   cd papers
+   bash organize_plots.sh ../mp_tests/backprop ../mp_tests/hotspot
+
+   # or, with no arguments, scan every immediate subfolder of the current directory
    bash organize_plots.sh
 
 Generate Summary Statistics
 ============================
 
-After running all experiments, generate a summary of floating-point type usage:
+After running all experiments, generate a summary of floating-point type usage with
+``calculate_stats.py`` (in ``mp_tests/`` or ``papers/``), passing the benchmark folders to summarize:
 
 .. code-block:: bash
 
-   python json_counts_sum.py
+   cd mp_tests
+   python3 calculate_stats.py backprop dense_lu hotspot
 
-This produces statistics showing the distribution of precision types across all benchmarks.
+This writes two files to the current directory:
+
+* ``fp_counts_summary.csv``: raw variable counts per precision type, per benchmark and combination
+* ``fp_ratio_averages.csv``: average share of each precision type across benchmarks
 
 Next Steps
 ==========

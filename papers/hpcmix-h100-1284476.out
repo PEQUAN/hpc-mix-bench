@@ -1,0 +1,192 @@
+job_id=1284476
+host=jzxh008
+repo_dir=/linkhome/rech/genlip01/ugf22up/hpc-mix-bench/papers/..
+h100_dir=/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers
+out_dir=/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476
+benchmarks=hotspot
+combinations=1 2
+backprop_size=65536
+dense_lu_size=5000
+hotspot_rows=512
+hotspot_cols=512
+hotspot_iters=2
+hotspot_temp_file=/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/hotspot_inputs/temp_512
+hotspot_power_file=/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/hotspot_inputs/power_512
+hotspot_generate_inputs=1
+cuda_arch=sm_90
+warmup_runs=1
+measured_runs=3
+plot_font_size=12
+run_plots=1
+/lustre/fshomisc/sys/cuda/12.4.1/bin/nvcc
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2024 NVIDIA Corporation
+Built on Thu_Mar_28_02:18:24_PDT_2024
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+Sun Aug 23 06:53:59 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          On  |   00000000:AD:00.0 Off |                    0 |
+| N/A   39C    P0             74W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Cleaning previous CUDA H100 targets...
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot'
+rm -f hotspot_cuda_double
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_1'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_1'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_10'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_10'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_2'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_2'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_3'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_3'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_4'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_4'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_5'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_5'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_6'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_6'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_7'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_7'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_8'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_8'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_9'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit1_9'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_1'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_1'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_10'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_10'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_2'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_2'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_3'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_3'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_4'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_4'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_5'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_5'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_6'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_6'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_7'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_7'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_8'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_8'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_9'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit2_9'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_1'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_1'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_10'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_10'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_2'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_2'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_3'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_3'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_4'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_4'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_5'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_5'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_6'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_6'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_7'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_7'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_8'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_8'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_9'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit3_9'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_1'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_1'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_10'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_10'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_2'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_2'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_3'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_3'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_4'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_4'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_5'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_5'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_6'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_6'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_7'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_7'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_8'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_8'
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_9'
+rm -f hotspot_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/hotspot/digit4_9'
+Building CUDA H100 benchmarks...
+Running CUDA H100 comparisons...
+Read: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/cuda_h100_ratios.csv
+Wrote 4 figure files to: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_time_ratio_combinations_1_2.pdf
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_time_ratio_combinations_1_2.png
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_memory_ratio_combinations_1_2.pdf
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_memory_ratio_combinations_1_2.png
+Read: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/cuda_h100_ratios.csv
+Wrote 4 combined figure files to: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_ratio_combinations_1_2_combined.pdf
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_ratio_combinations_1_2_combined.png
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_ratio_error_combinations_1_2_three_panel.pdf
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_ratio_error_combinations_1_2_three_panel.png
+Read: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/cuda_h100_ratios.csv
+Wrote 2 figure files to: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_output_error_combinations_1_2.pdf
+/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures/hotspot_output_error_combinations_1_2.png
+Done.
+Raw CSV:   /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/cuda_h100_raw.csv
+Ratio CSV: /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/cuda_h100_ratios.csv
+Figures:   /lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/h100_results/1284476/figures

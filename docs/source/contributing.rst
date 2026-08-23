@@ -55,27 +55,21 @@ Add your C/C++ source files. The code should:
 Step 3: Create promise.yml
 ---------------------------
 
-Define compilation settings:
+Define the compile/run commands PROMISE uses (must link CADNA with ``g++``):
 
 .. code-block:: yaml
 
-   compiler: g++
-   flags:
-     - -O3
-     - -std=c++11
-     - -Wall
-   sources:
-     - my_algorithm.cpp
-   output: my_algorithm
-   libraries:
-     - m
-   include_paths:
-     - ./include
+   compile:
+   - g++ -O3 my_algorithm.cpp -frounding-math -m64 -o my_algorithm.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
+   run: my_algorithm.out
+   files: my_algorithm.cpp
+   log: my_algorithm.log
+   output: debug/
 
 Step 4: Create fp.json
 -----------------------
 
-Define floating-point format search space (or copy from another benchmark):
+Define floating-point format search space (or copy the shared ``run_settings/fp.json`` template):
 
 .. code-block:: json
 

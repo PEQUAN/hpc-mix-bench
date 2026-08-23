@@ -1,0 +1,54 @@
+source_benchmark,source_case,accelerator,mode,status,time_ms,device_allocation_bytes,device_allocation_mib,relative_l2_error_vs_fp64,relative_linf_error_vs_fp64,gflops,notes
+backprop,digit1_1,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_2,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_3,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_4,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_5,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_6,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_1,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_2,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_3,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_4,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_5,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_6,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+dense_lu,double,dense_lu_blocked_update,fp64,completed,0.234886399,199967232,190.703613,0,0,13277.0748,
+dense_lu,digit1_1,dense_lu_blocked_update,fp16,completed,0.0664191999,49991808,47.6759033,0.000330907483,0.000438224128,46953.3553,
+dense_lu,digit1_2,dense_lu_blocked_update,tf32,completed,0.1090624,99983616,95.3518066,0.000254979006,0.000258718092,28594.6786,
+dense_lu,digit1_3,dense_lu_blocked_update,tf32,completed,0.108531199,99983616,95.3518066,0.000254979006,0.000258718092,28734.634,
+dense_lu,digit1_4,dense_lu_blocked_update,tf32,completed,0.1097984,99983616,95.3518066,0.000254979006,0.000258718092,28403.003,
+dense_lu,digit1_5,dense_lu_blocked_update,tf32,completed,0.109305599,99983616,95.3518066,0.000254979006,0.000258718092,28531.057,
+dense_lu,digit1_6,dense_lu_blocked_update,tf32,completed,0.109702399,99983616,95.3518066,0.000254979006,0.000258718092,28427.8585,
+dense_lu,digit1_7,dense_lu_blocked_update,tf32,completed,0.1085952,99983616,95.3518066,0.000254979006,0.000258718092,28717.6992,
+dense_lu,digit1_8,dense_lu_blocked_update,tf32,completed,0.1088064,99983616,95.3518066,0.000254979006,0.000258718092,28661.9564,
+dense_lu,digit1_9,dense_lu_blocked_update,tf32,completed,0.1095872,99983616,95.3518066,0.000254979006,0.000258718092,28457.7422,
+dense_lu,digit1_10,dense_lu_blocked_update,tf32,completed,0.109318401,99983616,95.3518066,0.000254979006,0.000258718092,28527.7159,
+dense_lu,digit2_1,dense_lu_blocked_update,fp16,completed,0.0710912012,49991808,47.6759033,0.000330907483,0.000438224128,43867.655,
+dense_lu,digit2_2,dense_lu_blocked_update,tf32,completed,0.108108798,99983616,95.3518066,0.000254979006,0.000258718092,28846.9057,
+dense_lu,digit2_3,dense_lu_blocked_update,tf32,completed,0.109318399,99983616,95.3518066,0.000254979006,0.000258718092,28527.7163,
+dense_lu,digit2_4,dense_lu_blocked_update,tf32,completed,0.1090496,99983616,95.3518066,0.000254979006,0.000258718092,28598.035,
+dense_lu,digit2_5,dense_lu_blocked_update,tf32,completed,0.1101952,99983616,95.3518066,0.000254979006,0.000258718092,28300.7271,
+dense_lu,digit2_6,dense_lu_blocked_update,tf32,completed,0.109318399,99983616,95.3518066,0.000254979006,0.000258718092,28527.7163,
+dense_lu,digit2_7,dense_lu_blocked_update,tf32,completed,0.109593599,99983616,95.3518066,0.000254979006,0.000258718092,28456.0807,
+dense_lu,digit2_8,dense_lu_blocked_update,tf32,completed,0.1087936,99983616,95.3518066,0.000254979006,0.000258718092,28665.3286,
+dense_lu,digit2_9,dense_lu_blocked_update,tf32,completed,0.109279999,99983616,95.3518066,0.000254979006,0.000258718092,28537.7408,
+dense_lu,digit2_10,dense_lu_blocked_update,tf32,completed,0.109299199,99983616,95.3518066,0.000254979006,0.000258718092,28532.7277,
+hotspot,digit1_1,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_2,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_3,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_4,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_5,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_6,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_7,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_8,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_9,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_10,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_1,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_2,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_3,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_4,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_5,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_6,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_7,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_8,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_9,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_10,none,not_applicable,not_applicable,,,,,,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply

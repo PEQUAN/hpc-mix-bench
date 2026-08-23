@@ -1,27 +1,25 @@
 #!/bin/bash
-
-
 # Usage:
 # ./clean.sh [operations] [folders...]
 # operations = combination of characters:
-#   c = remove CSV files (*.csv)
-#   d = remove debug folders
-#   p = remove prec_setting_{k}.json
-#   r = remove runtimes{k}.csv
-#   f = remove fp.json
-#   j = remove JPG files (*.jpg / *.jpeg)
+# c = remove CSV files (*.csv)
+# d = remove debug folders
+# p = remove prec_setting_{k}.json
+# r = remove runtimes{k}.csv
+# f = remove fp.json
+# j = remove JPG files (*.jpg / *.jpeg)
 #
 # If operations are omitted → all operations are enabled.
 # Remaining arguments = folders to target (optional)
-
+# If no folders given → recursively clean ALL directories under current path
 set -euo pipefail
 
-OPS=${1:-"cdprfj"}  # default: all operations
-shift $([ $# -gt 0 ] && echo 1 || echo 0)  # shift if first argument was operations
-TARGET_DIRS=("$@")  # remaining args = folder paths
+OPS=${1:-"cdprfj"} # default: all operations
+shift $([ $# -gt 0 ] && echo 1 || echo 0) # shift if first argument was operations
+TARGET_DIRS=("$@") # remaining args = folder paths
 
 # -------------------------------
-# Determine target directories (direct subdirectories only)
+# Determine target directories
 # -------------------------------
 if [ ${#TARGET_DIRS[@]} -gt 0 ]; then
     echo "Using explicitly provided target directories:"
@@ -34,10 +32,12 @@ if [ ${#TARGET_DIRS[@]} -gt 0 ]; then
     done
     TARGETS=("${TARGET_DIRS[@]}")
 else
-    echo "No folders provided → operating on direct subdirectories only."
-    mapfile -t TARGETS < <(
-        find . -mindepth 1 -maxdepth 1 -type d ! -path "."
-    )
+    echo "No folders provided → recursively operating on ALL directories under current path."
+    # 兼容旧版 bash（macOS 默认 bash 3.2）的写法
+    TARGETS=()
+    while IFS= read -r dir; do
+        TARGETS+=("$dir")
+    done < <(find . -type d)
 fi
 
 if [ ${#TARGETS[@]} -eq 0 ]; then
@@ -45,7 +45,7 @@ if [ ${#TARGETS[@]} -eq 0 ]; then
     exit 1
 fi
 
-echo "Target directories:"
+echo "Target directories (${#TARGETS[@]} found):"
 printf ' - %s\n' "${TARGETS[@]}"
 
 # -------------------------------
@@ -79,13 +79,11 @@ if op_enabled "d"; then
     else
         echo "No top-level logs/ found."
     fi
-
     echo "Removing debug folders and log.txt..."
     for dir in "${TARGETS[@]}"; do
         find "$dir" -maxdepth 1 -type d \
             \( -name "compileErrors" -o -name "digit*" -o -name "logs" \) \
             -print -exec rm -rf {} +
-
         find "$dir" -maxdepth 1 -type f -name "log.txt" \
             -print -delete
     done

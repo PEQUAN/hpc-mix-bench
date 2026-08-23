@@ -1,0 +1,5 @@
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/complement/dense_lu_tensorcore'
+nvcc -O3 -std=c++17 -arch=sm_90 \
+	-lcublas \
+	dense_lu_panel_update_tc.cu -o dense_lu_panel_update_tc
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/complement/dense_lu_tensorcore'

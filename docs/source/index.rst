@@ -288,8 +288,10 @@ Getting Started
    cd mp_tests
    ./run_benchmarks.sh 1 1 backprop hotspot
    
-   # View results
-   bash organize_plots.sh
+   # Collect the generated plots into a central plots/ directory
+   # (organize_plots.sh lives in papers/, so pass paths to the benchmark folders)
+   cd ../papers
+   bash organize_plots.sh ../mp_tests/backprop ../mp_tests/hotspot
 
 See the :doc:`installation` guide for detailed setup instructions and the :doc:`quickstart` for your first benchmark run.
 
@@ -346,7 +348,19 @@ Community & Support
 
 * **GitHub Repository**: https://github.com/PEQUAN/hpc-mix-bench
 * **Issue Tracker**: https://github.com/PEQUAN/hpc-mix-bench/issues
-* **License**: MIT License
+* **License**: MIT License for the benchmark suite; the bundled ``cadnaPromise`` package is distributed separately under the GNU LGPLv3 (see ``cadnaPromise/LICENSE``)
+
+References
+==========
+
+HPC-Mix-Bench is built to exercise **PROMISE**, a floating-point precision auto-tuning tool that relies on the **CADNA** library (Discrete Stochastic Arithmetic) and a Delta Debugging search strategy. Key references:
+
+* S. Graillat, F. Jézéquel, R. Picot, F. Févotte, B. Lathuilière. *Auto-tuning for floating-point precision with Discrete Stochastic Arithmetic*. Journal of Computational Science, 36, 101017, 2019. `HAL:hal-01331917 <https://hal.archives-ouvertes.fr/hal-01331917>`__
+* F. Jézéquel and J.-M. Chesneaux. *CADNA: a library for estimating round-off error propagation*. Computer Physics Communications, 178(12):933-955, 2008.
+* P. Eberhart, J. Brajard, P. Fortin, F. Jézéquel. *High Performance Numerical Validation using Stochastic Arithmetic*. Reliable Computing, 21, 35-52, 2015.
+* A. Zeller. *Why Programs Fail*, 2nd ed., Morgan Kaufmann, 2009 (the Delta Debugging algorithm used by PROMISE's search).
+
+The full PROMISE/CADNA bibliography is available in ``cadnaPromise/docs/source/index.rst``.
 
 Citation
 ========

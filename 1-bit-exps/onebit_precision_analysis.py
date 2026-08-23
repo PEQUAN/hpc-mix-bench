@@ -9,26 +9,27 @@ for each point of the sweep.  This matches the custom format layout documented
 in cadnaPromise/README.rst.
 
 How to run:
-    cd mp_tests
-    python3 onebit_precision_analysis.py [options]
+    cd 1-bit-exps
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests [options]
 
 Run PROMISE data collection and then plot all default benchmarks:
-    python3 onebit_precision_analysis.py --run
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests --run
 
 Plot from existing CSV files without rerunning PROMISE:
-    python3 onebit_precision_analysis.py
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests
 
 Run only two benchmarks, for example hotspot and dense_lu:
-    python3 onebit_precision_analysis.py --run --benchmark hotspot --benchmark dense_lu
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests --run --benchmark hotspot --benchmark dense_lu
 
-Run from the repository root instead of mp_tests:
-    python3 mp_tests/onebit_precision_analysis.py --repo-root mp_tests --run
+Run from the repository root instead of 1-bit-exps:
+    python3 1-bit-exps/onebit_precision_analysis.py --repo-root mp_tests --run
 
 Options:
     --repo-root PATH
-        Benchmark root path.  The default is the current directory, so the
-        usual invocation is from mp_tests.  If running from the repository root,
-        pass --repo-root mp_tests.
+        Benchmark root path containing the benchmark folders (for example
+        mp_tests).  The default is the current directory, so pass
+        --repo-root explicitly unless the benchmark folders are alongside
+        this script.
 
     --benchmark NAME
         Benchmark folder name under --repo-root.  This option is repeatable.
@@ -565,6 +566,13 @@ def apply_bit_xticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None
     ax.tick_params(axis="x", labelsize=FONT_SIZE)
 
 
+def apply_bit_yticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None:
+    ticks = adaptive_sweep_ticks(max_bits, max_ticks=max_ticks)
+    ax.set_yticks(ticks - offset)
+    ax.set_yticklabels([str(int(tick)) for tick in ticks])
+    ax.tick_params(axis="y", labelsize=FONT_SIZE)
+
+
 def plot_sweep(
     benchmark: str,
     nb_digits: int,
@@ -612,17 +620,17 @@ def plot_digit_count_heatmap(
     ax,
     data: np.ndarray,
     digits: List[int],
-    x_label: str,
+    y_label: str,
     title: str,
 ) -> object:
     plt, np = get_plotting_dependencies()
     cmap = plt.cm.magma.copy()
     cmap.set_bad(color="#bdbdbd")
-    img = ax.imshow(data, origin="lower", cmap=cmap, aspect="auto")
-    ax.set_xlabel(x_label)
-    ax.set_ylabel("Required significant digits")
-    ax.set_yticks(np.arange(len(digits)))
-    ax.set_yticklabels(digits)
+    img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto")
+    ax.set_xlabel("Required significant digits")
+    ax.set_ylabel(y_label)
+    ax.set_xticks(np.arange(len(digits)))
+    ax.set_xticklabels(digits)
     ax.set_title(title)
     return img
 
@@ -646,7 +654,7 @@ def plot_digit_counts(
         f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
         "Custom precision variables",
     )
-    apply_bit_xticks(axes[0, 0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[0, 0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     fig.colorbar(img, ax=axes[0, 0])
 
     img = plot_digit_count_heatmap(
@@ -656,7 +664,7 @@ def plot_digit_counts(
         f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
         "Double precision variables",
     )
-    apply_bit_xticks(axes[0, 1], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[0, 1], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     fig.colorbar(img, ax=axes[0, 1])
 
     img = plot_digit_count_heatmap(
@@ -666,7 +674,7 @@ def plot_digit_counts(
         f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
         "Custom precision variables",
     )
-    apply_bit_xticks(axes[1, 0], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[1, 0], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     fig.colorbar(img, ax=axes[1, 0])
 
     img = plot_digit_count_heatmap(
@@ -676,7 +684,7 @@ def plot_digit_counts(
         f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
         "Double precision variables",
     )
-    apply_bit_xticks(axes[1, 1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[1, 1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     fig.colorbar(img, ax=axes[1, 1])
 
     fig.suptitle(f"{benchmark_display_name(benchmark)}: precision counts across significant digits")

@@ -1,0 +1,53 @@
+benchmark,case,tensor_core_mode,notes
+backprop,digit1_1,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_2,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_3,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_4,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_5,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit1_6,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_1,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_2,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_3,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_4,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_5,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+backprop,digit2_6,not_applicable,Direct PROMISE sweep case; original Backprop shape is not a large Tensor-Core GEMM
+dense_lu,digit1_1,fp16,Dense LU PROMISE sweep case; matrix storage maps to FP16 so blocked-update TC complement uses FP16
+dense_lu,digit1_2,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_3,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_4,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_5,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_6,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_7,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_8,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_9,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit1_10,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_1,fp16,Dense LU PROMISE sweep case; matrix storage maps to FP16 so blocked-update TC complement uses FP16
+dense_lu,digit2_2,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_3,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_4,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_5,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_6,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_7,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_8,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_9,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+dense_lu,digit2_10,tf32,Dense LU PROMISE sweep case; matrix storage maps to FP32 so blocked-update TC complement uses TF32
+hotspot,digit1_1,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_2,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_3,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_4,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_5,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_6,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_7,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_8,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_9,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit1_10,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_1,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_2,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_3,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_4,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_5,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_6,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_7,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_8,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_9,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply
+hotspot,digit2_10,not_applicable,Direct PROMISE sweep case; stencil updates do not map to Tensor-Core matrix multiply

@@ -349,3 +349,12 @@ Precision settings heights: {'flx::floatx<4, 3>': [7, 5, 3, 3, 3, 3, 0, 0, 0, 0]
 Using Matplotlib style: seaborn-v0_8
 Plot saved as precision4_with_runtime.jpg
 Plotting completed.
+[RUN] python3 run_setting_4.py false true
+Skipping experiment execution.
+Loading data and generating plots...
+Digits: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Runtimes: [142.6809, 157.8732, 168.6138, 146.6596, 146.1209, 146.0763, 0.0, 0.0, 0.0, 0.0]
+Precision settings heights: {'flx::floatx<4, 3>': [7, 5, 3, 3, 3, 3, 0, 0, 0, 0], 'flx::floatx<8, 7>': [0, 2, 1, 0, 0, 0, 0, 0, 0, 0], 'float': [2, 2, 5, 6, 6, 6, 0, 0, 0, 0], 'double': [6, 6, 6, 6, 6, 6, 0, 0, 0, 0]}
+Using Matplotlib style: seaborn-v0_8
+Plot saved as precision4_with_runtime.jpg
+Plotting completed.

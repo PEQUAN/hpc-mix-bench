@@ -1,0 +1,100 @@
+==> building backprop double-precision baseline
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop'
+nvcc -O3 -std=c++17 -arch=sm_90 double_precision_cuda.cu -o backprop_cuda_double
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop'
+==> building backprop/digit1_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_1'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_1'
+==> building backprop/digit1_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_2'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_2'
+==> building backprop/digit1_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_3'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_3'
+==> building backprop/digit1_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_4'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_4'
+==> building backprop/digit1_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_5'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_5'
+==> building backprop/digit1_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_6'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit1_6'
+==> building backprop/digit2_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_1'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_1'
+==> building backprop/digit2_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_2'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_2'
+==> building backprop/digit2_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_3'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_3'
+==> building backprop/digit2_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_4'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_4'
+==> building backprop/digit2_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_5'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_5'
+==> building backprop/digit2_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_6'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit2_6'
+==> building backprop/digit3_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_1'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_1'
+==> building backprop/digit3_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_2'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_2'
+==> building backprop/digit3_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_3'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_3'
+==> building backprop/digit3_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_4'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_4'
+==> building backprop/digit3_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_5'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_5'
+==> building backprop/digit3_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_6'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit3_6'
+==> building backprop/digit4_1
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_1'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_1'
+==> building backprop/digit4_2
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_2'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_2'
+==> building backprop/digit4_3
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_3'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_3'
+==> building backprop/digit4_4
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_4'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_4'
+==> building backprop/digit4_5
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_5'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_5'
+==> building backprop/digit4_6
+make: Entering directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_6'
+nvcc -O3 -std=c++17 -arch=sm_90 backprop_cuda.cu -o backprop_cuda
+make: Leaving directory '/lustre/fshomisc/home/rech/genlip01/ugf22up/hpc-mix-bench/papers/backprop/digit4_6'

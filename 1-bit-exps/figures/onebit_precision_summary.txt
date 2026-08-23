@@ -1,1 +1,2 @@
-backprop (10 digits): max variables assigned to custom precision were 0 in the significand sweep and 0 in the exponent sweep; saturation at t=3, e=3.
+hotspot (10 digits): max variables assigned to custom precision were 31 in the significand sweep and 31 in the exponent sweep; saturation at t=4, e=7.
+dense_lu (10 digits): max variables assigned to custom precision were 39 in the significand sweep and 39 in the exponent sweep; saturation at t=3, e=3.

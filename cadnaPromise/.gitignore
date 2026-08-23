@@ -770,4 +770,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# PROMISE local temporary folders (Delta-Debug intermediate builds)
+~tmp/
+promise_errors_*.log
+
 

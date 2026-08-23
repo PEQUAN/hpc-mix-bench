@@ -162,7 +162,7 @@ def configure_style() -> None:
     plt, _ = get_plotting_dependencies()
     plt.rcParams.update(
         {
-            "font.family": "DejaVu Serif",
+            "font.family": "DejaVu Sans",
             "axes.labelsize": FONT_SIZE,
             "axes.titlesize": FONT_SIZE,
             "xtick.labelsize": FONT_SIZE,
@@ -565,6 +565,13 @@ def apply_bit_xticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None
     ax.tick_params(axis="x", labelsize=FONT_SIZE)
 
 
+def apply_bit_yticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None:
+    ticks = adaptive_sweep_ticks(max_bits, max_ticks=max_ticks)
+    ax.set_yticks(ticks - offset)
+    ax.set_yticklabels([str(int(tick)) for tick in ticks])
+    ax.tick_params(axis="y", labelsize=FONT_SIZE)
+
+
 def plot_sweep(
     benchmark: str,
     nb_digits: int,
@@ -612,18 +619,28 @@ def plot_digit_count_heatmap(
     ax,
     data: np.ndarray,
     digits: List[int],
-    x_label: str,
+    y_label: str,
     title: str,
+    vmin: float,
+    vmax: float,
 ) -> object:
     plt, np = get_plotting_dependencies()
-    cmap = plt.cm.magma.copy()
-    cmap.set_bad(color="#bdbdbd")
-    img = ax.imshow(data, origin="lower", cmap=cmap, aspect="auto")
-    ax.set_xlabel(x_label)
-    ax.set_ylabel("Required significant digits")
-    ax.set_yticks(np.arange(len(digits)))
-    ax.set_yticklabels(digits)
+    cmap = plt.cm.Blues.copy()
+    cmap.set_bad(color="#f2f2f2")
+    img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto", vmin=vmin, vmax=vmax, interpolation="nearest")
+    ax.grid(False)
+    ax.set_xlabel("Number of required digits")
+    ax.set_ylabel(y_label)
+    ax.set_xticks(np.arange(len(digits)))
+    ax.set_xticklabels(digits)
     ax.set_title(title)
+    ax.set_xticks(np.arange(-0.5, len(digits), 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, data.shape[1], 1), minor=True)
+    ax.grid(which="minor", color="white", alpha=0.35, linewidth=0.8)
+    ax.tick_params(which="minor", bottom=False, left=False)
+    for spine in ax.spines.values():
+        spine.set_color("#222222")
+        spine.set_linewidth(1.0)
     return img
 
 
@@ -640,32 +657,36 @@ def plot_digit_counts(
     # panels. Because each PROMISE run uses only custom precision and double
     # precision, the double-count heatmaps are the complement of these custom-count
     # heatmaps when the assigned-variable total is fixed.
-    plt, _ = get_plotting_dependencies()
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), constrained_layout=True)
+    plt, np = get_plotting_dependencies()
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.4), constrained_layout=True)
+    finite_counts = np.concatenate((sig_custom[np.isfinite(sig_custom)], exp_custom[np.isfinite(exp_custom)]))
+    vmin = float(np.min(finite_counts)) if finite_counts.size else 0.0
+    vmax = float(np.max(finite_counts)) if finite_counts.size else 1.0
 
     img = plot_digit_count_heatmap(
         axes[0],
         sig_custom,
         digits,
-        f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
-        "Custom precision variables",
+        "Custom trailing significand bits",
+        f"Significand sweep (e = {DOUBLE_EXPONENT_BITS})",
+        vmin,
+        vmax,
     )
-    apply_bit_xticks(axes[0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
-    cbar = fig.colorbar(img, ax=axes[0])
-    cbar.set_label("Variables assigned to custom precision")
+    apply_bit_yticks(axes[0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
 
     img = plot_digit_count_heatmap(
         axes[1],
         exp_custom,
         digits,
-        f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
-        "Custom precision variables",
+        "Custom exponent bits",
+        f"Exponent sweep (t = {DOUBLE_SIGNIFICAND_BITS})",
+        vmin,
+        vmax,
     )
-    apply_bit_xticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
-    cbar = fig.colorbar(img, ax=axes[1])
+    apply_bit_yticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    cbar = fig.colorbar(img, ax=axes.ravel().tolist(), pad=0.02, shrink=0.92)
     cbar.set_label("Variables assigned to custom precision")
 
-    fig.suptitle(f"{benchmark_display_name(benchmark)}: custom precision counts across significant digits")
     pdf = outdir / f"{benchmark}_digit_precision_counts.pdf"
     png = outdir / f"{benchmark}_digit_precision_counts.png"
     fig.savefig(pdf)

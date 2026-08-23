@@ -6,10 +6,24 @@
 
 HPC-MIX Bench is a collection of C/C++ numerical benchmarks for evaluating PROMISE mixed-precision tuning.  The repository includes benchmark programs, shared run-setting templates, Docker support, helper scripts for large benchmark sweeps, and post-processing tools for precision-count and one-bit precision analyses.
 
+## Why HPC-MIX Bench?
+
+Most numerical simulations default to double precision (IEEE 754 binary64) even though many variables tolerate much lower precision without affecting the accuracy of the final result. Manually discovering which variables can be safely narrowed is tedious and error-prone, yet the payoff is real: lower precision reduces compute time, memory bandwidth, and energy consumption, and it is a prerequisite for exploiting the low-precision arithmetic units (FP16, BF16, FP8/E5M2, FP8/E4M3) available on modern accelerators.
+
+HPC-MIX Bench provides a curated, reproducible testbed of 40+ numerical and machine-learning kernels (linear solvers, iterative methods, numerical integration, Rodinia-style physical simulations, and classic ML algorithms) for exercising [PROMISE](cadnaPromise/) — a floating-point precision auto-tuning tool built on delta debugging and the [CADNA](https://cadna.lip6.fr/) library for rigorous round-off error estimation via Discrete Stochastic Arithmetic. This lets researchers and practitioners:
+
+- Reproduce and extend published mixed-precision tuning results across a broad benchmark suite instead of a handful of toy examples.
+- Quantify, per variable and per required accuracy (1-10 correct significant digits), how much of a program can run in 8/16-bit formats before results become unreliable.
+- Compare four precision search spaces (E5M2/E4M3 x FP16/BF16, alongside FP32/FP64) to study the accuracy/performance trade-offs of emerging low-precision hardware formats.
+- Feed real precision-assignment data into research on autotuning, compiler transformations, and energy-aware HPC.
+
+See [`docs/source/index.rst`](docs/source/index.rst) (published at [hpc-mix-bench.readthedocs.io](https://hpc-mix-bench.readthedocs.io/)) for a full walkthrough, and [References](#references) below for the underlying research.
+
 ## Repository layout
 
 ```text
 hpc-mix-bench/
+├── 1-bit-exps/            # One-bit-granularity precision sweeps and figures
 ├── cadnaPromise/          # Bundled CADNA/PROMISE Python package
 ├── data/                  # Input datasets and data-query utilities
 ├── docs/                  # Sphinx documentation
@@ -28,6 +42,7 @@ Each runnable benchmark under `mp_tests/` is a directory that contains at least:
 - C/C++ source and any data files needed by the benchmark.
 
 The current `mp_tests/` tree includes benchmarks such as `backprop`, `dense_lu`, `hotspot`, `particle_filter`, `srad_v2`, `adaboost`, `bicgstab`, `cg`, `dbscan`, `gmres_tol1`, `kmeans`, `mlp`, `pca`, `qr`, `randomforest`, `sparse_lu`, `svm`, and others.
+
 
 ## Setup
 
@@ -167,9 +182,9 @@ bash organize_plots.sh [folder1 folder2 ...]
 
 ## One-bit precision analysis
 
-`mp_tests/onebit_precision_analysis.py` sweeps a custom PROMISE floating-point format against double precision with one-bit granularity.  It can either collect fresh PROMISE data or regenerate figures from existing CSV files.
+`1-bit-exps/onebit_precision_analysis.py` sweeps a custom PROMISE floating-point format against double precision with one-bit granularity.  It can either collect fresh PROMISE data or regenerate figures from existing CSV files.
 
-Run from `mp_tests/`:
+Run from `1-bit-exps/`:
 
 ```bash
 python3 onebit_precision_analysis.py --run
@@ -181,7 +196,7 @@ python3 onebit_precision_analysis.py --nb-digits 6
 Run from the repository root:
 
 ```bash
-python3 mp_tests/onebit_precision_analysis.py --repo-root mp_tests --run
+python3 1-bit-exps/onebit_precision_analysis.py --repo-root mp_tests --run
 ```
 
 Useful options:
@@ -202,6 +217,26 @@ Outputs are written to:
 - `<repo-root>/figures/*_digit_precision_counts.{pdf,png}`
 - `<repo-root>/figures/onebit_precision_summary.txt`
 
+## References
+
+HPC-MIX Bench builds on the PROMISE precision auto-tuning tool and the CADNA library for round-off error control. If you use this benchmark suite, please consider citing the underlying research:
+
+- S. Graillat, F. Jézéquel, R. Picot, F. Févotte, B. Lathuilière. *Auto-tuning for floating-point precision with Discrete Stochastic Arithmetic*. Journal of Computational Science, 36, 101017, 2019. [HAL:hal-01331917](https://hal.archives-ouvertes.fr/hal-01331917)
+- F. Jézéquel and J.-M. Chesneaux. *CADNA: a library for estimating round-off error propagation*. Computer Physics Communications, 178(12):933-955, 2008.
+- P. Eberhart, J. Brajard, P. Fortin, F. Jézéquel. *High Performance Numerical Validation using Stochastic Arithmetic*. Reliable Computing, 21, 35-52, 2015.
+- A. Zeller. *Why Programs Fail*, 2nd ed., Morgan Kaufmann, 2009. (Delta debugging algorithm used by PROMISE's search.)
+
+See [`cadnaPromise/docs/source/index.rst`](cadnaPromise/docs/source/index.rst) for the complete PROMISE/CADNA bibliography, and cite this repository itself as:
+
+```bibtex
+@software{hpc_mix_bench,
+  title  = {HPC-MIX Bench: Benchmarks for Mixed-Precision Emulations},
+  author = {PEQUAN Team},
+  year   = {2026},
+  url    = {https://github.com/PEQUAN/hpc-mix-bench}
+}
+```
+
 ## License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details. The bundled [`cadnaPromise/`](cadnaPromise/) package is distributed separately under the **GNU LGPLv3**; see [`cadnaPromise/LICENSE`](cadnaPromise/LICENSE) for details.

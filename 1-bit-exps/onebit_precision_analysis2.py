@@ -569,6 +569,13 @@ def apply_bit_xticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None
     ax.tick_params(axis="x", labelsize=FONT_SIZE)
 
 
+def apply_bit_yticks(ax, max_bits: int, max_ticks: int, offset: int = 0) -> None:
+    ticks = adaptive_sweep_ticks(max_bits, max_ticks=max_ticks)
+    ax.set_yticks(ticks - offset)
+    ax.set_yticklabels([str(int(tick)) for tick in ticks])
+    ax.tick_params(axis="y", labelsize=FONT_SIZE)
+
+
 def plot_sweep(
     benchmark: str,
     nb_digits: int,
@@ -626,17 +633,17 @@ def plot_digit_ratio_heatmap(
     ax,
     data: np.ndarray,
     digits: List[int],
-    x_label: str,
+    y_label: str,
     title: str,
 ) -> object:
     plt, np = get_plotting_dependencies()
     cmap = plt.cm.magma.copy()
     cmap.set_bad(color="#bdbdbd")
-    img = ax.imshow(data, origin="lower", cmap=cmap, aspect="auto", vmin=0, vmax=100)
-    ax.set_xlabel(x_label)
-    ax.set_ylabel("Required significant digits")
-    ax.set_yticks(np.arange(len(digits)))
-    ax.set_yticklabels(digits)
+    img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto", vmin=0, vmax=100)
+    ax.set_xlabel("Required significant digits")
+    ax.set_ylabel(y_label)
+    ax.set_xticks(np.arange(len(digits)))
+    ax.set_xticklabels(digits)
     ax.set_title(title)
     return img
 
@@ -663,7 +670,7 @@ def plot_digit_counts(
         f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
         "Significand sweep",
     )
-    apply_bit_xticks(axes[0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     cbar = fig.colorbar(img, ax=axes[0])
     cbar.set_label("Variables assigned to custom precision (%)")
     cbar.set_ticks([0, 25, 50, 75, 100])
@@ -675,7 +682,7 @@ def plot_digit_counts(
         f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
         "Exponent sweep",
     )
-    apply_bit_xticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    apply_bit_yticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     cbar = fig.colorbar(img, ax=axes[1])
     cbar.set_label("Variables assigned to custom precision (%)")
     cbar.set_ticks([0, 25, 50, 75, 100])

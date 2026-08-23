@@ -28,12 +28,13 @@ Promise v3 has been written from v2 by Thibault Hilaire, Fabienne JÉZÉQUEL and
 """
 
 from tempfile import mkdtemp
-from os.path import join
-from os import getcwd, environ#, chmod
+from os.path import basename, join
+from os import getcwd, environ, makedirs#, chmod
 from stat import S_IXUSR
 from importlib.resources import as_file, files  # Python >=3.9
 
 import re
+import shutil
 from math import isnan, isinf
 from colorama import Fore
 from datetime import datetime
@@ -47,6 +48,12 @@ from .logger import PrLogger
 from os.path import join, split
 
 logger = PrLogger()
+
+# name of the local (per-project) directory used to hold the temporary
+# folders created while compiling/running the different precision variants
+# (instead of using the system-wide /tmp, which tends to accumulate a lot
+# of leftover files/binaries when running Delta-Debug repeatedly)
+PROMISE_TMP_DIRNAME = '~tmp'
 regDumpST = re.compile(
 	r"^\[PROMISE_DUMP_ST\] (\w+)(?:\[(\d+)\])? = \(([\w\-+.]+),([\w\-+.]+),([\w\-+.]+)\), nb significant digits=(\d+)")
 regDump = re.compile(r"^\[PROMISE_DUMP\] (\w+)(?:\[(\d+)\])? = ([\w\-+.]+)")
@@ -61,6 +68,46 @@ def _copy_resource(rel_path: str, dest_dir: str, preserve_mode: bool = False):
             cmd.append('-p')
         cmd += [str(src_path), dest_dir]
         runCommand(cmd)
+
+
+def _promise_tmp_parent(fallback_dir):
+	"""Return the parent directory for PROMISE temporary build trees."""
+	for key in ("PROMISE_TMPDIR", "TMPDIR", "TEMP", "TMP"):
+		path = environ.get(key)
+		if path:
+			makedirs(path, exist_ok=True)
+			return path
+
+	path = join(fallback_dir, PROMISE_TMP_DIRNAME)
+	makedirs(path, exist_ok=True)
+	return path
+
+
+def _rsync_project(src_dir, dest_dir, compile_error_path=None):
+	"""Copy the user project while excluding PROMISE-generated work trees."""
+	source = (src_dir.rstrip('/') + '/') if src_dir else './'
+	exclude_patterns = [
+		PROMISE_TMP_DIRNAME + '/',
+		'debug/',
+		'compileErrors/',
+		'promise_errors_*',
+		'promise_tmp*/',
+		'promise_*/',
+		'tmp/',
+		'tmp_*/',
+		'__pycache__/',
+		'.pytest_cache/',
+		basename(dest_dir.rstrip('/')) + '/',
+	]
+
+	if compile_error_path:
+		exclude_patterns.append(basename(str(compile_error_path).rstrip('/')) + '/')
+
+	cmd = ['rsync', '-a']
+	for pattern in exclude_patterns:
+		cmd.append('--exclude=' + pattern)
+	cmd += [source, dest_dir]
+	runCommand(cmd)
 
 
 
@@ -254,143 +301,147 @@ class Promise:
 		if frozenset(self._types.items()) not in self._cache:
 			# store actual directory and create destination folder (temporary or not)
 			pwd = getcwd()
+			# only clean up automatically-created temporary folders (not a user-provided `dest`)
+			cleanupDest = dest is None
 			if dest is None:
-				dest = mkdtemp()
+				dest = mkdtemp(prefix='promise_', dir=_promise_tmp_parent(pwd))
 			else:
 				runCommand(['mkdir', '-p', dest])
 
-			# copy all the project (but exclude the dest/ in case it is in the same folder)
-			runCommand(['rsync', '-a', join(self._path, '*'), dest, '--exclude', dest] + (['--exclude', compileErrorPath] if compileErrorPath else []))
+			try:
+				# Copy only the project inputs; PROMISE-generated work trees can be large
+				# and recursive if copied into subsequent Delta-Debug attempts.
+				_rsync_project(self._path, dest, compileErrorPath)
 
-			# copy the required extra files (promise.h, cadnaizer)
-			_copy_resource("extra/promise.h", dest)
-			_copy_resource("extra/promise_header.h", dest)
-			_copy_resource("extra/cadnaizer", dest, preserve_mode=True)   # ← keeps +x bit!
+				# copy the required extra files (promise.h, cadnaizer)
+				_copy_resource("extra/promise.h", dest)
+				_copy_resource("extra/promise_header.h", dest)
+				_copy_resource("extra/cadnaizer", dest, preserve_mode=True)   # ← keeps +x bit!
 
-			# update the files that have to be changed
-			for i, f in enumerate(self._files):
-				f.createFile(self._types, dest, prefix='withoutcadna_' if cadna else '', promiseHeader=(i != 0))
+				# update the files that have to be changed
+				for i, f in enumerate(self._files):
+					f.createFile(self._types, dest, prefix='withoutcadna_' if cadna else '', promiseHeader=(i != 0))
 
-			# move the  temp directory
-			cd(dest)
+				# move the  temp directory
+				cd(dest)
 
-			# cadnaize the project
-			if cadna:
-				for f in self._files:
-					beginName, endName = split(f.fileName)
-					filename = join(beginName, 'withoutcadna_' + endName)
-					if not runCommand(['./cadnaizer', filename, '-o', f.fileName])[0]:
-						cd(pwd)
-						raise PromiseError("cadnaizer failed...")
+				# cadnaize the project
+				if cadna:
+					for f in self._files:
+						beginName, endName = split(f.fileName)
+						filename = join(beginName, 'withoutcadna_' + endName)
+						if not runCommand(['./cadnaizer', filename, '-o', f.fileName])[0]:
+							raise PromiseError("cadnaizer failed...")
 
-			# compile it
-			with Timing(self._compilations):
-				for line in self._compile:
-					res, msgError = runCommand(line.split(), errorsAsDegug=compilationErrorAsDebug, alias=self._alias)
+				# compile it
+				with Timing(self._compilations):
+					for line in self._compile:
+						res, msgError = runCommand(line.split(), errorsAsDegug=compilationErrorAsDebug, alias=self._alias)
 
-					if not res:
-						msg = "Compilation failed"
-						if cadna:
-							msg += "\nIs Cadna installed? Did you link your cade with Cadna with `-lcadnac`," \
-							       " `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?"
-							if 'CADNA_PATH' not in environ:
-								msg += '\nThe environment variable `CADNA_PATH` is not set, you should probably set it to Cadna path with'
-								msg += '\n >>> export CADNA_PATH=/path/to/cadna'
+						if not res:
+							msg = "Compilation failed"
+							if cadna:
+								msg += "\nIs Cadna installed? Did you link your cade with Cadna with `-lcadnac`," \
+								       " `-L$CADNA_PATH/lib` and `-I$CADNA_PATH/include` ?"
+								if 'CADNA_PATH' not in environ:
+									msg += '\nThe environment variable `CADNA_PATH` is not set, you should probably set it to Cadna path with'
+									msg += '\n >>> export CADNA_PATH=/path/to/cadna'
 
-						if compileErrorPath:
-							# create compileError folder and copy all the files in it
-							copyPath = join(pwd, compileErrorPath, 'attempt' + str(self.compilations[1]))
-							runCommand(['mkdir', '-p', copyPath])
-							runCommand(['cp', '-r', '.', copyPath])
-							runFile = join(copyPath, "run.sh")
-							# put all the compile commands in a `run.sh` file
-							with open(runFile, 'w') as f:
-								f.write("# Automatically generated by Promise (%s)\n\n" % datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-								f.write('# Config=' + str(self.typesDict)+'\n\n')
-								f.write("\n".join('#'+l for l in msgError))
-								f.write("\n")
-								f.write("\n".join(line for line in self._compile))
-							#chmod(runFile, S_IXUSR)
+							if compileErrorPath:
+								# create compileError folder and copy all the files in it
+								copyPath = join(pwd, compileErrorPath, 'attempt' + str(self.compilations[1]))
+								runCommand(['mkdir', '-p', copyPath])
+								runCommand(['cp', '-r', '.', copyPath])
+								runFile = join(copyPath, "run.sh")
+								# put all the compile commands in a `run.sh` file
+								with open(runFile, 'w') as f:
+									f.write("# Automatically generated by Promise (%s)\n\n" % datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+									f.write('# Config=' + str(self.typesDict)+'\n\n')
+									f.write("\n".join('#'+l for l in msgError))
+									f.write("\n")
+									f.write("\n".join(line for line in self._compile))
+								#chmod(runFile, S_IXUSR)
 
-						cd(pwd)
-						raise PromiseCompilationError(msg)
+							raise PromiseCompilationError(msg)
 
 
-			# run it and check if the execution has failed
-			with Timing(self._executions):
-				run = self._run.split(' ')
-				ret, lines = runCommand(list(('./' if i == 0 else '') + r for i, r in enumerate(run)))
+				# run it and check if the execution has failed
+				with Timing(self._executions):
+					run = self._run.split(' ')
+					ret, lines = runCommand(list(('./' if i == 0 else '') + r for i, r in enumerate(run)))
 
-				if not ret:
-					cd(pwd)
-					raise PromiseError("Execution failed (should return 0)")
+					if not ret:
+						raise PromiseError("Execution failed (should return 0)")
 
-			# get the results in dictionary digits (and fill self._ref if cadna)
-			if result and cadna:
-				digits = {}
-				self._ref = {}
-				self._power = {}
-				# parse the lines to get the variable name, 3 values and the nb of significant digits
-				for li in lines:
-					m = regDumpST.match(li)
+				# get the results in dictionary digits (and fill self._ref if cadna)
+				if result and cadna:
+					digits = {}
+					self._ref = {}
+					self._power = {}
+					# parse the lines to get the variable name, 3 values and the nb of significant digits
+					for li in lines:
+						m = regDumpST.match(li)
 
-					if m:
-						varName, index, val1, val2, val3, nbDigits = m.groups()
-						
-						val = float.fromhex(val1)/3+float.fromhex(val2)/3+float.fromhex(val3)/3
-						if varName not in digits:
-							self._ref[varName] = []
-							digits[varName] = []
-						
-						self._ref[varName].append(val)
-						self._power[varName] = 10 ** (-self._nbDigits[1].get(varName, self._nbDigits[0]))
-						digits[varName].append(int(nbDigits))
+						if m:
+							varName, index, val1, val2, val3, nbDigits = m.groups()
+							
+							val = float.fromhex(val1)/3+float.fromhex(val2)/3+float.fromhex(val3)/3
+							if varName not in digits:
+								self._ref[varName] = []
+								digits[varName] = []
+							
+							self._ref[varName].append(val)
+							self._power[varName] = 10 ** (-self._nbDigits[1].get(varName, self._nbDigits[0]))
+							digits[varName].append(int(nbDigits))
 
-				# compare to expectations
-				st = "\n".join("Variable %s: expect %d and found %d" % (var, self._nbDigits[1].get(var, self._nbDigits[0]), min(d))
-				               for var, d in digits.items() if min(d) < self._nbDigits[1].get(var, self._nbDigits[0]))
-				if st:
-					cd(pwd)
-					raise PromiseCompilationError(
-						"The number of significant digits found with Cadna is lower than the expectation: ", st)
+					# compare to expectations
+					st = "\n".join("Variable %s: expect %d and found %d" % (var, self._nbDigits[1].get(var, self._nbDigits[0]), min(d))
+					               for var, d in digits.items() if min(d) < self._nbDigits[1].get(var, self._nbDigits[0]))
+					if st:
+						raise PromiseCompilationError(
+							"The number of significant digits found with Cadna is lower than the expectation: ", st)
 
-			elif result:
-				# parse the result and store them in a dictionary
-				values = {}
-				for li in lines:
-					m = regDump.match(li)
+				elif result:
+					# parse the result and store them in a dictionary
+					values = {}
+					for li in lines:
+						m = regDump.match(li)
 
-					if m:
-						varName, index, val = m.groups()
-						
-						if varName not in values:
-							values[varName] = []
+						if m:
+							varName, index, val = m.groups()
+							
+							if varName not in values:
+								values[varName] = []
 
-						try:
-							values[varName].append(float.fromhex(val))
+							try:
+								values[varName].append(float.fromhex(val))
 
-						except ValueError as e:
-							logger.error("ValueError val=%s\n%s" % (val, li))
-							cd(pwd)
-							raise ValueError from e
-						
-				# compare to the expectation
-				try:
-					if self._ref != {}:
-						for var, d in values.items():
-							for v, ref in zip(d, self._ref[var]):
-								if isnan(v) or isinf(v):
-									raise StopIteration(var)
-								if abs(ref-v) >= abs(ref) * self._power[var]:
-									if not((ref == 0) and (abs(v) <= self._power[var])):
+							except ValueError as e:
+								logger.error("ValueError val=%s\n%s" % (val, li))
+								raise ValueError from e
+							
+					# compare to the expectation
+					try:
+						if self._ref != {}:
+							for var, d in values.items():
+								for v, ref in zip(d, self._ref[var]):
+									if isnan(v) or isinf(v):
 										raise StopIteration(var)
-								
-				except StopIteration as e:
-					varFailed = e.value
+									if abs(ref-v) >= abs(ref) * self._power[var]:
+										if not((ref == 0) and (abs(v) <= self._power[var])):
+											raise StopIteration(var)
+									
+					except StopIteration as e:
+						varFailed = e.value
 
+			finally:
+				# go back to previous folder
+				cd(pwd)
 
-			# go back to previous folder
-			cd(pwd)
+				# remove the temporary folder we created (once its result has been used),
+				# so that consecutive Delta-Debug attempts don't accumulate files/binaries
+				if cleanupDest:
+					shutil.rmtree(dest, ignore_errors=True)
 
 			# store the result (memoization)
 			if not cadna:
@@ -482,7 +533,7 @@ class Promise:
 					error_log_path = os.path.join(error_log_path, f"errors_{os.getpid()}.log")
 				
 				elif error_log_path is None:
-					error_log_path = f"/tmp/promise_errors_{os.getpid()}.log"
+					error_log_path = os.path.join(_promise_tmp_parent(os.getcwd()), f"promise_errors_{os.getpid()}")
 				
 				elif os.path.splitext(error_log_path)[1] == '.log' and os.path.isdir(os.path.splitext(error_log_path)[0]):
 					error_log_path = os.path.join(os.path.splitext(error_log_path)[0], f"errors_{os.getpid()}.log")
