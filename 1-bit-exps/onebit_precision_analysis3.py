@@ -610,6 +610,7 @@ def plot_sweep(
     )
     apply_bit_xticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=SWEEP_MAX_XTICKS)
 
+    fig.suptitle(f"{benchmark_display_name(benchmark)}: custom precision vs double ({nb_digits} digits)")
 
     file_stem = safe_filename_stem(benchmark)
     pdf = outdir / f"{file_stem}_1bit_sweep.pdf"
@@ -636,8 +637,8 @@ def plot_digit_ratio_heatmap(
     title: str,
 ) -> object:
     plt, np = get_plotting_dependencies()
-    cmap = plt.cm.viridis.copy()
-    cmap.set_bad(color="#d0d0d0")
+    cmap = plt.cm.magma.copy()
+    cmap.set_bad(color="#bdbdbd")
     img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto", vmin=0, vmax=100)
     ax.set_xlabel("Required significant digits")
     ax.set_ylabel(y_label)
@@ -686,243 +687,13 @@ def plot_digit_counts(
     cbar.set_label("Variables assigned to custom precision (%)")
     cbar.set_ticks([0, 25, 50, 75, 100])
 
+    fig.suptitle(f"{benchmark_display_name(benchmark)}: custom-assignment ratio across significant digits")
     file_stem = safe_filename_stem(benchmark)
     pdf = outdir / f"{file_stem}_digit_precision_ratio.pdf"
     png = outdir / f"{file_stem}_digit_precision_ratio.png"
     fig.savefig(pdf)
     fig.savefig(png, dpi=600)
     plt.close(fig)
-
-
-def finite_max_or_default(arrays: List[np.ndarray], default: float = 1.0) -> float:
-    _, np = get_plotting_dependencies()
-    finite_values = [array[np.isfinite(array)] for array in arrays]
-    finite_values = [values for values in finite_values if values.size]
-    if not finite_values:
-        return default
-    return float(max(float(np.max(values)) for values in finite_values))
-
-
-def finite_min_or_default(arrays: List[np.ndarray], default: float = 0.0) -> float:
-    _, np = get_plotting_dependencies()
-    finite_values = [array[np.isfinite(array)] for array in arrays]
-    finite_values = [values for values in finite_values if values.size]
-    if not finite_values:
-        return default
-    return float(min(float(np.min(values)) for values in finite_values))
-
-
-def make_surface_colormap(name: str):
-    plt, _ = get_plotting_dependencies()
-    cmap = plt.get_cmap(name).copy()
-    cmap.set_bad(color="#d0d0d0")
-    return cmap
-
-
-def style_3d_axis(ax) -> None:
-    # Make the surface easier to read in exported PDF/PNG figures.
-    ax.set_proj_type("persp")
-    ax.grid(True)
-    ax.xaxis.pane.set_facecolor((0.96, 0.96, 0.96, 1.0))
-    ax.yaxis.pane.set_facecolor((0.96, 0.96, 0.96, 1.0))
-    ax.zaxis.pane.set_facecolor((0.99, 0.99, 0.99, 1.0))
-    ax.xaxis.pane.set_edgecolor((0.78, 0.78, 0.78, 1.0))
-    ax.yaxis.pane.set_edgecolor((0.78, 0.78, 0.78, 1.0))
-    ax.zaxis.pane.set_edgecolor((0.78, 0.78, 0.78, 1.0))
-    # x, y, z box aspect.  A taller z aspect makes small differences more visible.
-    ax.set_box_aspect((1.55, 1.0, 0.82))
-
-
-def plot_3d_surface_panel(
-    ax,
-    data: np.ndarray,
-    digits: List[int],
-    max_bits: int,
-    title: str,
-    x_label: str,
-    z_label: str,
-    vmin: float,
-    vmax: float,
-    cmap_name: str,
-) -> object:
-    plt, np = get_plotting_dependencies()
-    xvals = np.arange(1, max_bits + 1)
-    yvals = np.array(digits, dtype=float)
-    xgrid, ygrid = np.meshgrid(xvals, yvals)
-    zgrid = np.ma.masked_invalid(data)
-    cmap = make_surface_colormap(cmap_name)
-    z_offset = vmin
-    z_top = max(vmax, vmin + 1.0)
-
-    surface = ax.plot_surface(
-        xgrid,
-        ygrid,
-        zgrid,
-        cmap=cmap,
-        vmin=vmin,
-        vmax=z_top,
-        rstride=1,
-        cstride=1,
-        linewidth=0.28,
-        edgecolor=(0.18, 0.18, 0.18, 0.28),
-        antialiased=True,
-        shade=True,
-        alpha=0.96,
-    )
-
-    # A light projected contour on the base plane makes the depth/height relation clearer.
-    try:
-        ax.contourf(
-            xgrid,
-            ygrid,
-            zgrid,
-            zdir="z",
-            offset=z_offset,
-            levels=12,
-            cmap=cmap,
-            alpha=0.30,
-            vmin=vmin,
-            vmax=z_top,
-        )
-    except Exception:
-        pass
-
-    # Sparse wireframe highlights the mesh shape without overwhelming the color surface.
-    wire_cstride = max(1, math.ceil(max_bits / 14))
-    try:
-        ax.plot_wireframe(
-            xgrid,
-            ygrid,
-            zgrid,
-            rstride=1,
-            cstride=wire_cstride,
-            color=(0.0, 0.0, 0.0, 0.22),
-            linewidth=0.35,
-        )
-    except Exception:
-        pass
-
-    ax.set_title(title, pad=4)
-    ax.set_xlabel(x_label, labelpad=10)
-    ax.set_ylabel("Required significant digits", labelpad=10)
-    ax.set_zlabel(z_label, labelpad=12)
-    ax.set_xticks(adaptive_sweep_ticks(max_bits, max_ticks=HEATMAP_MAX_XTICKS))
-    ax.set_yticks(digits)
-    ax.tick_params(axis="x", labelrotation=XTICK_LABEL_ROTATION, pad=2)
-    ax.tick_params(axis="y", pad=2)
-    ax.tick_params(axis="z", pad=4)
-    ax.view_init(elev=34, azim=-58)
-    ax.set_zlim(z_offset, z_top)
-    style_3d_axis(ax)
-    return surface
-
-
-def plot_digit_3d_group(
-    benchmark: str,
-    digits: List[int],
-    sig_data: np.ndarray,
-    exp_data: np.ndarray,
-    outdir: Path,
-    file_suffix: str,
-    figure_title: str,
-    z_label: str,
-    vmin: float,
-    vmax: float,
-    cmap_name: str,
-) -> None:
-    plt, _ = get_plotting_dependencies()
-    import matplotlib.colors as mcolors
-
-    # Avoid constrained_layout for mplot3d: it often over-crops z labels and colorbars.
-    fig = plt.figure(figsize=(16.8, 7.4))
-    axes = [fig.add_subplot(1, 2, 1, projection="3d"), fig.add_subplot(1, 2, 2, projection="3d")]
-    fig.subplots_adjust(left=0.035, right=0.885, bottom=0.12, top=0.94, wspace=0.12)
-
-    plot_3d_surface_panel(
-        axes[0],
-        sig_data,
-        digits,
-        SIGNIFICAND_SWEEP_BITS,
-        f"Significand sweep, e = {DOUBLE_EXPONENT_BITS}",
-        "Custom trailing significand bits",
-        z_label,
-        vmin,
-        vmax,
-        cmap_name,
-    )
-    plot_3d_surface_panel(
-        axes[1],
-        exp_data,
-        digits,
-        EXPONENT_SWEEP_BITS,
-        f"Exponent sweep, t = {DOUBLE_SIGNIFICAND_BITS}",
-        "Custom exponent bits",
-        z_label,
-        vmin,
-        vmax,
-        cmap_name,
-    )
-
-    cmap = make_surface_colormap(cmap_name)
-    norm = mcolors.Normalize(vmin=vmin, vmax=max(vmax, vmin + 1.0))
-    mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
-    mappable.set_array([])
-
-    # Use a manual colorbar axis instead of fig.colorbar(..., ax=axes) to prevent cropping.
-    cax = fig.add_axes([0.932, 0.20, 0.018, 0.58])
-    cbar = fig.colorbar(mappable, cax=cax)
-    cbar.set_label(z_label, labelpad=12)
-
-    file_stem = safe_filename_stem(benchmark)
-    pdf = outdir / f"{file_stem}_{file_suffix}.pdf"
-    png = outdir / f"{file_stem}_{file_suffix}.png"
-
-    # Keep generous padding; no tight bounding box because tight export can cut mplot3d labels.
-    fig.savefig(pdf, pad_inches=0.35)
-    fig.savefig(png, dpi=600, pad_inches=0.35)
-    plt.close(fig)
-
-
-def plot_digit_3d_surfaces(
-    benchmark: str,
-    digits: List[int],
-    sig_custom: np.ndarray,
-    sig_double: np.ndarray,
-    exp_custom: np.ndarray,
-    exp_double: np.ndarray,
-    outdir: Path,
-) -> None:
-    sig_ratio = custom_assignment_ratio(sig_custom, sig_double)
-    exp_ratio = custom_assignment_ratio(exp_custom, exp_double)
-    count_min = min(0.0, finite_min_or_default([sig_custom, exp_custom], default=0.0))
-    count_max = finite_max_or_default([sig_custom, exp_custom], default=1.0)
-
-    plot_digit_3d_group(
-        benchmark,
-        digits,
-        sig_ratio,
-        exp_ratio,
-        outdir,
-        "digit_precision_ratio_3d",
-        "3D custom-assignment ratio across significant digits",
-        "Custom assignment (%)",
-        0.0,
-        100.0,
-        "viridis",
-    )
-    plot_digit_3d_group(
-        benchmark,
-        digits,
-        sig_custom,
-        exp_custom,
-        outdir,
-        "digit_precision_counts_3d",
-        "3D custom-assignment counts across significant digits",
-        "Custom variables",
-        count_min,
-        count_max,
-        "plasma",
-    )
 
 def first_saturation(xs: np.ndarray, ys: np.ndarray, tol: float = 0.2) -> Optional[int]:
     _, np = get_plotting_dependencies()
@@ -1020,7 +791,6 @@ def main() -> None:
 
         plot_sweep(bench, summary_digit, tvals, sig_counts, sig_runtime, evals, exp_counts, exp_runtime, outdir)
         plot_digit_counts(bench, digits, sig_custom, sig_double, exp_custom, exp_double, outdir)
-        plot_digit_3d_surfaces(bench, digits, sig_custom, sig_double, exp_custom, exp_double, outdir)
 
         summaries.append(summarize(bench, summary_digit, sig_counts, exp_counts))
 

@@ -1,0 +1,83 @@
+============
+Applications
+============
+
+HPC-Mix-Bench contains benchmarks intended to stress different numerical
+structures and precision sensitivities.
+
+Main Benchmark Families
+=======================
+
+Linear algebra and solvers:
+
+* ``dense_lu``: dense LU factorization with pivoting.
+* ``sparse_lu``: sparse LU factorization with RCM ordering.
+* ``cg``, ``bicgstab``, ``gmres_tol1``, ``gmres_tol2``: Krylov solvers.
+* ``jacobi``, ``gauss_seidel``, ``sor``, ``multigrid``: iterative methods.
+* ``qr`` and ``lud``: matrix factorization kernels.
+* ``ir3``, ``ir3_tol1``, ``ir3_tol2``: iterative refinement variants.
+
+Numerical interpolation, integration, and ODEs:
+
+* ``rk4``: fourth-order Runge-Kutta.
+* ``simpson`` and ``trapezoidal``: numerical integration.
+* ``cubic_spline`` and ``lagrange``: interpolation.
+* ``nystrom``: integral-equation method.
+
+Rodinia-style simulations:
+
+* ``backprop``: neural-network backpropagation.
+* ``hotspot`` and ``hotspot3D``: thermal simulation.
+* ``particle_filter``: particle filtering with stochastic resampling.
+* ``srad_v2``: speckle-reducing anisotropic diffusion.
+* ``cfd`` and ``streamcluster``: CFD and clustering kernels.
+
+Machine-learning kernels:
+
+* ``mlp`` and ``mlp_reg``: multilayer perceptron classification/regression.
+* ``knn``, ``svm``, ``decisiontree``, ``randomforest``, ``adaboost`` and
+  ``gassnb``.
+* ``kmeans``, ``dbscan``, ``pca`` and ``rsvd``.
+
+How To Interpret ``digit<i>_<j>``
+=================================
+
+Several benchmark folders contain generated mixed-precision code in directories
+named ``digit<i>_<j>``:
+
+* ``i`` is the precision combination number.
+* ``j`` is the required number of correct significant digits.
+
+For example, ``digit2_5`` corresponds to Combination II at a five-digit
+accuracy target. In the CPU PROMISE outputs, these directories contain
+source-to-source transformed programs using FloatX-style custom types. In the
+H100 CUDA validation tree, the corresponding CUDA wrappers preserve the
+PROMISE-selected precision assignments and map supported formats to CUDA/H100
+storage types.
+
+H100 CUDA Applications
+======================
+
+The H100 validation currently focuses on three representative applications:
+
+* ``backprop``: exposes neural-network forward/backward propagation and
+  output-gradient sensitivity.
+* ``hotspot``: exposes a regular stencil with strong memory-footprint effects
+  but conversion-sensitive timing.
+* ``dense_lu``: exposes a large dense matrix allocation and dependent
+  factorization updates.
+
+The direct CUDA ports intentionally preserve the PROMISE-derived computation
+structure. They are not cuBLAS/cuDNN or WMMA/MMA rewrites, so the reported time
+ratios measure the direct effect of applying PROMISE-derived precision
+assignments to CUDA kernels rather than H100 peak Tensor Core throughput.
+
+Complementary Tensor Core Applications
+======================================
+
+The ``papers/complement`` directory contains additional H100 experiments. The
+Tensor Core complement is used only where the PROMISE-derived algorithmic
+structure contains a Tensor-Core-suitable dense update. Dense LU includes such
+a blocked update comparison. Cases such as Hotspot stencils and the current
+Backprop shape are marked as not applicable instead of being replaced by a
+different GEMM surrogate.

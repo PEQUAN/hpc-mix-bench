@@ -1,0 +1,172 @@
+==============
+API References
+==============
+
+This page documents the command-line interfaces, Python entry points, and
+result-file schemas used by HPC-Mix-Bench.
+
+PROMISE Command Line
+====================
+
+The ``promise`` command is provided by the bundled ``cadnaPromise`` package.
+
+.. code-block:: bash
+
+   promise --help
+   promise --version
+   promise --precs=<letters> --nbDigits=<digits> --conf=promise.yml --fp=fp.json
+
+Important options:
+
+* ``--precs=<letters>``: ordered precision letters to search, using aliases
+  from ``fp.json``.
+* ``--nbDigits=<digits>``: required number of correct significant digits.
+* ``--conf=<file>``: PROMISE compile/run configuration, normally
+  ``promise.yml``.
+* ``--fp=<file>``: custom floating-point format definitions, normally
+  ``fp.json``.
+* ``--output=<dir>``: output directory for transformed source files.
+* ``--debug``: keep additional intermediate files and diagnostic output.
+* ``--noCadna``: run without CADNA validation.
+
+Python Entry Point
+==================
+
+The shared ``run_setting_*.py`` scripts call PROMISE programmatically:
+
+.. code-block:: python
+
+   from cadnaPromise.run import runPromise
+
+   result = runPromise([
+       "--precs=wpsd",
+       "--nbDigits=5",
+       "--conf=promise.yml",
+       "--fp=fp.json",
+   ])
+
+The returned object is serialized into ``prec_setting_<i>.json`` by the
+benchmark run scripts.
+
+Code Instrumentation
+====================
+
+PROMISE searches variables marked with ``__PROMISE__`` annotations and checks
+outputs marked by PROMISE check macros:
+
+.. code-block:: cpp
+
+   __PROMISE__ double value;
+   PROMISE_CHECK_VAR(value);
+   PROMISE_CHECK_ARRAY(array, n_elements);
+
+The transformed code replaces PROMISE annotations with native or FloatX-based
+precision types selected by the delta-debugging search.
+
+CPU Runner
+==========
+
+``mp_tests/run_benchmarks.sh`` is the main CPU benchmark runner.
+
+.. code-block:: bash
+
+   ./run_benchmarks.sh [run_exp] [run_plot] [run_debug] [folders...] [--parallel] [--jobs N]
+
+Arguments:
+
+* ``run_exp``: run PROMISE experiments. Defaults to ``true``.
+* ``run_plot``: generate plots. Defaults to ``true``.
+* ``run_debug``: run matching ``run_debug_i.sh`` scripts. Defaults to
+  ``false``.
+* ``folders``: optional benchmark folders.
+* ``--parallel``: use GNU Parallel when available.
+* ``--jobs N`` or ``--jobs=N``: worker count.
+
+H100 Direct CUDA Runner
+=======================
+
+``papers/run_cuda_h100_comparison.sh`` builds a raw comparison table by running
+the FP64 CUDA baseline and all selected ``digit<i>_<j>`` CUDA programs.
+``papers/submit_hpc_mix_h100.sh`` is the Jean Zay batch wrapper.
+
+Important environment variables:
+
+* ``BENCHMARKS``: benchmark names, for example ``"backprop dense_lu hotspot"``.
+* ``COMBINATIONS``: selected combinations, for example ``"1 2"``.
+* ``BACKPROP_SIZE``, ``DENSE_LU_SIZE``, ``HOTSPOT_ROWS``, ``HOTSPOT_COLS`` and
+  ``HOTSPOT_ITERS``.
+* ``WARMUP_RUNS`` and ``MEASURED_RUNS``.
+* ``RUN_PLOTS`` and ``PLOT_FONT_SIZE``.
+* ``OUT_DIR``: optional output directory override.
+
+H100 Ratio CSV Schema
+=====================
+
+``cuda_h100_ratios.csv`` contains one row for each double baseline and each
+mixed-precision case. Key fields are:
+
+* ``benchmark``: benchmark name.
+* ``case``: ``double`` or ``digit<i>_<j>``.
+* ``precision``: ``double`` or ``mixed``.
+* ``input_size``: benchmark input size.
+* ``time_ms``: mean measured CUDA time.
+* ``time_ms_stddev``, ``time_ms_min``, ``time_ms_max`` and ``time_ms_runs``.
+* ``device_allocation_bytes`` and ``device_allocation_mib``.
+* ``speedup_vs_double`` and ``time_ratio_vs_double``.
+* ``memory_ratio_vs_double``.
+* validation/error fields when produced by the benchmark, such as
+  ``relative_residual``, ``relative_error``, ``solution_l2_error_vs_double``,
+  ``output_delta_mse_vs_double`` and ``output_linf_error_vs_double``.
+* ``warmup_runs`` and ``measured_runs``.
+
+Plotting Scripts
+================
+
+Main H100 plotting scripts under ``papers/h100_results``:
+
+* ``plot_h100_ratios.py``: per-benchmark time/memory ratio figures.
+* ``plot_h100_ratios_combined.py``: combined ratio figures for combinations
+  I-II.
+* ``plot_h100_benchmark_panels.py``: paper-style combined benchmark panel.
+* ``plot_dense_lu_solution_errors.py``: Dense LU solution-vector errors when
+  saved solution vectors are available.
+* ``plot_h100_accuracy_errors.py``: validation-error plots from ratio CSV
+  columns.
+
+Complement plotting:
+
+* ``papers/complement/plot_complement_h100.py``: direct CUDA and Tensor Core
+  complement figures.
+
+Common options:
+
+.. code-block:: bash
+
+   python3 plot_h100_ratios_combined.py <job-id> --font-size 12
+   python3 plot_h100_ratios_combined.py --csv path/to/cuda_h100_ratios.csv --out-dir figures --formats pdf png
+
+Precision Configuration JSON
+============================
+
+``prec_setting_<i>.json`` is a JSON array. Each entry corresponds to one
+required significant-digit target and maps type names to selected variable
+indices.
+
+Example:
+
+.. code-block:: json
+
+   {
+     "double": [0, 1, 2, 9, 10],
+     "float": [6, 7],
+     "flx::floatx<5, 2>": [3, 4, 5, 8]
+   }
+
+Common type-name mapping:
+
+* ``double``: FP64.
+* ``float``: FP32.
+* ``half_float::half`` and ``flx::floatx<5, 10>``: FP16.
+* ``flx::floatx<8, 7>``: BF16.
+* ``flx::floatx<5, 2>``: E5M2.
+* ``flx::floatx<4, 3>``: E4M3.

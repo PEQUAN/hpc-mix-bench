@@ -9,26 +9,27 @@ for each point of the sweep.  This matches the custom format layout documented
 in cadnaPromise/README.rst.
 
 How to run:
-    cd mp_tests
-    python3 onebit_precision_analysis.py [options]
+    cd 1-bit-exps
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests [options]
 
 Run PROMISE data collection and then plot all default benchmarks:
-    python3 onebit_precision_analysis.py --run
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests --run
 
 Plot from existing CSV files without rerunning PROMISE:
-    python3 onebit_precision_analysis.py
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests
 
 Run only two benchmarks, for example hotspot and dense_lu:
-    python3 onebit_precision_analysis.py --run --benchmark hotspot --benchmark dense_lu
+    python3 onebit_precision_analysis.py --repo-root ../mp_tests --run --benchmark hotspot --benchmark dense_lu
 
-Run from the repository root instead of mp_tests:
-    python3 mp_tests/onebit_precision_analysis.py --repo-root mp_tests --run
+Run from the repository root instead of 1-bit-exps:
+    python3 1-bit-exps/onebit_precision_analysis.py --repo-root mp_tests --run
 
 Options:
     --repo-root PATH
-        Benchmark root path.  The default is the current directory, so the
-        usual invocation is from mp_tests.  If running from the repository root,
-        pass --repo-root mp_tests.
+        Benchmark root path containing the benchmark folders (for example
+        mp_tests).  The default is the current directory, so pass
+        --repo-root explicitly unless the benchmark folders are alongside
+        this script.
 
     --benchmark NAME
         Benchmark folder name under --repo-root.  This option is repeatable.
@@ -101,7 +102,7 @@ DEFAULT_SIGNIFICANT_DIGITS = tuple(range(1, 11))
 SWEEP_MAX_XTICKS = 8
 HEATMAP_MAX_XTICKS = 9
 XTICK_LABEL_ROTATION = 35
-FONT_SIZE = 14
+FONT_SIZE = 16
 
 
 @dataclass
@@ -118,10 +119,6 @@ def benchmark_display_name(benchmark: str) -> str:
     if benchmark == "backprop":
         return "Backprop"
     return benchmark.replace("_", " ").title()
-
-
-def safe_filename_stem(name: str) -> str:
-    return Path(str(name).rstrip("/")).name.replace(os.sep, "_")
 
 
 def resolve_benchmarks(repo_root: Path, selected: Optional[List[str]]) -> List[Tuple[str, Path]]:
@@ -612,24 +609,14 @@ def plot_sweep(
 
     fig.suptitle(f"{benchmark_display_name(benchmark)}: custom precision vs double ({nb_digits} digits)")
 
-    file_stem = safe_filename_stem(benchmark)
-    pdf = outdir / f"{file_stem}_1bit_sweep.pdf"
-    png = outdir / f"{file_stem}_1bit_sweep.png"
+    pdf = outdir / f"{benchmark}_1bit_sweep.pdf"
+    png = outdir / f"{benchmark}_1bit_sweep.png"
     fig.savefig(pdf)
     fig.savefig(png, dpi=600)
     plt.close(fig)
 
 
-def custom_assignment_ratio(custom: np.ndarray, double: np.ndarray) -> np.ndarray:
-    _, np = get_plotting_dependencies()
-    total = custom + double
-    ratio = np.full(custom.shape, np.nan, dtype=float)
-    valid = np.isfinite(custom) & np.isfinite(double) & (total > 0)
-    ratio[valid] = (custom[valid] / total[valid]) * 100.0
-    return ratio
-
-
-def plot_digit_ratio_heatmap(
+def plot_digit_count_heatmap(
     ax,
     data: np.ndarray,
     digits: List[int],
@@ -639,7 +626,7 @@ def plot_digit_ratio_heatmap(
     plt, np = get_plotting_dependencies()
     cmap = plt.cm.magma.copy()
     cmap.set_bad(color="#bdbdbd")
-    img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto", vmin=0, vmax=100)
+    img = ax.imshow(data.T, origin="lower", cmap=cmap, aspect="auto")
     ax.set_xlabel("Required significant digits")
     ax.set_ylabel(y_label)
     ax.set_xticks(np.arange(len(digits)))
@@ -657,43 +644,56 @@ def plot_digit_counts(
     exp_double: np.ndarray,
     outdir: Path,
 ) -> None:
-    plt, _ = get_plotting_dependencies()
-    sig_ratio = custom_assignment_ratio(sig_custom, sig_double)
-    exp_ratio = custom_assignment_ratio(exp_custom, exp_double)
+    plt, np = get_plotting_dependencies()
+    fig, axes = plt.subplots(2, 2, figsize=(13, 8), constrained_layout=True)
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), constrained_layout=True)
-
-    img = plot_digit_ratio_heatmap(
-        axes[0],
-        sig_ratio,
+    img = plot_digit_count_heatmap(
+        axes[0, 0],
+        sig_custom,
         digits,
         f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
-        "Significand sweep",
+        "Custom precision variables",
     )
-    apply_bit_yticks(axes[0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
-    cbar = fig.colorbar(img, ax=axes[0])
-    cbar.set_label("Variables assigned to custom precision (%)")
-    cbar.set_ticks([0, 25, 50, 75, 100])
+    apply_bit_yticks(axes[0, 0], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    fig.colorbar(img, ax=axes[0, 0])
 
-    img = plot_digit_ratio_heatmap(
-        axes[1],
-        exp_ratio,
+    img = plot_digit_count_heatmap(
+        axes[0, 1],
+        sig_double,
+        digits,
+        f"Custom significand bits (e = {DOUBLE_EXPONENT_BITS})",
+        "Double precision variables",
+    )
+    apply_bit_yticks(axes[0, 1], SIGNIFICAND_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    fig.colorbar(img, ax=axes[0, 1])
+
+    img = plot_digit_count_heatmap(
+        axes[1, 0],
+        exp_custom,
         digits,
         f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
-        "Exponent sweep",
+        "Custom precision variables",
     )
-    apply_bit_yticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
-    cbar = fig.colorbar(img, ax=axes[1])
-    cbar.set_label("Variables assigned to custom precision (%)")
-    cbar.set_ticks([0, 25, 50, 75, 100])
+    apply_bit_yticks(axes[1, 0], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    fig.colorbar(img, ax=axes[1, 0])
 
-    fig.suptitle(f"{benchmark_display_name(benchmark)}: custom-assignment ratio across significant digits")
-    file_stem = safe_filename_stem(benchmark)
-    pdf = outdir / f"{file_stem}_digit_precision_ratio.pdf"
-    png = outdir / f"{file_stem}_digit_precision_ratio.png"
+    img = plot_digit_count_heatmap(
+        axes[1, 1],
+        exp_double,
+        digits,
+        f"Custom exponent bits (t = {DOUBLE_SIGNIFICAND_BITS})",
+        "Double precision variables",
+    )
+    apply_bit_yticks(axes[1, 1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
+    fig.colorbar(img, ax=axes[1, 1])
+
+    fig.suptitle(f"{benchmark_display_name(benchmark)}: precision counts across significant digits")
+    pdf = outdir / f"{benchmark}_digit_precision_counts.pdf"
+    png = outdir / f"{benchmark}_digit_precision_counts.png"
     fig.savefig(pdf)
     fig.savefig(png, dpi=600)
     plt.close(fig)
+
 
 def first_saturation(xs: np.ndarray, ys: np.ndarray, tol: float = 0.2) -> Optional[int]:
     _, np = get_plotting_dependencies()

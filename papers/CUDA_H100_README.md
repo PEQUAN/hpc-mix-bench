@@ -173,6 +173,18 @@ pre-existing input files instead.
 
 ## Running on Jean Zay H100
 
+Some steps might need to be taken before running the scripts:
+
+```sh
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+
+cd cadnaPromise
+python3 -m pip install --user -e . # install the cadnaPromise
+activate-promise
+```
+
+
+
 Submit from `hpc-mix-bench/papers`:
 
 ```sh
@@ -180,6 +192,25 @@ sbatch --account=${IDRPROJ}@h100 \
   --export=ALL,REPO_DIR="$(pwd)/..",BENCHMARKS="dense_lu hotspot",COMBINATIONS="1 2",DENSE_LU_SIZE=5000,HOTSPOT_ROWS=1024,HOTSPOT_COLS=1024,HOTSPOT_ITERS=2,FORCE_REBUILD=1,WARMUP_RUNS=1,MEASURED_RUNS=3,RUN_PLOTS=1 \
   submit_hpc_mix_h100.sh
 ```
+
+or separately,
+```sh
+ sbatch --account=${IDRPROJ}@h100   --export=ALL,REPO_DIR="$(pwd)/..",BENCHMARKS=backprop,COMBINATIONS="1 2",BACKPROP_SIZE=262144,FORCE_REBUILD=1,WARMUP_RUNS=1,MEASURED_RUNS=3,RUN_PLOTS=1   submit_hpc_mix_h100.sh
+
+ sbatch --account=${IDRPROJ}@h100   --export=ALL,REPO_DIR="$(pwd)/..",BENCHMARKS=hotspot,COMBINATIONS="1 2",HOTSPOT_ROWS=512,HOTSPOT_COLS=512,HOTSPOT_ITERS=2,FORCE_REBUILD=1,WARMUP_RUNS=1,MEASURED_RUNS=3,RUN_PLOTS=1   submit_hpc_mix_h100.sh
+
+ sbatch --account=${IDRPROJ}@h100   --export=ALL,REPO_DIR="$(pwd)/..",BENCHMARKS=dense_lu,DENSE_LU_SIZE=5000,FORCE_REBUILD=1,WARMUP_RUNS=1,MEASURED_RUNS=3   submit_hpc_mix_h100.sh
+```
+
+
+To check the status of the submitted jobs:
+
+```sh
+sacct -u $USER --name=hpcmix-h100 --format=JobID,JobName,State,Elapsed,ExitCode
+```
+
+
+
 
 The job writes CSVs, generated Hotspot inputs, benchmark outputs, and figures
 to:
@@ -194,6 +225,12 @@ For each mixed run, compute:
 - time ratio = mixed mean `time_ms` / double mean `time_ms`
 - memory ratio = mixed `device_allocation_bytes` / double `device_allocation_bytes`
 
+
+For data transfer to, e.g., xinye@front.convergence.lip6.fr:
+
+```sh
+ rsync -avP hpc-mix-bench/   xinye@front.convergence.lip6.fr:~/hpc-mix-bench/
+```
 ## Plotting
 
 The Jean Zay batch script writes plots automatically to

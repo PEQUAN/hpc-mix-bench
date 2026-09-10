@@ -2,133 +2,107 @@
 Installation
 ============
 
-This guide will help you set up HPC-Mix-Bench on your system.
+This page describes the software needed to run the CPU PROMISE benchmark suite
+and the optional H100 CUDA validation scripts.
 
 Prerequisites
 =============
 
-* Python 3.10 or higher
-* GCC/G++ compiler with C++11 support (PROMISE/CADNA compilation requires ``g++``, not ``gcc``)
-* ``build-essential``, ``cmake`` (used by the Docker image; recommended for local builds too)
-* Docker (optional, for containerized deployment)
+For CPU precision-search experiments:
 
-Installing CADNA-PROMISE
-=========================
+* Python 3.9 or newer.
+* ``g++`` with C++11 support.
+* CADNA, activated through the bundled ``cadnaPromise`` package or through a
+  local CADNA installation.
+* Python packages used by the run and plotting scripts: ``numpy``,
+  ``matplotlib``, ``colorama``, ``colorlog``, ``tqdm``, ``regex``, ``pyyaml``,
+  ``packaging``, and ``docopt-ng`` or ``docopt``.
+* GNU Parallel is optional but recommended for ``run_benchmarks.sh
+  --parallel``.
 
-The benchmark tool requires ``cadnaPromise`` to be installed. Install it, along with the plotting/analysis dependencies used by the run-setting scripts, using pip:
+For H100 validation experiments:
 
-.. code-block:: bash
+* NVIDIA CUDA with ``nvcc``.
+* An H100-capable CUDA architecture target, normally ``sm_90``.
+* On Jean Zay, an H100 allocation such as ``${IDRPROJ}@h100``.
 
-   python3 -m pip install cadnaPromise matplotlib numpy
-
-Then activate CADNA support (enables CADNA and arbitrary-precision customization):
-
-.. code-block:: bash
-
-   activate-promise
-
-To deactivate later:
-
-.. code-block:: bash
-
-   deactivate-promise
-
-Alternatively, install ``CADNA`` (and, for custom formats, ``FloatX``) manually and point PROMISE at it:
-
-.. code-block:: bash
-
-   export CADNA_PATH=/path/to/cadna
-
-Verify the CLI is available:
-
-.. code-block:: bash
-
-   promise --version
-
-For detailed information about CADNA-PROMISE, visit the `cadnaPromise directory <https://github.com/PEQUAN/hpc-mix-bench/tree/main/cadnaPromise>`_.
-
-Clone the Repository
+Clone The Repository
 ====================
-
-Clone the HPC-Mix-Bench repository:
 
 .. code-block:: bash
 
    git clone https://github.com/PEQUAN/hpc-mix-bench.git
    cd hpc-mix-bench
 
-Docker Installation
-===================
+Install CADNA/PROMISE
+=====================
 
-Using Docker provides a consistent environment across different platforms.
-
-macOS (Apple Silicon) and Windows on ARM
------------------------------------------
-
-Build with platform specification to avoid compilation issues:
+The repository bundles the ``cadnaPromise`` Python package. A local editable
+install is convenient when running from a cluster account:
 
 .. code-block:: bash
 
-   docker buildx build --platform linux/amd64 -t hpc-mix-cadna .
+   cd cadnaPromise
+   python3 -m pip install --user -e .
+   export PATH="$(python3 -m site --user-base)/bin:$PATH"
+   activate-promise
 
-Run the container:
+Verify that the command-line tools are visible:
 
 .. code-block:: bash
 
-   docker run --platform linux/amd64 -it --rm hpc-mix-cadna
+   which promise
+   which activate-promise
+   python3 -c "import cadnaPromise; print(cadnaPromise.__file__)"
 
-Windows (Intel/AMD) and Linux (x86_64)
----------------------------------------
+Install Python Dependencies
+===========================
 
-Build normally without platform flags:
+On systems with internet access:
+
+.. code-block:: bash
+
+   python3 -m pip install --user numpy matplotlib colorama colorlog tqdm regex pyyaml packaging docopt-ng
+
+On clusters where compute nodes do not have network access, install these
+packages on a login node before submitting jobs. The batch scripts add the user
+base ``bin`` directory to ``PATH`` and the user ``site-packages`` directory to
+``PYTHONPATH`` when needed.
+
+Docker
+======
+
+Docker provides a reproducible CPU environment for PROMISE and plotting.
+
+On Linux x86_64 and Windows on Intel/AMD:
 
 .. code-block:: bash
 
    docker build -t hpc-mix-cadna .
-
-Run the container:
-
-.. code-block:: bash
-
    docker run -it --rm hpc-mix-cadna
 
-Activate CADNA-PROMISE
------------------------
-
-After entering the Docker container, activate CADNA-PROMISE (this is done automatically by the container entrypoint, but can be re-run if needed):
+On macOS Apple Silicon and Windows on ARM:
 
 .. code-block:: bash
 
-   activate-promise
+   docker buildx build --platform linux/amd64 -t hpc-mix-cadna .
+   docker run --platform linux/amd64 -it --rm hpc-mix-cadna
 
-Docker Compose
---------------
-
-A ``docker-compose.yml`` service is also provided:
+The repository also provides a Docker Compose service:
 
 .. code-block:: bash
 
    docker compose run --rm promise-env
 
-Verification
-============
+ReadTheDocs
+===========
 
-Verify your installation by running a simple test:
-
-.. code-block:: bash
-
-   cd mp_tests
-   ls
-
-You should see various benchmark directories (e.g., ``backprop``, ``hotspot``, ``dense_lu``).
-
-Confirm PROMISE itself is reachable:
+The online documentation is built with Sphinx. To reproduce the build locally:
 
 .. code-block:: bash
 
-   promise --version
+   python3 -m pip install -r docs/requirements.txt
+   python3 -m sphinx -b html docs/source docs/_build/html
 
-Next Steps
-==========
-
-Continue to the :doc:`quickstart` guide to learn how to run your first benchmark.
+ReadTheDocs uses the repository-level ``.readthedocs.yaml`` file and installs
+``docs/requirements.txt`` before building ``docs/source``.

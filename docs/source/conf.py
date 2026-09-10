@@ -31,7 +31,6 @@ html_css_files = ['custom.css']
 html_theme_options = {
     'analytics_id': '',
     'logo_only': False,
-    'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'collapse_navigation': False,
@@ -54,7 +53,7 @@ mathjax3_config = {
 }
 
 # -- Source suffix -----------------------------------------------------------
-source_suffix = '.rst'
+source_suffix = {'.rst': 'restructuredtext'}
 master_doc = 'index'
 
 # -- Language ----------------------------------------------------------------

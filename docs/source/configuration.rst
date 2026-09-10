@@ -1,0 +1,160 @@
+=============
+Configuration
+=============
+
+Repository Layout
+=================
+
+.. code-block:: text
+
+   hpc-mix-bench/
+   |-- 1-bit-exps/            # One-bit custom precision sweeps
+   |-- cadnaPromise/          # Bundled CADNA/PROMISE Python package
+   |-- data/                  # Input datasets and data notes
+   |-- docs/                  # Sphinx documentation
+   |-- mp_tests/              # Main CPU PROMISE benchmark suite
+   |-- papers/                # Paper artifacts, H100 CUDA ports, plots, scripts
+   |-- run_settings/          # Shared PROMISE run templates and fp.json
+   |-- src/                   # Additional source experiments
+   |-- Dockerfile
+   `-- docker-compose.yml
+
+Benchmark folders under ``mp_tests/`` and ``papers/`` generally contain:
+
+* ``promise.yml``: compile/run information for PROMISE.
+* ``fp.json``: custom floating-point format definitions.
+* ``run_setting_*.py``: one script per precision combination.
+* C/C++ source files and benchmark-specific input files.
+
+PROMISE Configuration
+=====================
+
+``promise.yml`` tells PROMISE how to compile and run a benchmark. A typical
+configuration looks like:
+
+.. code-block:: yaml
+
+   compile:
+   - g++ -O3 lu.cpp -frounding-math -m64 -o lu.out -lcadnaC -L$CADNA_PATH/lib -I$CADNA_PATH/include
+   run: lu.out
+   files: lu.cpp
+   log: lu.log
+   output: debug/
+
+Important fields:
+
+* ``compile``: one or more shell commands used to build the benchmark.
+* ``run``: executable or command run by PROMISE.
+* ``files``: source files transformed by PROMISE.
+* ``log``: optional benchmark log file.
+* ``output``: directory where transformed source files are written.
+
+Floating-Point Format File
+==========================
+
+``fp.json`` maps precision letters to exponent and trailing-significand
+bitwidths. The shared template in ``run_settings/fp.json`` defines the formats
+used by the paper experiments:
+
+.. code-block:: json
+
+   {
+     "c": [4, 3],
+     "w": [5, 2],
+     "b": [8, 7],
+     "p": [5, 10],
+     "h": [5, 10],
+     "s": [8, 23],
+     "d": [11, 52],
+     "q": [15, 112],
+     "o": [19, 236]
+   }
+
+The most common letters are:
+
+.. list-table:: Format aliases
+   :widths: 15 20 20
+   :header-rows: 1
+
+   * - Letter
+     - Format
+     - Bits ``(e,t)``
+   * - ``w``
+     - E5M2
+     - ``(5,2)``
+   * - ``c``
+     - E4M3
+     - ``(4,3)``
+   * - ``p`` or ``h``
+     - FP16
+     - ``(5,10)``
+   * - ``b``
+     - BF16
+     - ``(8,7)``
+   * - ``s``
+     - FP32
+     - ``(8,23)``
+   * - ``d``
+     - FP64
+     - ``(11,52)``
+
+Shared Run Settings
+===================
+
+The standard templates in ``run_settings/`` are:
+
+* ``run_setting_1.py``: Combination I, ``wpsd``.
+* ``run_setting_2.py``: Combination II, ``wbsd``.
+* ``run_setting_3.py``: Combination III, ``cpsd``.
+* ``run_setting_4.py``: Combination IV, ``cbsd``.
+
+Each script sweeps requested significant digits, calls
+``cadnaPromise.run.runPromise``, writes ``prec_setting_<i>.json``, records
+runtime CSV files, and plots precision counts.
+
+Synchronize templates into benchmark folders from ``mp_tests``:
+
+.. code-block:: bash
+
+   cd mp_tests
+   bash sync_settings.sh
+
+Useful options:
+
+* ``--delete`` or ``-d``: remove existing ``run_setting_*.py``,
+  ``run_debug_*.sh``, and ``fp.json`` from benchmark folders.
+* ``--broadcast`` or ``-b``: copy templates from ``../run_settings``.
+* ``--advanced`` or ``-a``: also copy advanced run-setting templates when
+  present.
+
+Environment Variables
+=====================
+
+* ``CADNA_PATH``: path to CADNA headers and libraries. Normally set by
+  ``activate-promise``.
+* ``JOBS``: default worker count for ``run_benchmarks.sh --parallel``.
+* ``OMP_NUM_THREADS``, ``MKL_NUM_THREADS``, ``OPENBLAS_NUM_THREADS``: set to
+  ``1`` by the runner unless already defined.
+* ``PROMISE_TMPDIR`` or ``TMPDIR``: useful on clusters to keep PROMISE
+  temporary files in job scratch instead of ``/tmp``.
+
+H100 Job Parameters
+===================
+
+The main H100 script is ``papers/submit_hpc_mix_h100.sh``. Common exported
+variables are:
+
+* ``REPO_DIR``: repository root.
+* ``BENCHMARKS``: space-separated list, for example ``"backprop dense_lu
+  hotspot"``.
+* ``COMBINATIONS``: precision combinations to evaluate, normally ``"1 2"``.
+* ``BACKPROP_SIZE``: Backprop input layer size.
+* ``DENSE_LU_SIZE``: Dense LU matrix size.
+* ``HOTSPOT_ROWS`` and ``HOTSPOT_COLS``: Hotspot grid dimensions.
+* ``HOTSPOT_ITERS``: Hotspot iteration count.
+* ``WARMUP_RUNS`` and ``MEASURED_RUNS``: timing protocol.
+* ``RUN_PLOTS`` and ``PLOT_FONT_SIZE``: plot generation options.
+
+The complement script ``papers/complement/submit_complement_h100.sh`` accepts
+the same problem-size and timing variables and writes results under
+``papers/complement/results/<job-id>/``.
