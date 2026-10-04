@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">HPC-MIX Bench</title>
+  <desc id="desc">Four precision bars connected by a rising numerical curve</desc>
+  <defs>
+    <linearGradient id="surface" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#101a32"/>
+      <stop offset="1" stop-color="#3152a9"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a5b4fc"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="122" height="122" rx="27" fill="url(#surface)"/>
+  <rect x="3" y="3" width="122" height="122" rx="27" fill="none" stroke="#6687dc" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M26 91V72m25 19V53m25 38V62m25 29V36" stroke="#dbeafe" stroke-width="12" stroke-linecap="round" opacity=".95"/>
+  <path d="M26 64 51 46 76 56 101 29" fill="none" stroke="url(#signal)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="26" cy="64" r="5" fill="#2dd4bf"/>
+  <circle cx="51" cy="46" r="5" fill="#60e6d3"/>
+  <circle cx="76" cy="56" r="5" fill="#8ccce8"/>
+  <circle cx="101" cy="29" r="5" fill="#a5b4fc"/>
+</svg>

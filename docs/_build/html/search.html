@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+    
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="#" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="precision_tuning.html">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Search</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <noscript>
+  <div id="fallback" class="admonition warning">
+    <p class="last">
+      Please activate JavaScript to enable the search functionality.
+    </p>
+  </div>
+  </noscript>
+
+  
+  <div id="search-results">
+  
+  </div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+  <script>
+    jQuery(function() { Search.loadIndex("searchindex.js"); });
+  </script>
+  
+  <script id="searchindexloader"></script>
+   
+
+
+</body>
+</html>

@@ -1,8 +1,12 @@
-# HPC-MIX Benchmarks
+# HPC-MIX Bench
 
-[![Docs](https://readthedocs.org/projects/hpc-mix-bench/badge/?version=latest)](https://hpc-mix-bench.readthedocs.io/)
-[![Python](https://img.shields.io/badge/python-3.10+-4B8BBE?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/github/license/PEQUAN/hpc-mix-bench)](https://github.com/PEQUAN/hpc-mix-bench)
+[![Documentation](https://readthedocs.org/projects/hpc-mix-bench/badge/?version=latest)](https://hpc-mix-bench.readthedocs.io/en/latest/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776ab?style=flat-square&logo=python&logoColor=white)](docs/source/installation.rst)
+[![C/C++ benchmarks](https://img.shields.io/badge/benchmarks-C%2FC%2B%2B-2563eb?style=flat-square&logo=cplusplus&logoColor=white)](docs/source/applications.rst)
+[![Docker ready](https://img.shields.io/badge/Docker-ready-0ea5e9?style=flat-square&logo=docker&logoColor=white)](Dockerfile)
+[![40+ numerical workloads](https://img.shields.io/badge/workloads-40%2B-7c3aed?style=flat-square)](docs/source/applications.rst)
+[![Last commit](https://img.shields.io/github/last-commit/PEQUAN/hpc-mix-bench?style=flat-square&color=0f766e)](https://github.com/PEQUAN/hpc-mix-bench/commits/main/)
 
 HPC-MIX Bench is a collection of C/C++ numerical benchmarks for evaluating PROMISE mixed-precision tuning.  The repository includes benchmark programs, shared run-setting templates, Docker support, helper scripts for large benchmark sweeps, and post-processing tools for precision-count and one-bit precision analyses.
 
@@ -17,7 +21,9 @@ HPC-MIX Bench provides a curated, reproducible testbed of 40+ numerical and mach
 - Compare four precision search spaces (E5M2/E4M3 x FP16/BF16, alongside FP32/FP64) to study the accuracy/performance trade-offs of emerging low-precision hardware formats.
 - Feed real precision-assignment data into research on autotuning, compiler transformations, and energy-aware HPC.
 
-See [`docs/source/index.rst`](docs/source/index.rst) (published at [hpc-mix-bench.readthedocs.io](https://hpc-mix-bench.readthedocs.io/)) for a full walkthrough, and [References](#references) below for the underlying research.
+**Explore the documentation:** [Start here](docs/source/index.rst) · [Precision tuning concepts](docs/source/precision_tuning.rst) · [Benchmark methodology and use cases](docs/source/methodology.rst) · [Results and interpretation](docs/source/benchmark_results.rst)
+
+The suite separates *precision-search cost* from *application performance*: PROMISE sweeps record the time spent searching for a valid assignment, while the H100 validation artifacts report measured CUDA execution time and device allocation. See the [methodology guide](docs/source/methodology.rst) before comparing these numbers.
 
 ## Repository layout
 
@@ -51,7 +57,7 @@ The current `mp_tests/` tree includes benchmarks such as `backprop`, `dense_lu`,
 Install compilers and Python dependencies needed by PROMISE and the plotting scripts:
 
 ```bash
-python3 -m pip install cadnaPromise matplotlib numpy
+python3 -m pip install -e ./cadnaPromise numpy matplotlib
 activate-promise
 ```
 
@@ -143,6 +149,8 @@ Common examples:
 
 The script writes logs under `mp_tests/logs/<folder>/run_<i>.log`.  It also sets `OMP_NUM_THREADS`, `MKL_NUM_THREADS`, and `OPENBLAS_NUM_THREADS` to `1` unless those variables are already defined.
 
+For repeatable comparisons, run settings that share one benchmark directory sequentially or give each setting an isolated copy of that directory. The `--parallel` option dispatches setting tasks, which may otherwise share generated binaries and output paths.
+
 ### MPI runner
 
 For MPI-based distribution, use `mpi_runner.py` from `mp_tests/` after installing `mpi4py` and an MPI runtime:
@@ -182,21 +190,21 @@ bash organize_plots.sh [folder1 folder2 ...]
 
 ## One-bit precision analysis
 
-`1-bit-exps/onebit_precision_analysis.py` sweeps a custom PROMISE floating-point format against double precision with one-bit granularity.  It can either collect fresh PROMISE data or regenerate figures from existing CSV files.
+`1-bit-exps/onebit_precision_analysis1.py` sweeps a custom PROMISE floating-point format against double precision with one-bit granularity. It can collect fresh PROMISE data or regenerate figures from existing CSV files. The `onebit_precision_analysis2.py` through `onebit_precision_analysis4.py` variants provide alternative visualizations.
 
 Run from `1-bit-exps/`:
 
 ```bash
-python3 onebit_precision_analysis.py --run
-python3 onebit_precision_analysis.py --run --benchmark hotspot --benchmark dense_lu
-python3 onebit_precision_analysis.py --digits 1-10
-python3 onebit_precision_analysis.py --nb-digits 6
+python3 onebit_precision_analysis1.py --run
+python3 onebit_precision_analysis1.py --run --benchmark hotspot --benchmark dense_lu
+python3 onebit_precision_analysis1.py --digits 1-10
+python3 onebit_precision_analysis1.py --nb-digits 6
 ```
 
 Run from the repository root:
 
 ```bash
-python3 1-bit-exps/onebit_precision_analysis.py --repo-root mp_tests --run
+python3 1-bit-exps/onebit_precision_analysis1.py --repo-root mp_tests --run
 ```
 
 Useful options:

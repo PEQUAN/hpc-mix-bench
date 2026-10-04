@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmark Methodology and Value &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]]}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="Precision Tuning Explained" href="precision_tuning.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="precision_tuning.html">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Benchmark Methodology and Value</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/methodology.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="benchmark-methodology-and-value">
+<h1>Benchmark Methodology and Value<a class="headerlink" href="#benchmark-methodology-and-value" title="Link to this heading"></a></h1>
+<p>HPC-MIX Bench is useful when a precision method must work across more than
+one favorable kernel. The suite spans algorithms with different data access,
+iteration, conditioning, and output sensitivity. Its artifacts help compare
+<strong>how much precision can be reduced</strong>, <strong>what accuracy remains</strong>, <strong>how much
+search costs</strong>, and, for selected H100 ports, <strong>what changes on hardware</strong>.</p>
+<section id="research-questions-the-suite-supports">
+<h2>Research questions the suite supports<a class="headerlink" href="#research-questions-the-suite-supports" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Tuning-method evaluation:</strong> Does a search strategy find useful assignments
+across stencils, solvers, factorizations, and machine-learning workloads?</p></li>
+<li><p><strong>Format design:</strong> Does E5M2’s extra exponent bit help more than E4M3’s extra
+trailing-significand bit for a particular numerical structure?</p></li>
+<li><p><strong>Accuracy budgets:</strong> How do selected variable types change as the requested
+number of correct significant digits increases?</p></li>
+<li><p><strong>Compiler and hardware work:</strong> Which PROMISE-derived assignments are worth
+porting, and where do conversion overhead or unavailable native operations
+erase the expected gain?</p></li>
+<li><p><strong>Reproducibility studies:</strong> Can another machine reproduce the precision
+counts, search behavior, and application-level validation for a fixed input?</p></li>
+</ul>
+</section>
+<section id="choosing-a-workload">
+<h2>Choosing a workload<a class="headerlink" href="#choosing-a-workload" title="Link to this heading"></a></h2>
+<p>Select a family based on the numerical behavior you want to probe. The table
+offers starting points, not claims that every case in a family behaves alike.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Workload selection guide</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 31.0%" />
+<col style="width: 47.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Family</p></th>
+<th class="head"><p>Examples</p></th>
+<th class="head"><p>Useful precision question</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Factorization and dense algebra</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dense_lu</span></code>, <code class="docutils literal notranslate"><span class="pre">qr</span></code>, <code class="docutils literal notranslate"><span class="pre">lud</span></code></p></td>
+<td><p>How do pivots, dependent updates, and matrix conditioning constrain
+low-precision arithmetic?</p></td>
+</tr>
+<tr class="row-odd"><td><p>Iterative linear solvers</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cg</span></code>, <code class="docutils literal notranslate"><span class="pre">bicgstab</span></code>, <code class="docutils literal notranslate"><span class="pre">gmres_tol1</span></code>, <code class="docutils literal notranslate"><span class="pre">ir3</span></code></p></td>
+<td><p>How do residual checks, repeated updates, and stopping criteria respond
+to rounding?</p></td>
+</tr>
+<tr class="row-even"><td><p>Stencils and physical simulation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hotspot</span></code>, <code class="docutils literal notranslate"><span class="pre">hotspot3D</span></code>, <code class="docutils literal notranslate"><span class="pre">srad_v2</span></code>, <code class="docutils literal notranslate"><span class="pre">cfd</span></code></p></td>
+<td><p>Does reduced storage help a regular or data-parallel computation after
+conversion costs are included?</p></td>
+</tr>
+<tr class="row-odd"><td><p>Interpolation and integration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cubic_spline</span></code>, <code class="docutils literal notranslate"><span class="pre">rk4</span></code>, <code class="docutils literal notranslate"><span class="pre">simpson</span></code>, <code class="docutils literal notranslate"><span class="pre">trapezoidal</span></code></p></td>
+<td><p>How does local error propagate across stages or sample points?</p></td>
+</tr>
+<tr class="row-even"><td><p>Learning and data analysis</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">backprop</span></code>, <code class="docutils literal notranslate"><span class="pre">kmeans</span></code>, <code class="docutils literal notranslate"><span class="pre">pca</span></code>, <code class="docutils literal notranslate"><span class="pre">svm</span></code>, <code class="docutils literal notranslate"><span class="pre">randomforest</span></code></p></td>
+<td><p>Which state and intermediate values tolerate narrowing while retaining
+the checked model output?</p></td>
+</tr>
+</tbody>
+</table>
+<p>For the full inventory, including nested benchmark variants, see
+<a class="reference internal" href="applications.html"><span class="doc">Applications</span></a>. A compact first comparison is <code class="docutils literal notranslate"><span class="pre">dense_lu</span></code> versus
+<code class="docutils literal notranslate"><span class="pre">hotspot</span></code>: one has dependent factorization updates; the other is a regular
+stencil. <code class="docutils literal notranslate"><span class="pre">backprop</span></code> adds a learning workload and has a selected H100 port.</p>
+</section>
+<section id="a-repeatable-cpu-study">
+<h2>A repeatable CPU study<a class="headerlink" href="#a-repeatable-cpu-study" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>State the question.</strong> Pick benchmark directories, exact inputs, a set of
+significant-digit targets, and the precision combinations to compare.</p></li>
+<li><p><strong>Record the environment.</strong> Save the repository revision, compiler and
+optimization flags, Python/PROMISE/CADNA versions, CPU model, thread counts,
+and relevant floating-point settings.</p></li>
+<li><p><strong>Review each ``promise.yml``.</strong> It fixes the source files, compile command,
+executable, and output path. Check that the benchmark validates the output
+you care about. See <a class="reference internal" href="configuration.html"><span class="doc">Configuration</span></a>.</p></li>
+<li><p><strong>Prepare the templates.</strong> From <code class="docutils literal notranslate"><span class="pre">mp_tests/</span></code>, <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">sync_settings.sh</span></code>
+copies the shared files into top-level benchmark folders. Its default mode
+deletes existing local <code class="docutils literal notranslate"><span class="pre">run_setting_*.py</span></code>, <code class="docutils literal notranslate"><span class="pre">run_debug_*.sh</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">fp.json</span></code> files before copying; preserve any custom versions first.</p></li>
+<li><p><strong>Run a small sequential sweep first.</strong> This checks that the compiler,
+CADNA, input files, and output checks work before a large batch.</p></li>
+<li><p><strong>Inspect the logs and artifacts.</strong> Confirm every target yielded a valid
+precision assignment. Do not interpret an empty assignment or zero runtime
+as a successful low-cost result.</p></li>
+<li><p><strong>Repeat and validate independently.</strong> Use additional inputs or an
+application-level residual/error metric where possible. Re-run timing
+measurements instead of relying on one observed wall-clock value.</p></li>
+</ol>
+<p>Example from <code class="docutils literal notranslate"><span class="pre">mp_tests/</span></code> after setup:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>sync_settings.sh
+./run_benchmarks.sh<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span>dense_lu<span class="w"> </span>hotspot
+python3<span class="w"> </span>calculate_stats.py<span class="w"> </span>dense_lu<span class="w"> </span>hotspot
+</pre></div>
+</div>
+<p>The runner supports <code class="docutils literal notranslate"><span class="pre">--parallel</span></code>, but its setting tasks currently share each
+benchmark’s working directory. For clean comparisons, run those settings
+sequentially or isolate each task’s files and generated outputs first. The MPI
+runner has a different folder-discovery rule; pass explicit folders and check
+its task count before a distributed run.</p>
+</section>
+<section id="what-each-result-measures">
+<h2>What each result measures<a class="headerlink" href="#what-each-result-measures" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Keep these quantities separate</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 26.0%" />
+<col style="width: 42.0%" />
+<col style="width: 32.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Quantity</p></th>
+<th class="head"><p>Source in this repository</p></th>
+<th class="head"><p>Interpretation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Precision assignment</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prec_setting_&lt;i&gt;.json</span></code> and precision-count plots</p></td>
+<td><p>Number and identities of selected variables by type for a digit target.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PROMISE search wall time</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">runtimes&lt;i&gt;.csv</span></code> and CPU figures</p></td>
+<td><p>Includes reference work, compilation, and candidate executions; it is
+the <em>cost of tuning</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p>CUDA execution time</p></td>
+<td><p>H100 <code class="docutils literal notranslate"><span class="pre">cuda_h100_ratios.csv</span></code> and raw result files</p></td>
+<td><p>Measured time for a selected direct CUDA port on its test input.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Device allocation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">device_allocation_bytes</span></code> and ratios</p></td>
+<td><p>Tracked device-resident allocation, not source-variable count or total
+memory traffic.</p></td>
+</tr>
+<tr class="row-even"><td><p>Accuracy or validation error</p></td>
+<td><p>Benchmark-specific residual, relative-error, or output-difference fields</p></td>
+<td><p>Evidence tied to the particular output check and test input.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For a mixed implementation and matching FP64 baseline, the stored H100 ratios
+use the following interpretation:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{time\ ratio} = \frac{T_{\mathrm{mixed}}}{T_{\mathrm{FP64}}},
+\qquad
+\mathrm{speedup} = \frac{T_{\mathrm{FP64}}}{T_{\mathrm{mixed}}},
+\qquad
+\mathrm{memory\ ratio} =
+\frac{B_{\mathrm{mixed}}}{B_{\mathrm{FP64}}}.\]</div>
+<p>A time ratio below one indicates a faster measured case; a memory ratio below
+one indicates fewer tracked device-allocation bytes. Neither alone establishes
+that the required numerical accuracy was met. See <a class="reference internal" href="benchmark_results.html"><span class="doc">Benchmark Results</span></a>
+for the stored H100 cases and their limitations.</p>
+</section>
+<section id="fair-comparisons-and-practical-limits">
+<h2>Fair comparisons and practical limits<a class="headerlink" href="#fair-comparisons-and-practical-limits" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use the <strong>same input and output validation</strong> for baseline and mixed cases.
+Report input size, convergence settings, and random seed when applicable.</p></li>
+<li><p>Hold compiler flags, thread counts, hardware, and software versions fixed.
+For performance, describe warm-up and measured runs and report variability.</p></li>
+<li><p>Compare <strong>like with like</strong>: a PROMISE search-time curve answers a different
+question from a standalone CPU kernel run or CUDA-event time.</p></li>
+<li><p>Treat emulated custom-format results as evidence about numerical feasibility.
+Native hardware speedups need their own measurements.</p></li>
+<li><p>The selected H100 ports preserve the PROMISE-derived computational structure.
+They are not general cuBLAS/cuDNN or Tensor Core rewrites. The separate
+complement experiments mark Tensor-Core-suitable cases explicitly.</p></li>
+<li><p>A passing target applies to the exercised input and checked outputs. More
+inputs, independent references, and error metrics strengthen the conclusion.</p></li>
+</ul>
+<p>Next: <a class="reference internal" href="precision_tuning.html"><span class="doc">Precision Tuning Explained</span></a> explains the formats and search; <a class="reference internal" href="example.html"><span class="doc">Example</span></a>
+contains runnable commands; <a class="reference internal" href="api_references.html"><span class="doc">API References</span></a> documents output schemas.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="precision_tuning.html" class="btn btn-neutral float-left" title="Precision Tuning Explained" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

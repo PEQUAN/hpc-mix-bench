@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API References &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Licenses" href="licenses.html" />
+    <link rel="prev" title="Benchmark Results" href="benchmark_results.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="precision_tuning.html">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API References</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_references.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-references">
+<h1>API References<a class="headerlink" href="#api-references" title="Link to this heading"></a></h1>
+<p>This page documents the command-line interfaces, Python entry points, and
+result-file schemas used by HPC-Mix-Bench.</p>
+<section id="promise-command-line">
+<h2>PROMISE Command Line<a class="headerlink" href="#promise-command-line" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">promise</span></code> command is provided by the bundled <code class="docutils literal notranslate"><span class="pre">cadnaPromise</span></code> package.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>promise<span class="w"> </span>--help
+promise<span class="w"> </span>--version
+promise<span class="w"> </span>--precs<span class="o">=</span>&lt;letters&gt;<span class="w"> </span>--nbDigits<span class="o">=</span>&lt;digits&gt;<span class="w"> </span>--conf<span class="o">=</span>promise.yml<span class="w"> </span>--fp<span class="o">=</span>fp.json
+</pre></div>
+</div>
+<p>Important options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--precs=&lt;letters&gt;</span></code>: ordered precision letters to search, using aliases
+from <code class="docutils literal notranslate"><span class="pre">fp.json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--nbDigits=&lt;digits&gt;</span></code>: required number of correct significant digits.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--conf=&lt;file&gt;</span></code>: PROMISE compile/run configuration, normally
+<code class="docutils literal notranslate"><span class="pre">promise.yml</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fp=&lt;file&gt;</span></code>: custom floating-point format definitions, normally
+<code class="docutils literal notranslate"><span class="pre">fp.json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output=&lt;dir&gt;</span></code>: output directory for transformed source files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--debug</span></code>: keep additional intermediate files and diagnostic output.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--noCadna</span></code>: run without CADNA validation.</p></li>
+</ul>
+</section>
+<section id="python-entry-point">
+<h2>Python Entry Point<a class="headerlink" href="#python-entry-point" title="Link to this heading"></a></h2>
+<p>The shared <code class="docutils literal notranslate"><span class="pre">run_setting_*.py</span></code> scripts call PROMISE programmatically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cadnaPromise.run</span><span class="w"> </span><span class="kn">import</span> <span class="n">runPromise</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">runPromise</span><span class="p">([</span>
+    <span class="s2">&quot;--precs=wpsd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--nbDigits=5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--conf=promise.yml&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--fp=fp.json&quot;</span><span class="p">,</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>The returned object is serialized into <code class="docutils literal notranslate"><span class="pre">prec_setting_&lt;i&gt;.json</span></code> by the
+benchmark run scripts.</p>
+</section>
+<section id="code-instrumentation">
+<h2>Code Instrumentation<a class="headerlink" href="#code-instrumentation" title="Link to this heading"></a></h2>
+<p>PROMISE searches variables marked with <code class="docutils literal notranslate"><span class="pre">__PROMISE__</span></code> annotations and checks
+outputs marked by PROMISE check macros:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">__PROMISE__</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="n">PROMISE_CHECK_VAR</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+<span class="n">PROMISE_CHECK_ARRAY</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="n">n_elements</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The transformed code replaces PROMISE annotations with native or FloatX-based
+precision types selected by the delta-debugging search.</p>
+</section>
+<section id="cpu-runner">
+<h2>CPU Runner<a class="headerlink" href="#cpu-runner" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mp_tests/run_benchmarks.sh</span></code> is the main CPU benchmark runner.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./run_benchmarks.sh<span class="w"> </span><span class="o">[</span>run_exp<span class="o">]</span><span class="w"> </span><span class="o">[</span>run_plot<span class="o">]</span><span class="w"> </span><span class="o">[</span>run_debug<span class="o">]</span><span class="w"> </span><span class="o">[</span>folders...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--parallel<span class="o">]</span><span class="w"> </span><span class="o">[</span>--jobs<span class="w"> </span>N<span class="o">]</span>
+</pre></div>
+</div>
+<p>Arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">run_exp</span></code>: run PROMISE experiments. Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_plot</span></code>: generate plots. Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_debug</span></code>: run matching <code class="docutils literal notranslate"><span class="pre">run_debug_i.sh</span></code> scripts. Defaults to
+<code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">folders</span></code>: optional benchmark folders.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--parallel</span></code>: use GNU Parallel when available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">N</span></code> or <code class="docutils literal notranslate"><span class="pre">--jobs=N</span></code>: worker count.</p></li>
+</ul>
+</section>
+<section id="h100-direct-cuda-runner">
+<h2>H100 Direct CUDA Runner<a class="headerlink" href="#h100-direct-cuda-runner" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">papers/run_cuda_h100_comparison.sh</span></code> builds a raw comparison table by running
+the FP64 CUDA baseline and all selected <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code> CUDA programs.
+<code class="docutils literal notranslate"><span class="pre">papers/submit_hpc_mix_h100.sh</span></code> is the Jean Zay batch wrapper.</p>
+<p>Important environment variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BENCHMARKS</span></code>: benchmark names, for example <code class="docutils literal notranslate"><span class="pre">&quot;backprop</span> <span class="pre">dense_lu</span> <span class="pre">hotspot&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COMBINATIONS</span></code>: selected combinations, for example <code class="docutils literal notranslate"><span class="pre">&quot;1</span> <span class="pre">2&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BACKPROP_SIZE</span></code>, <code class="docutils literal notranslate"><span class="pre">DENSE_LU_SIZE</span></code>, <code class="docutils literal notranslate"><span class="pre">HOTSPOT_ROWS</span></code>, <code class="docutils literal notranslate"><span class="pre">HOTSPOT_COLS</span></code> and
+<code class="docutils literal notranslate"><span class="pre">HOTSPOT_ITERS</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WARMUP_RUNS</span></code> and <code class="docutils literal notranslate"><span class="pre">MEASURED_RUNS</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RUN_PLOTS</span></code> and <code class="docutils literal notranslate"><span class="pre">PLOT_FONT_SIZE</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUT_DIR</span></code>: optional output directory override.</p></li>
+</ul>
+</section>
+<section id="h100-ratio-csv-schema">
+<h2>H100 Ratio CSV Schema<a class="headerlink" href="#h100-ratio-csv-schema" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">cuda_h100_ratios.csv</span></code> contains one row for each double baseline and each
+mixed-precision case. Key fields are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">benchmark</span></code>: benchmark name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">case</span></code>: <code class="docutils literal notranslate"><span class="pre">double</span></code> or <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">precision</span></code>: <code class="docutils literal notranslate"><span class="pre">double</span></code> or <code class="docutils literal notranslate"><span class="pre">mixed</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_size</span></code>: benchmark input size.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_ms</span></code>: mean measured CUDA time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_ms_stddev</span></code>, <code class="docutils literal notranslate"><span class="pre">time_ms_min</span></code>, <code class="docutils literal notranslate"><span class="pre">time_ms_max</span></code> and <code class="docutils literal notranslate"><span class="pre">time_ms_runs</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">device_allocation_bytes</span></code> and <code class="docutils literal notranslate"><span class="pre">device_allocation_mib</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">speedup_vs_double</span></code> and <code class="docutils literal notranslate"><span class="pre">time_ratio_vs_double</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">memory_ratio_vs_double</span></code>.</p></li>
+<li><p>validation/error fields when produced by the benchmark, such as
+<code class="docutils literal notranslate"><span class="pre">relative_residual</span></code>, <code class="docutils literal notranslate"><span class="pre">relative_error</span></code>, <code class="docutils literal notranslate"><span class="pre">solution_l2_error_vs_double</span></code>,
+<code class="docutils literal notranslate"><span class="pre">output_delta_mse_vs_double</span></code> and <code class="docutils literal notranslate"><span class="pre">output_linf_error_vs_double</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">warmup_runs</span></code> and <code class="docutils literal notranslate"><span class="pre">measured_runs</span></code>.</p></li>
+</ul>
+</section>
+<section id="plotting-scripts">
+<h2>Plotting Scripts<a class="headerlink" href="#plotting-scripts" title="Link to this heading"></a></h2>
+<p>Main H100 plotting scripts under <code class="docutils literal notranslate"><span class="pre">papers/h100_results</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_h100_ratios.py</span></code>: per-benchmark time/memory ratio figures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_h100_ratios_combined.py</span></code>: combined ratio figures for combinations
+I-II.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_h100_benchmark_panels.py</span></code>: paper-style combined benchmark panel.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_dense_lu_solution_errors.py</span></code>: Dense LU solution-vector errors when
+saved solution vectors are available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_h100_accuracy_errors.py</span></code>: validation-error plots from ratio CSV
+columns.</p></li>
+</ul>
+<p>Complement plotting:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">papers/complement/plot_complement_h100.py</span></code>: direct CUDA and Tensor Core
+complement figures.</p></li>
+</ul>
+<p>Common options:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>plot_h100_ratios_combined.py<span class="w"> </span>&lt;job-id&gt;<span class="w"> </span>--font-size<span class="w"> </span><span class="m">12</span>
+python3<span class="w"> </span>plot_h100_ratios_combined.py<span class="w"> </span>--csv<span class="w"> </span>path/to/cuda_h100_ratios.csv<span class="w"> </span>--out-dir<span class="w"> </span>figures<span class="w"> </span>--formats<span class="w"> </span>pdf<span class="w"> </span>png
+</pre></div>
+</div>
+</section>
+<section id="precision-configuration-json">
+<h2>Precision Configuration JSON<a class="headerlink" href="#precision-configuration-json" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">prec_setting_&lt;i&gt;.json</span></code> is a JSON array. Each entry corresponds to one
+required significant-digit target and maps type names to selected variable
+indices. The standard run settings sweep digit targets 1 through 10 in order;
+the JSON entries do not themselves store the target number.</p>
+<p>Example:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;double&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;float&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;flx::floatx&lt;5, 2&gt;&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Common type-name mapping:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">double</span></code>: FP64.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float</span></code>: FP32.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">half_float::half</span></code> and <code class="docutils literal notranslate"><span class="pre">flx::floatx&lt;5,</span> <span class="pre">10&gt;</span></code>: FP16.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flx::floatx&lt;8,</span> <span class="pre">7&gt;</span></code>: BF16.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flx::floatx&lt;5,</span> <span class="pre">2&gt;</span></code>: E5M2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flx::floatx&lt;4,</span> <span class="pre">3&gt;</span></code>: E4M3.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="benchmark_results.html" class="btn btn-neutral float-left" title="Benchmark Results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="licenses.html" class="btn btn-neutral float-right" title="Licenses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

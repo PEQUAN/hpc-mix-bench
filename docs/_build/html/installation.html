@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example" href="example.html" />
+    <link rel="prev" title="HPC-MIX Bench | Explore precision with confidence" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="precision_tuning.html">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>This page describes the software needed to run the CPU PROMISE benchmark suite
+and the optional H100 CUDA validation scripts.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<p>For CPU precision-search experiments:</p>
+<ul class="simple">
+<li><p>Python 3.9 or newer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g++</span></code> with C++11 support.</p></li>
+<li><p>CADNA, activated through the bundled <code class="docutils literal notranslate"><span class="pre">cadnaPromise</span></code> package or through a
+local CADNA installation.</p></li>
+<li><p>Python packages used by the run and plotting scripts: <code class="docutils literal notranslate"><span class="pre">numpy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, <code class="docutils literal notranslate"><span class="pre">colorama</span></code>, <code class="docutils literal notranslate"><span class="pre">colorlog</span></code>, <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, <code class="docutils literal notranslate"><span class="pre">regex</span></code>, <code class="docutils literal notranslate"><span class="pre">pyyaml</span></code>,
+<code class="docutils literal notranslate"><span class="pre">packaging</span></code>, and <code class="docutils literal notranslate"><span class="pre">docopt-ng</span></code> or <code class="docutils literal notranslate"><span class="pre">docopt</span></code>.</p></li>
+<li><p>GNU Parallel is optional but recommended for <code class="docutils literal notranslate"><span class="pre">run_benchmarks.sh</span>
+<span class="pre">--parallel</span></code>.</p></li>
+</ul>
+<p>For H100 validation experiments:</p>
+<ul class="simple">
+<li><p>NVIDIA CUDA with <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>.</p></li>
+<li><p>An H100-capable CUDA architecture target, normally <code class="docutils literal notranslate"><span class="pre">sm_90</span></code>.</p></li>
+<li><p>On Jean Zay, an H100 allocation such as <code class="docutils literal notranslate"><span class="pre">${IDRPROJ}&#64;h100</span></code>.</p></li>
+</ul>
+</section>
+<section id="clone-the-repository">
+<h2>Clone The Repository<a class="headerlink" href="#clone-the-repository" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/PEQUAN/hpc-mix-bench.git
+<span class="nb">cd</span><span class="w"> </span>hpc-mix-bench
+</pre></div>
+</div>
+</section>
+<section id="install-cadna-promise">
+<h2>Install CADNA/PROMISE<a class="headerlink" href="#install-cadna-promise" title="Link to this heading"></a></h2>
+<p>The repository bundles the <code class="docutils literal notranslate"><span class="pre">cadnaPromise</span></code> Python package. A local editable
+install is convenient when running from a cluster account:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cadnaPromise
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-e<span class="w"> </span>.
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>python3<span class="w"> </span>-m<span class="w"> </span>site<span class="w"> </span>--user-base<span class="k">)</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+activate-promise
+</pre></div>
+</div>
+<p>Verify that the command-line tools are visible:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>which<span class="w"> </span>promise
+which<span class="w"> </span>activate-promise
+python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import cadnaPromise; print(cadnaPromise.__file__)&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="install-python-dependencies">
+<h2>Install Python Dependencies<a class="headerlink" href="#install-python-dependencies" title="Link to this heading"></a></h2>
+<p>On systems with internet access:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>numpy<span class="w"> </span>matplotlib<span class="w"> </span>colorama<span class="w"> </span>colorlog<span class="w"> </span>tqdm<span class="w"> </span>regex<span class="w"> </span>pyyaml<span class="w"> </span>packaging<span class="w"> </span>docopt-ng
+</pre></div>
+</div>
+<p>On clusters where compute nodes do not have network access, install these
+packages on a login node before submitting jobs. The batch scripts add the user
+base <code class="docutils literal notranslate"><span class="pre">bin</span></code> directory to <code class="docutils literal notranslate"><span class="pre">PATH</span></code> and the user <code class="docutils literal notranslate"><span class="pre">site-packages</span></code> directory to
+<code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> when needed.</p>
+</section>
+<section id="docker">
+<h2>Docker<a class="headerlink" href="#docker" title="Link to this heading"></a></h2>
+<p>Docker provides a reproducible CPU environment for PROMISE and plotting.</p>
+<p>On Linux x86_64 and Windows on Intel/AMD:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>hpc-mix-cadna<span class="w"> </span>.
+docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>hpc-mix-cadna
+</pre></div>
+</div>
+<p>On macOS Apple Silicon and Windows on ARM:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>buildx<span class="w"> </span>build<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>-t<span class="w"> </span>hpc-mix-cadna<span class="w"> </span>.
+docker<span class="w"> </span>run<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>hpc-mix-cadna
+</pre></div>
+</div>
+<p>The repository also provides a Docker Compose service:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>promise-env
+</pre></div>
+</div>
+</section>
+<section id="readthedocs">
+<h2>ReadTheDocs<a class="headerlink" href="#readthedocs" title="Link to this heading"></a></h2>
+<p>The online documentation is built with Sphinx. To reproduce the build locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+python3<span class="w"> </span>-m<span class="w"> </span>sphinx<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs/source<span class="w"> </span>docs/_build/html
+</pre></div>
+</div>
+<p>ReadTheDocs uses the repository-level <code class="docutils literal notranslate"><span class="pre">.readthedocs.yaml</span></code> file and installs
+<code class="docutils literal notranslate"><span class="pre">docs/requirements.txt</span></code> before building <code class="docutils literal notranslate"><span class="pre">docs/source</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="HPC-MIX Bench | Explore precision with confidence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example.html" class="btn btn-neutral float-right" title="Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

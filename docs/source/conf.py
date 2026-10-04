@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
-project = 'HPC-Mix-Bench'
+project = 'HPC-MIX Bench'
 copyright = '2026, PEQUAN'
 author = 'PEQUAN Team'
 release = '1.0.0'
@@ -27,6 +27,10 @@ exclude_patterns = []
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 html_css_files = ['custom.css']
+html_title = 'HPC-MIX Bench Documentation'
+html_short_title = 'HPC-MIX Bench'
+html_logo = '_static/hpc-mix-mark.svg'
+html_favicon = '_static/hpc-mix-mark.svg'
 
 html_theme_options = {
     'analytics_id': '',
@@ -39,10 +43,6 @@ html_theme_options = {
     'includehidden': True,
     'titles_only': False
 }
-
-# Remove logo configuration
-# html_logo = '../../workfloat.png'
-# html_favicon = '../../workfloat.png'
 
 # -- MathJax configuration ---------------------------------------------------
 mathjax3_config = {

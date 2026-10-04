@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmark Results &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API References" href="api_references.html" />
+    <link rel="prev" title="Applications" href="applications.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="precision_tuning.html">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="precision_tuning.html#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Benchmark Results</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/benchmark_results.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="benchmark-results">
+<h1>Benchmark Results<a class="headerlink" href="#benchmark-results" title="Link to this heading"></a></h1>
+<p>This page summarizes the result artifacts currently stored in the repository.
+The paper figures and CSV files live mainly under <code class="docutils literal notranslate"><span class="pre">papers/</span></code>.</p>
+<p>For format definitions and the meaning of a significant-digit target, start
+with <a class="reference internal" href="precision_tuning.html"><span class="doc">Precision Tuning Explained</span></a>. For fair comparisons and the distinction between
+search cost and application speed, see <a class="reference internal" href="methodology.html"><span class="doc">Benchmark Methodology and Value</span></a>.</p>
+<section id="cpu-promise-precision-search">
+<h2>CPU PROMISE Precision Search<a class="headerlink" href="#cpu-promise-precision-search" title="Link to this heading"></a></h2>
+<p>The CPU experiments evaluate PROMISE precision assignments over the standard
+precision combinations I-IV. For each required number of correct significant
+digits, PROMISE runs the CADNA reference computation and uses delta debugging to
+accept or reject candidate mixed-precision configurations.</p>
+<p>The precision-search figures report:</p>
+<ul class="simple">
+<li><p>stacked precision counts for the final PROMISE configuration;</p></li>
+<li><p>PROMISE search wall time, including reference execution, transformations,
+compilation, and candidate executions.</p></li>
+</ul>
+<p>The timing curves are therefore search costs, not standalone kernel runtimes.
+Small timing differences between neighboring digit targets can reflect a
+different delta-debugging search path even when the final precision assignment
+is unchanged.</p>
+<p>Representative paper plots are stored under <code class="docutils literal notranslate"><span class="pre">papers/plots</span></code> and in individual
+benchmark folders.</p>
+</section>
+<section id="one-bit-exploration">
+<h2>One-Bit Exploration<a class="headerlink" href="#one-bit-exploration" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">1-bit-exps</span></code> directory contains controlled custom-format sweeps. For a
+benchmark and a required significant-digit target, PROMISE is run with FP64 and
+one custom type. The sweep either:</p>
+<ul class="simple">
+<li><p>fixes the exponent bitwidth and varies the trailing-significand bitwidth; or</p></li>
+<li><p>fixes the trailing-significand bitwidth and varies the exponent bitwidth.</p></li>
+</ul>
+<p>The resulting figures show how many variables can remain in the tested custom
+format. The current paper-style figures include Hotspot and Dense LU because
+they represent two contrasting structures: a regular stencil computation and a
+direct dense linear-algebra kernel.</p>
+<p>Regenerate one-bit figures:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="m">1</span>-bit-exps
+python3<span class="w"> </span>onebit_precision_analysis1.py<span class="w"> </span>--run<span class="w"> </span>--benchmark<span class="w"> </span>hotspot<span class="w"> </span>--benchmark<span class="w"> </span>dense_lu<span class="w"> </span>--digits<span class="w"> </span><span class="m">1</span>-10
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">onebit_precision_analysis1.py</span></code> through
+<code class="docutils literal notranslate"><span class="pre">onebit_precision_analysis4.py</span></code> provide alternative visualizations. Omit
+<code class="docutils literal notranslate"><span class="pre">--run</span></code> to regenerate plots from existing CSV files without repeating the
+PROMISE search.</p>
+</section>
+<section id="h100-direct-cuda-results">
+<h2>H100 Direct CUDA Results<a class="headerlink" href="#h100-direct-cuda-results" title="Link to this heading"></a></h2>
+<p>The H100 validation data are stored under <code class="docutils literal notranslate"><span class="pre">papers/h100_results</span></code>. The latest
+checked-in runs are:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">H100 result directories</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Directory</p></th>
+<th class="head"><p>Benchmark</p></th>
+<th class="head"><p>Input size</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1284441</span></code></p></td>
+<td><p>Backprop</p></td>
+<td><p>262,144 input elements</p></td>
+<td><p>Combinations I-II</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1284476</span></code></p></td>
+<td><p>Hotspot</p></td>
+<td><p>1024 x 1024 grid, 2 iterations</p></td>
+<td><p>Combinations I-II</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1326840</span></code></p></td>
+<td><p>Dense LU</p></td>
+<td><p>5000 x 5000 matrix</p></td>
+<td><p>Combinations I-II</p></td>
+</tr>
+</tbody>
+</table>
+<p>The ratio CSV schema is described in <a class="reference internal" href="api_references.html"><span class="doc">API References</span></a>. In the current
+stored results:</p>
+<ul class="simple">
+<li><p>Backprop reduces tracked device allocation to about 57.5 percent of FP64 and
+reports time ratios from 0.734 to 0.745.</p></li>
+<li><p>Hotspot reduces tracked device allocation from 12.5 percent to 50 percent of
+FP64 depending on the requested digits, with time ratios from 0.887 to 1.139.</p></li>
+<li><p>Dense LU reduces tracked device allocation to about 25 percent for one
+required digit and about 50 percent for the other tested digit levels, with
+time ratios from 0.467 to 0.601.</p></li>
+</ul>
+<p>The combined paper-style figure is available at:</p>
+<a class="reference internal image-reference" href="_images/h100_backprop_hotspot_dense_lu_memory_lines_time_bars_combinations_1_2.png"><img alt="H100 memory and time ratios for Backprop, Hotspot, and Dense LU" src="_images/h100_backprop_hotspot_dense_lu_memory_lines_time_bars_combinations_1_2.png" style="width: 100%;" />
+</a>
+<p>Run-specific outputs include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cuda_h100_raw.csv</span></code>: direct executable outputs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cuda_h100_ratios.csv</span></code>: normalized time, memory, speedup, and validation
+fields.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_cuda_h100.log</span></code>: build log.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">figures/</span></code>: generated plots.</p></li>
+<li><p>benchmark-specific output directories such as <code class="docutils literal notranslate"><span class="pre">hotspot_outputs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">backprop_outputs</span></code>, and <code class="docutils literal notranslate"><span class="pre">dense_lu_solutions</span></code> when generated by the run.</p></li>
+</ul>
+<p>Regenerate H100 figures from a result directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>papers/h100_results
+python3<span class="w"> </span>plot_h100_ratios.py<span class="w"> </span>&lt;job-id&gt;<span class="w"> </span>--font-size<span class="w"> </span><span class="m">12</span>
+python3<span class="w"> </span>plot_h100_ratios_combined.py<span class="w"> </span>&lt;job-id&gt;<span class="w"> </span>--font-size<span class="w"> </span><span class="m">12</span>
+python3<span class="w"> </span>plot_h100_benchmark_panels.py<span class="w"> </span>--font-size<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+</section>
+<section id="complementary-h100-results">
+<h2>Complementary H100 Results<a class="headerlink" href="#complementary-h100-results" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">papers/complement</span></code> contains reviewer-facing experiments that help interpret
+the direct CUDA validation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">direct_case_rerun.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">direct_case_ratios.csv</span></code> rerun the direct
+CUDA cases for the manifest entries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">profile_breakdown.csv</span></code> separates reported CUDA-event kernel time from
+end-to-end executable wall time and non-kernel overhead.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tensorcore_complement.csv</span></code> records Tensor Core complement measurements
+when applicable and marks non-applicable cases explicitly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tensorcore_ratio_summary.csv</span></code> summarizes Tensor Core ratios and errors.</p></li>
+</ul>
+<p>The complement data currently include a Dense LU blocked-update Tensor Core
+comparison. Backprop and Hotspot entries are marked not applicable where the
+original PROMISE-derived computation is not a large Tensor-Core-suitable GEMM.</p>
+<p>Regenerate complement plots:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>papers/complement
+python3<span class="w"> </span>plot_complement_h100.py<span class="w"> </span>results/&lt;job-id&gt;<span class="w"> </span>--font-size<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+</section>
+<section id="interpretation-notes">
+<h2>Interpretation Notes<a class="headerlink" href="#interpretation-notes" title="Link to this heading"></a></h2>
+<p>The H100 memory ratio is based on tracked <code class="docutils literal notranslate"><span class="pre">cudaMalloc</span></code> byte counts for
+device-resident arrays and work buffers. It is an allocation-footprint metric,
+not a count of source-level variables.</p>
+<p>The H100 time ratio is the mixed-precision CUDA time divided by the FP64 CUDA
+baseline time for the same benchmark input. Each configuration is timed after
+one warm-up run and averaged over the requested measured runs, normally three
+for the main validation scripts.</p>
+<p>Time ratio is not guaranteed to improve monotonically with lower memory use.
+For example, Hotspot can reduce allocation substantially but remain close to
+FP64 runtime because the direct CUDA port stores data in low precision while
+performing scalar conversions inside a short stencil kernel.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="applications.html" class="btn btn-neutral float-left" title="Applications" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_references.html" class="btn btn-neutral float-right" title="API References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

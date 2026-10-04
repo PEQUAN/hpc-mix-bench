@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precision Tuning Explained &mdash; HPC-MIX Bench Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=046acf81" />
+
+  
+    <link rel="shortcut icon" href="_static/hpc-mix-mark.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Benchmark Methodology and Value" href="methodology.html" />
+    <link rel="prev" title="Example" href="example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HPC-MIX Bench
+              <img src="_static/hpc-mix-mark.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#clone-the-repository">Clone The Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-cadna-promise">Install CADNA/PROMISE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#install-python-dependencies">Install Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#readthedocs">ReadTheDocs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-a-cpu-promise-sweep">Run A CPU PROMISE Sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#output-files">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-the-direct-h100-cuda-validation">Run The Direct H100 CUDA Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#regenerate-h100-plots">Regenerate H100 Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#run-complementary-tensor-core-experiments">Run Complementary Tensor Core Experiments</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methods and workloads</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Precision Tuning Explained</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-format-trade-off">The format trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-promise-searches">How PROMISE searches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-does-five-correct-digits-mean">What does “five correct digits” mean?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#four-standard-search-spaces">Four standard search spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diagnosing-sensitivity">Diagnosing sensitivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#one-bit-format-exploration">One-bit format exploration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methodology.html">Benchmark Methodology and Value</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#research-questions-the-suite-supports">Research questions the suite supports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#choosing-a-workload">Choosing a workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#a-repeatable-cpu-study">A repeatable CPU study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#what-each-result-measures">What each result measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methodology.html#fair-comparisons-and-practical-limits">Fair comparisons and practical limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#repository-layout">Repository Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#promise-configuration">PROMISE Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#floating-point-format-file">Floating-Point Format File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#shared-run-settings">Shared Run Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#environment-variables">Environment Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#h100-job-parameters">H100 Job Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="applications.html">Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#main-benchmark-families">Main Benchmark Families</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#how-to-interpret-digit-i-j">How To Interpret <code class="docutils literal notranslate"><span class="pre">digit&lt;i&gt;_&lt;j&gt;</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#h100-cuda-applications">H100 CUDA Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applications.html#complementary-tensor-core-applications">Complementary Tensor Core Applications</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Results and reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Benchmark Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#cpu-promise-precision-search">CPU PROMISE Precision Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#one-bit-exploration">One-Bit Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#h100-direct-cuda-results">H100 Direct CUDA Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#complementary-h100-results">Complementary H100 Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmark_results.html#interpretation-notes">Interpretation Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">API References</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#promise-command-line">PROMISE Command Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#python-entry-point">Python Entry Point</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#code-instrumentation">Code Instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#cpu-runner">CPU Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-direct-cuda-runner">H100 Direct CUDA Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#h100-ratio-csv-schema">H100 Ratio CSV Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#plotting-scripts">Plotting Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#precision-configuration-json">Precision Configuration JSON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">Licenses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#repository-license">Repository License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#attribution">Attribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#third-party-components">Third-Party Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="licenses.html#documentation-license">Documentation License</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HPC-MIX Bench</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Precision Tuning Explained</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/precision_tuning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="precision-tuning-explained">
+<h1>Precision Tuning Explained<a class="headerlink" href="#precision-tuning-explained" title="Link to this heading"></a></h1>
+<p>Precision is a resource: it affects the range and spacing of representable
+numbers, storage requirements, conversion cost, and the arithmetic available
+on a target machine. HPC-MIX Bench helps answer a narrower, testable question:
+<strong>for this program, input, and output-accuracy target, which annotated
+variables can use each candidate format?</strong></p>
+<p>The goal is an assignment across variables, not a single data type for the
+whole application. A long-lived state variable may need FP64 while a temporary
+value in the same kernel tolerates FP16 or a custom eight-bit format.</p>
+<section id="the-format-trade-off">
+<h2>The format trade-off<a class="headerlink" href="#the-format-trade-off" title="Link to this heading"></a></h2>
+<p>A binary format is described here by <code class="docutils literal notranslate"><span class="pre">(e,</span> <span class="pre">t)</span></code>: exponent bits <code class="docutils literal notranslate"><span class="pre">e</span></code> and
+explicit trailing-significand bits <code class="docutils literal notranslate"><span class="pre">t</span></code>. More exponent bits generally extend
+dynamic range; more significand bits reduce rounding between nearby normal
+numbers. These are distinct failure modes, so a format with more range is not
+automatically more accurate for every computation.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Formats used in the standard search spaces</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 16.0%" />
+<col style="width: 22.0%" />
+<col style="width: 44.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">(e,</span> <span class="pre">t)</span></code></p></th>
+<th class="head"><p>PROMISE alias</p></th>
+<th class="head"><p>Useful comparison</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>E4M3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">3)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+<td><p>More trailing-significand bits than E5M2, with less exponent range.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E5M2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">2)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">w</span></code></p></td>
+<td><p>Wider exponent range than E4M3, with coarser normal-number spacing.</p></td>
+</tr>
+<tr class="row-even"><td><p>FP16-like custom format</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">10)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">p</span></code></p></td>
+<td><p>Tests whether a ten-bit trailing significand is enough.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BF16-like format</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(8,</span> <span class="pre">7)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b</span></code></p></td>
+<td><p>Preserves an FP32-like exponent width with fewer significand bits.</p></td>
+</tr>
+<tr class="row-even"><td><p>FP32</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(8,</span> <span class="pre">23)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">s</span></code></p></td>
+<td><p>Common intermediate and comparison precision.</p></td>
+</tr>
+<tr class="row-odd"><td><p>FP64</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(11,</span> <span class="pre">52)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
+<td><p>High-precision candidate and reference-format baseline.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The built-in <code class="docutils literal notranslate"><span class="pre">h</span></code> alias uses <code class="docutils literal notranslate"><span class="pre">half_float::half</span></code>. The custom <code class="docutils literal notranslate"><span class="pre">p</span></code> alias is
+defined in <code class="docutils literal notranslate"><span class="pre">run_settings/fp.json</span></code> and uses a FloatX-style <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">10)</span></code> type.
+The standard four combinations use <code class="docutils literal notranslate"><span class="pre">p</span></code>. See <a class="reference internal" href="configuration.html"><span class="doc">Configuration</span></a> for the
+exact aliases and files.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Custom FloatX types are useful for <strong>precision sensitivity experiments</strong>.
+Their CPU execution time is not a prediction of native FP8, BF16, or FP16
+speed on a GPU. Hardware performance also depends on vectorization, memory
+layout, conversions, and whether a kernel actually uses specialized units.</p>
+</div>
+</section>
+<section id="how-promise-searches">
+<h2>How PROMISE searches<a class="headerlink" href="#how-promise-searches" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Annotate tunable declarations with <code class="docutils literal notranslate"><span class="pre">__PROMISE__</span></code> and identify outputs to
+check with the PROMISE checking macros. The checked outputs define what an
+accuracy claim covers.</p></li>
+<li><p>Choose an ordered search space, such as <code class="docutils literal notranslate"><span class="pre">wpsd</span></code>, and a required number of
+correct significant digits through <code class="docutils literal notranslate"><span class="pre">--nbDigits</span></code>.</p></li>
+<li><p>PROMISE builds a reference using CADNA’s Discrete Stochastic Arithmetic
+(DSA), then tests candidate type assignments through source transformation,
+compilation, and execution.</p></li>
+<li><p>Delta debugging narrows the set of variables that can be reduced while the
+checked result still meets the requested target.</p></li>
+<li><p>Inspect the returned per-type variable lists and the generated source. The
+same target can lead to different assignments for different inputs or
+benchmark configurations.</p></li>
+</ol>
+<p>A compact invocation from a configured benchmark directory is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>promise<span class="w"> </span>--precs<span class="o">=</span>wpsd<span class="w"> </span>--nbDigits<span class="o">=</span><span class="m">5</span><span class="w"> </span>--conf<span class="o">=</span>promise.yml<span class="w"> </span>--fp<span class="o">=</span>fp.json
+</pre></div>
+</div>
+<p>The repository’s <code class="docutils literal notranslate"><span class="pre">run_setting_*.py</span></code> scripts sweep targets from one to ten
+digits and write <code class="docutils literal notranslate"><span class="pre">prec_setting_&lt;i&gt;.json</span></code>, <code class="docutils literal notranslate"><span class="pre">runtimes&lt;i&gt;.csv</span></code>, and figures.
+The runtime recorded there is the <em>complete search wall time</em>, including
+reference work, transformations, compilation, and candidate runs. See
+<a class="reference internal" href="benchmark_results.html"><span class="doc">Benchmark Results</span></a> for separate H100 application timing.</p>
+</section>
+<section id="what-does-five-correct-digits-mean">
+<h2>What does “five correct digits” mean?<a class="headerlink" href="#what-does-five-correct-digits-mean" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">--nbDigits=5</span></code> is a requested accuracy threshold for the outputs that a
+benchmark checks. It is not a promise that every intermediate value has five
+correct digits. It is also not a proof for every possible input: the observed
+assignment is tied to the supplied dataset, control flow, build, and checking
+logic.</p>
+<p>When reading a result, ask:</p>
+<ul class="simple">
+<li><p>Which output variable or array was checked?</p></li>
+<li><p>Was the reference computation numerically meaningful for this input?</p></li>
+<li><p>Were non-finite values, convergence failures, and invalid outputs detected?</p></li>
+<li><p>Does the program use randomness or parallel reductions, and were those
+conditions controlled?</p></li>
+<li><p>Does the generated program satisfy an independent application-level error
+or residual check on held-out inputs?</p></li>
+</ul>
+</section>
+<section id="four-standard-search-spaces">
+<h2>Four standard search spaces<a class="headerlink" href="#four-standard-search-spaces" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Standard combinations</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 17.0%" />
+<col style="width: 31.0%" />
+<col style="width: 34.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Combination</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">--precs</span></code></p></th>
+<th class="head"><p>Candidate formats</p></th>
+<th class="head"><p>Main comparison</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>I</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wpsd</span></code></p></td>
+<td><p>E5M2 → FP16-like → FP32 → FP64</p></td>
+<td><p>E5M2 with a narrow intermediate range.</p></td>
+</tr>
+<tr class="row-odd"><td><p>II</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wbsd</span></code></p></td>
+<td><p>E5M2 → BF16-like → FP32 → FP64</p></td>
+<td><p>Effect of BF16-like range at intermediate precision.</p></td>
+</tr>
+<tr class="row-even"><td><p>III</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cpsd</span></code></p></td>
+<td><p>E4M3 → FP16-like → FP32 → FP64</p></td>
+<td><p>Effect of a different eight-bit range/spacing balance.</p></td>
+</tr>
+<tr class="row-odd"><td><p>IV</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cbsd</span></code></p></td>
+<td><p>E4M3 → BF16-like → FP32 → FP64</p></td>
+<td><p>E4M3 paired with BF16-like intermediate precision.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The letters describe <em>candidate sets</em>. A final assignment can contain several
+formats at once. Compare the same benchmark, input, and digit target across
+combinations to isolate the effect of changing the candidate set.</p>
+</section>
+<section id="diagnosing-sensitivity">
+<h2>Diagnosing sensitivity<a class="headerlink" href="#diagnosing-sensitivity" title="Link to this heading"></a></h2>
+<p>Precision counts are an entry point, not a complete numerical explanation.
+Patterns worth investigating include:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Questions suggested by a precision assignment</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Observation</p></th>
+<th class="head"><p>Follow-up check</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Low precision fails only for large or tiny inputs</p></td>
+<td><p>Test overflow, underflow, scaling, and the available exponent range.</p></td>
+</tr>
+<tr class="row-odd"><td><p>More digits force accumulators upward</p></td>
+<td><p>Inspect long sums, reductions, iteration counts, and residuals.</p></td>
+</tr>
+<tr class="row-even"><td><p>Factorizations need high precision in a few variables</p></td>
+<td><p>Inspect pivoting, near-singular inputs, cancellation, and conditioning.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Counts change sharply at one target</p></td>
+<td><p>Compare generated source and checked outputs on both sides of the
+threshold; a search path can also change abruptly.</p></td>
+</tr>
+<tr class="row-even"><td><p>Lower precision reduces bytes but not time</p></td>
+<td><p>Profile conversions, memory traffic, launch overhead, and use of
+native low-precision arithmetic.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="one-bit-format-exploration">
+<h2>One-bit format exploration<a class="headerlink" href="#one-bit-format-exploration" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">1-bit-exps</span></code> experiments vary one format dimension at a time. With the
+exponent width fixed, varying <code class="docutils literal notranslate"><span class="pre">t</span></code> probes rounding sensitivity; with <code class="docutils literal notranslate"><span class="pre">t</span></code>
+fixed, varying <code class="docutils literal notranslate"><span class="pre">e</span></code> probes range sensitivity. Each point compares one custom
+type with FP64. This makes a useful follow-up when two eight-bit formats behave
+differently on the same workload.</p>
+<p>The repository provides four plot variants. From <code class="docutils literal notranslate"><span class="pre">1-bit-exps/</span></code>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>onebit_precision_analysis1.py<span class="w"> </span>--benchmark<span class="w"> </span>hotspot<span class="w"> </span>--benchmark<span class="w"> </span>dense_lu
+python3<span class="w"> </span>onebit_precision_analysis1.py<span class="w"> </span>--run<span class="w"> </span>--benchmark<span class="w"> </span>hotspot<span class="w"> </span>--digits<span class="w"> </span><span class="m">1</span>-10
+</pre></div>
+</div>
+<p>The first command reads existing <code class="docutils literal notranslate"><span class="pre">onebit_precision_results.csv</span></code> files; the
+second reruns PROMISE sweeps and can take substantially longer. See
+<a class="reference internal" href="methodology.html"><span class="doc">Benchmark Methodology and Value</span></a> before comparing outputs across machines.</p>
+<p>Next: <a class="reference internal" href="example.html"><span class="doc">Example</span></a> for commands, <a class="reference internal" href="applications.html"><span class="doc">Applications</span></a> for workload selection,
+and <a class="reference internal" href="methodology.html"><span class="doc">Benchmark Methodology and Value</span></a> for a repeatable experimental protocol.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="example.html" class="btn btn-neutral float-left" title="Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="methodology.html" class="btn btn-neutral float-right" title="Benchmark Methodology and Value" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, PEQUAN.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
