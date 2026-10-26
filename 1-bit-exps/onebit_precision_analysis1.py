@@ -685,12 +685,14 @@ def plot_digit_counts(
     )
     apply_bit_yticks(axes[1], EXPONENT_SWEEP_BITS, max_ticks=HEATMAP_MAX_XTICKS, offset=1)
     cbar = fig.colorbar(img, ax=axes.ravel().tolist(), pad=0.02, shrink=0.92)
-    cbar.set_label("Variables assigned to custom precision")
+    # Keep the rotated label short enough to fit the compact figure height.
+    cbar.set_label("Variables assigned to\ncustom precision")
 
     pdf = outdir / f"{benchmark}_digit_precision_counts.pdf"
     png = outdir / f"{benchmark}_digit_precision_counts.png"
-    fig.savefig(pdf)
-    fig.savefig(png, dpi=600)
+    # Include the full rotated colorbar label, which can extend beyond the canvas.
+    fig.savefig(pdf, bbox_inches="tight", pad_inches=0.2)
+    fig.savefig(png, dpi=600, bbox_inches="tight", pad_inches=0.2)
     plt.close(fig)
 
 def first_saturation(xs: np.ndarray, ys: np.ndarray, tol: float = 0.2) -> Optional[int]:

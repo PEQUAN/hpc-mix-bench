@@ -9,7 +9,10 @@ By default, the script scans all result directories under papers/h100_results
 that contain cuda_h100_ratios.csv, combines their benchmark rows, and writes a
 publication-oriented figure with one panel per benchmark.  Each panel overlays
 memory-ratio line plots with time-ratio bars, both normalized to FP64.
-Accuracy/error columns are ignored on purpose: the paper figure should focus on
+Time-ratio error bars use time_ratio_vs_double_stddev when available; the
+stored values propagate the measured timing standard deviations of both the
+mixed-precision program and the FP64 baseline. Panels use a common y-axis range.
+Numerical-accuracy columns are ignored on purpose: the paper figure should focus on
 resource use and runtime only.
 """
 
@@ -302,9 +305,15 @@ def collect_benchmark_series(
     rows: list[dict[str, str]],
     benchmark: str,
     combinations: list[int],
-) -> tuple[list[int], dict[int, dict[int, float]], dict[int, dict[int, float]]]:
+) -> tuple[
+    list[int],
+    dict[int, dict[int, float]],
+    dict[int, dict[int, float]],
+    dict[int, dict[int, float]],
+]:
     memory_series: dict[int, dict[int, float]] = {combo: {} for combo in combinations}
     time_series: dict[int, dict[int, float]] = {combo: {} for combo in combinations}
+    time_errors: dict[int, dict[int, float]] = {combo: {} for combo in combinations}
     digits = set()
 
     for row in rows:
@@ -323,9 +332,12 @@ def collect_benchmark_series(
             continue
         memory_series[combo][digit] = memory_value
         time_series[combo][digit] = time_value
+        time_error = parse_float(row.get("time_ratio_vs_double_stddev"))
+        if math.isfinite(time_error) and time_error >= 0:
+            time_errors[combo][digit] = time_error
         digits.add(digit)
 
-    return sorted(digits), memory_series, time_series
+    return sorted(digits), memory_series, time_series, time_errors
 
 
 def finite_values(*series_maps: dict[int, dict[int, float]]) -> list[float]:
@@ -361,7 +373,7 @@ def plot_benchmark_panel(
     *,
     show_ylabel: bool,
 ) -> bool:
-    digits, memory_series, time_series = collect_benchmark_series(
+    digits, memory_series, time_series, time_errors = collect_benchmark_series(
         rows, benchmark, combinations
     )
     if not digits:
@@ -377,6 +389,7 @@ def plot_benchmark_panel(
     for combo in combinations:
         color = COLORS.get(combo, "0.35")
         time_values = [time_series[combo].get(digit, math.nan) for digit in digits]
+        errors = [time_errors[combo].get(digit, math.nan) for digit in digits]
         memory_values = [memory_series[combo].get(digit, math.nan) for digit in digits]
         x_bars = [digit + offsets[combo] for digit in digits]
 
@@ -390,6 +403,8 @@ def plot_benchmark_panel(
             hatch=HATCHES.get(combo, ""),
             alpha=0.42,
             zorder=2,
+            yerr=errors if any(math.isfinite(error) for error in errors) else None,
+            error_kw={"ecolor": color, "elinewidth": 0.8, "capsize": 2, "capthick": 0.8, "zorder": 4},
         )
         ax.plot(
             digits,
@@ -410,7 +425,14 @@ def plot_benchmark_panel(
         ax.set_ylabel("Ratio to FP64")
     ax.set_xticks(digits)
     ax.set_xlim(min(digits) - 0.45, max(digits) + 0.45)
-    set_ratio_axis(ax, finite_values(memory_series, time_series))
+    axis_values = finite_values(memory_series, time_series)
+    axis_values.extend(
+        time_series[combo][digit] + error
+        for combo, errors in time_errors.items()
+        for digit, error in errors.items()
+        if math.isfinite(time_series[combo].get(digit, math.nan))
+    )
+    set_ratio_axis(ax, axis_values)
     style_axis(ax)
     return True
 
@@ -501,6 +523,12 @@ def plot_benchmark_row(
     if plotted == 0:
         plt.close(fig)
         return []
+
+    # Include error-bar tops in a common range so the FP64 line aligns in all panels.
+    common_top = max(ax.get_ylim()[1] for ax in axes if ax.get_visible())
+    for ax in axes:
+        if ax.get_visible():
+            ax.set_ylim(0.0, common_top)
 
     add_shared_legend(fig, combinations, ncol=min(4, len(combinations) + 2))
     fig.subplots_adjust(left=0.065, right=0.995, bottom=0.31, top=0.88, wspace=0.28)

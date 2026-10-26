@@ -217,7 +217,7 @@ def add_precision_runtime_panel(
     if show_precision_ylabel:
         ax.set_ylabel("Number of variables of each type", fontsize=fontsize, weight="bold")
     if show_runtime_ylabel:
-        ax2.set_ylabel("Runtime (seconds)", fontsize=fontsize, weight="bold", color="red")
+        ax2.set_ylabel("Workflow runtime (s)", fontsize=fontsize, weight="bold", color="red")
     ax2.tick_params(axis="y", labelcolor="red")
     ax.tick_params(axis="both", which="major", labelsize=fontsize)
     ax2.tick_params(axis="both", which="major", labelsize=fontsize)
@@ -244,7 +244,7 @@ def legend_handles(categories, Line2D, Patch):
             linestyle="-",
             linewidth=2,
             markersize=8,
-            label="Runtime",
+            label="Workflow runtime",
         )
     )
     return handles
@@ -321,7 +321,7 @@ def generate_from_data(benchmark_dir: Path, output_path: Path, digits):
     fig.text(
         0.94,
         0.5,
-        "Runtime (seconds)",
+        "Workflow runtime (s)",
         va="center",
         rotation=-90,
         fontsize=25,
